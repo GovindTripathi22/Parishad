@@ -4,6 +4,7 @@
   "description": "Parishad (CortexOS) — Autonomous Company Brain & Decision Ledger",
   "scripts": {
     "dev": "python run.py",
+    "dve": "python run.py",
     "start": "python run.py",
     "test": "pytest -v",
     "lint": "python -m py_compile run.py"
