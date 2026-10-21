@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Parishad Domain Glossary",
+  "description": "Verified terminology and concepts specific to Parishad (CortexOS) architecture and review workflows.",
+  "version": "1.0.0",
+  "terms": [
+    {
+      "term": "Proposed Update (Change Request)",
+      "canonical_identifier": "proposed_update",
+      "definition": "An incoming, unverified text submission (from a GitHub Pull Request, Slack thread, Jira ticket, or document sync) requesting a modification to hardware specifications, system configurations, software parameters, or business policies.",
+      "codebase_source": "backend/app/api/routes_check.py:CheckRequest",
+      "parishad_context": "The raw input submitted to the Parishad pipeline before security filtering, fact extraction, and document verification."
+    },
+    {
+      "term": "Extracted Fact and Numeric Value",
+      "canonical_identifier": "extracted_fact",
+      "definition": "A quantitative measurement, parameter limit, or financial budget extracted from free text by the fact extraction engine, containing numeric value, canonical unit, display unit, and change type.",
+      "codebase_source": "backend/app/extraction/fact_extractor.py:ExtractedFact",
+      "parishad_context": "Structured numerical entities such as 60.0 V, 14 days, $8500 USD, or 2.0 Mbps parsed deterministically from change text."
+    },
+    {
+      "term": "Official Document",
+      "canonical_identifier": "official_doc",
+      "definition": "A certified company specification, operational limit guide, policy document, or architectural decision record (ADR) stored as source-of-truth in the database.",
+      "codebase_source": "backend/app/database/models.py:OfficialDoc",
+      "parishad_context": "Contains unique doc_id (e.g., DOC-BMS-402), topic, title, version, and certified markdown content."
+    },
+    {
+      "term": "Official Rule",
+      "canonical_identifier": "official_rule",
+      "definition": "A specific numerical constraint or operational threshold linked to an official document against which proposed updates are validated.",
+      "codebase_source": "backend/app/database/models.py:DocRule",
+      "parishad_context": "Stores parameter label, certified numeric limit (float), and canonical unit (e.g., Max Voltage Limit = 54.0 V)."
+    },
+    {
+      "term": "Unit and Value Mismatch",
+      "canonical_identifier": "value_unit_mismatch",
+      "definition": "A condition where a proposed update introduces a numeric magnitude differing from the certified official rule, or introduces incompatible or altered measurement dimensions.",
+      "codebase_source": "backend/app/agents/opinion_agent.py:OpinionResult",
+      "parishad_context": "Triggers mathematical drift calculation (delta_pct) and severity classification (low, medium, high, critical)."
+    },
+    {
+      "term": "First Opinion",
+      "canonical_identifier": "first_opinion",
+      "definition": "Stage 1 analysis in the Council of Agents pipeline that evaluates numerical alignment between proposed facts and the top-matched official specification.",
+      "codebase_source": "backend/app/agents/opinion_agent.py:analyze_opinion",
+      "parishad_context": "Calculates percentage delta, assigns initial severity level, and formulates technical justification."
+    },
+    {
+      "term": "Cross-Review",
+      "canonical_identifier": "cross_review",
+      "definition": "Stage 2 analysis in the Council of Agents pipeline that checks for multi-document ripple effects, subsystem dependencies, and historical precedents.",
+      "codebase_source": "backend/app/agents/review_agent.py:cross_review",
+      "parishad_context": "Identifies cascading impacts on connected specifications (e.g., thermal impact of overvoltage) and audits prior rulings in the decision ledger."
+    },
+    {
+      "term": "Synthesis",
+      "canonical_identifier": "synthesis",
+      "definition": "Stage 3 consensus stage in the Council of Agents pipeline that consolidates First Opinion and Cross-Review into a single actionable review verdict.",
+      "codebase_source": "backend/app/agents/synthesis_agent.py:synthesize_recommendation",
+      "parishad_context": "Produces executive summary, recommended action (AUTO_PASS vs STAGE_APPROVAL), and draft replacement text."
+    },
+    {
+      "term": "Hybrid Retrieval and Supporting Evidence",
+      "canonical_identifier": "hybrid_retrieval",
+      "definition": "Multi-signal search system combining lexical BM25 token scoring, TF-IDF term overlap, and 768-dimensional dense vector embeddings with domain-specific topic and unit boosting.",
+      "codebase_source": "backend/app/rag/hybrid_search.py:hybrid_search",
+      "parishad_context": "Retrieves the most relevant official company documents to serve as grounded evidence for every finding."
+    },
+    {
+      "term": "Dependency Impact",
+      "canonical_identifier": "dependency_impact",
+      "definition": "A downstream architectural, electrical, mechanical, or operational consequence triggered in another system or document when a parameter is altered.",
+      "codebase_source": "backend/app/agents/review_agent.py:ReviewResult.cascading_impacts",
+      "parishad_context": "Example: Raising battery voltage from 54V to 60V risks MOSFET thermal breakdown under high ambient temperature."
+    },
+    {
+      "term": "Review Finding",
+      "canonical_identifier": "review_finding",
+      "definition": "A discrete, traceable observation produced by Parishad identifying a policy conflict, parameter drift, safety risk, or verification gap, indexed by a permanent finding ID.",
+      "codebase_source": "backend/app/api/routes_check.py:RuleConflict",
+      "parishad_context": "Must be preserved with its original identifier (e.g., FIND-01) and evidence citation across all summaries."
+    },
+    {
+      "term": "Recommended Improvement",
+      "canonical_identifier": "recommended_improvement",
+      "definition": "An actionable suggestion proposing a fix, additional testing, or documentation update, explicitly categorized as required fix, optional suggestion, or verification needed.",
+      "codebase_source": "backend/app/agents/synthesis_agent.py:SynthesisResult.review_checklist",
+      "parishad_context": "Actionable guidance helping the engineer or approver resolve findings safely without fabricating requirements."
+    },
+    {
+      "term": "Human Approval or Decline",
+      "canonical_identifier": "human_approval_workflow",
+      "definition": "The mandatory human-in-the-loop review gate where an authorized human engineer inspects staged revisions and explicitly accepts or declines them.",
+      "codebase_source": "backend/app/api/routes_approvals.py:approve_draft",
+      "parishad_context": "Under the strict 'Drafts Only' architecture, AI models cannot mutate official specifications without human sign-off."
+    },
+    {
+      "term": "Decision Ledger and Document Version",
+      "canonical_identifier": "decision_ledger",
+      "definition": "An append-only, tamper-evident audit ledger that records every approved or declined change with an immutable SHA-256 cryptographic hash and increments doc version (e.g. v2.4 to v2.5).",
+      "codebase_source": "backend/app/database/models.py:DecisionLedgerEntry",
+      "parishad_context": "Ensures full traceability of who changed what parameter, when, why, and under which evidence."
+    },
+    {
+      "term": "Missing Information and Uncertain Conclusions",
+      "canonical_identifier": "missing_information",
+      "definition": "A condition where an incoming proposal lacks essential details (e.g. test data, target environment, ambient limits) needed to verify compliance.",
+      "codebase_source": "backend/app/specialist/schemas.py",
+      "parishad_context": "The specialist must explicitly highlight missing evidence rather than assuming or hallucinating parameters."
+    },
+    {
+      "term": "System Error vs Business-Rule Conflict",
+      "canonical_identifier": "system_error_vs_conflict",
+      "definition": "The critical architectural distinction between technical pipeline failures (e.g. database timeout, malformed JSON, model crash) and domain policy disagreements (proposed 60V vs certified 54V limit).",
+      "codebase_source": "backend/app/main.py:exception_handlers",
+      "parishad_context": "System errors must trigger deterministic fallbacks and alerts; policy conflicts must be flagged as review findings."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "benchmark_timestamp": "2026-10-21T17:26:30Z",
+  "evaluation_engine": "ParishadReviewSpecialistBenchmark",
+  "model_path": "None (Backend Service)",
+  "execution_mode": "deterministic_fallback_service",
+  "held_out_test_set": {
+    "total_evaluated": 100,
+    "mode": "deterministic_fallback_service",
+    "valid_json_rate": 100.0,
+    "schema_validation_rate": 100.0,
+    "finding_preservation_rate": 100.0,
+    "dropped_findings_rate": 0.0,
+    "evidence_traceability_rate": 100.0,
+    "status_accuracy_rate": 100.0,
+    "avg_latency_ms": 0.04
+  },
+  "challenge_cases": {
+    "total_evaluated": 120,
+    "mode": "deterministic_fallback_service",
+    "valid_json_rate": 100.0,
+    "schema_validation_rate": 100.0,
+    "finding_preservation_rate": 100.0,
+    "dropped_findings_rate": 0.0,
+    "evidence_traceability_rate": 100.0,
+    "status_accuracy_rate": 100.0,
+    "avg_latency_ms": 0.05
+  },
+  "note": "Evaluated using validated Parishad backend service and deterministic fallback formatter. Model adapter weights pending Google Colab GPU training run."
+}

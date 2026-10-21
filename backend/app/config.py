@@ -51,6 +51,13 @@ class Settings(BaseSettings):
     COUNCIL_ENABLED: bool = True
     COUNCIL_CONFIDENCE_THRESHOLD: float = 0.7
 
+    # ── Parishad Review Specialist ──────────────────────────────
+    PARISHAD_LOCAL_SUMMARY_ENABLED: bool = False
+    PARISHAD_LOCAL_MODEL_PATH: str = "training/saved_model"
+    PARISHAD_LOCAL_INFERENCE_DEVICE: str = "auto"
+    PARISHAD_LOCAL_TIMEOUT_SECONDS: float = 15.0
+    PARISHAD_LOCAL_MAX_NEW_TOKENS: int = 1536
+
     # ── Paths ───────────────────────────────────────────────────
     BASE_DIR: str = str(Path(__file__).resolve().parent.parent)
 

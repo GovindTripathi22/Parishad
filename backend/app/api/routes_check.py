@@ -24,6 +24,8 @@ from app.extraction.fact_extractor import extract_facts
 from app.extraction.entity_resolver import resolve_entities
 from app.rag.hybrid_search import DEFAULT_DOCUMENTS, hybrid_search
 from app.agents.council import run_council
+from app.specialist.schemas import ParishadReviewInput, ParishadReviewReport
+from app.specialist.service import ReviewSummaryService
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +102,7 @@ class CheckResult(BaseModel):
     council_confidence: Optional[float] = None
     pending_approval_id: Optional[str] = None
     pipeline: str = "full"
+    specialist_report: Optional[ParishadReviewReport] = None
 
 
 # ── Main Endpoint ─────────────────────────────────────────────────────────────
@@ -125,6 +128,17 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
     enforce_privacy = body.is_privacy_enforced()
 
     if not raw_text:
+        empty_input = ParishadReviewInput(
+            change_request="",
+            source=source_val,
+            topic=topic_val,
+            official_docs=[],
+            pipeline_findings=[],
+            ledger_history=[],
+            missing_context=["No content provided to check."],
+            security_warnings=[],
+        )
+        empty_report = ReviewSummaryService().generate_deterministic_fallback(empty_input)
         return CheckResult(
             verdict="low_signal",
             title="Empty Content",
@@ -132,23 +146,37 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
             message="Please provide a message, pull request, or policy text to check.",
             privacy_clean=True,
             clean_text="",
+            specialist_report=empty_report,
         )
 
     # ── Step 1: Injection & Security Guard ────────────────────────────────────
     guard = check_safety(raw_text)
     if not guard.is_safe:
+        threats_list = guard.matched_patterns or [guard.blocked_reason or "Unsafe prompt override attempt"]
+        blocked_input = ParishadReviewInput(
+            change_request=raw_text,
+            source=source_val,
+            topic=topic_val,
+            official_docs=[],
+            pipeline_findings=[],
+            ledger_history=[],
+            missing_context=[],
+            security_warnings=threats_list,
+        )
+        blocked_report = ReviewSummaryService().generate_deterministic_fallback(blocked_input)
         return CheckResult(
             verdict="blocked",
             title="Prompt Injection Attack Blocked",
             subtitle="Adversarial input detected and neutralized",
             message="The submitted content contains prompt injection or unsafe patterns attempting to override rules or exfiltrate restricted data. The input has been blocked by CortexOS Security Guard.",
-            threats=guard.matched_patterns or [guard.blocked_reason or "Unsafe prompt override attempt"],
+            threats=threats_list,
             privacy_clean=False,
             clean_text=raw_text,
             is_safe=False,
             threat_score=guard.threat_score,
             blocked_reason=guard.blocked_reason,
             confidence=0.99,
+            specialist_report=blocked_report,
         )
 
     # ── Step 2: Privacy Redaction ─────────────────────────────────────────────
@@ -258,6 +286,48 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
         await db.refresh(approval)
         staged_draft_id = approval.draft_id
 
+    # ── Step 7.5: Parishad Review Specialist Summary ──────────────────────────
+    pipeline_findings: list[dict[str, Any]] = []
+    if has_conflict:
+        pipeline_findings.append({
+            "finding_id": "FIND-01",
+            "category": "policy_conflict",
+            "proposed_value": proposed_val,
+            "official_value": official_val,
+            "delta_pct": council.opinion.delta_pct if council.opinion else 0.0,
+            "target_doc_id": top_doc_id or "DOC-GEN-001",
+            "initial_rationale": council.opinion.reasoning if council.opinion else "Parameter conflict detected.",
+        })
+        if council.review and council.review.cascading_impacts:
+            for idx, c_imp in enumerate(council.review.cascading_impacts, start=2):
+                pipeline_findings.append({
+                    "finding_id": f"FIND-0{idx}",
+                    "category": "dependency_risk",
+                    "proposed_value": proposed_val,
+                    "official_value": official_val,
+                    "delta_pct": council.opinion.delta_pct if council.opinion else 0.0,
+                    "target_doc_id": top_doc_id or "DOC-GEN-001",
+                    "initial_rationale": c_imp,
+                })
+
+    missing_ctx: list[str] = []
+    if not extraction.has_signal and clean_text:
+        missing_ctx.append("No quantitative physical, temporal, or financial parameters detected in message.")
+
+    review_input = ParishadReviewInput(
+        change_request=clean_text,
+        source=source_val,
+        topic=topic_val,
+        official_docs=docs_payload[:3] if docs_payload else [],
+        pipeline_findings=pipeline_findings,
+        ledger_history=[],
+        missing_context=missing_ctx,
+        security_warnings=[],
+    )
+
+    specialist_service = ReviewSummaryService()
+    specialist_report = await specialist_service.generate_review_summary(review_input)
+
     # ── Step 8: Build Unified Frontend/API Response ───────────────────────────
     if has_conflict:
         verdict = "conflict"
@@ -311,6 +381,7 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
         council_confidence=council.confidence,
         pending_approval_id=staged_draft_id,
         pipeline="full",
+        specialist_report=specialist_report,
     )
 
 
@@ -323,3 +394,30 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
 async def quick_check(body: CheckRequest, db: AsyncSession = Depends(get_db)):
     """Fast pipeline for low-latency batch processing or CI/CD pre-commit hooks."""
     return await check_update(body, db)
+
+
+@router.post(
+    "/specialist",
+    response_model=ParishadReviewReport,
+    status_code=status.HTTP_200_OK,
+    summary="Generate strict Parishad Review Specialist report directly",
+)
+async def specialist_review(body: CheckRequest, db: AsyncSession = Depends(get_db)) -> ParishadReviewReport:
+    """Direct execution endpoint returning the strict structured Parishad Review Report."""
+    res = await check_update(body, db)
+    if res.specialist_report:
+        return res.specialist_report
+    # Fallback if blocked or empty
+    service = ReviewSummaryService()
+    return service.generate_deterministic_fallback(
+        ParishadReviewInput(
+            change_request=body.get_text(),
+            source=body.source,
+            topic=body.get_topic(),
+            official_docs=[],
+            pipeline_findings=[],
+            ledger_history=[],
+            missing_context=["Input blocked or empty"],
+            security_warnings=res.threats,
+        )
+    )
