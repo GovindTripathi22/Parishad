@@ -3,6 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('parishad_theme');
+        if (saved === 'light' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        } else {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
   <title>Parishad — Autonomous Company Brain &amp; Decision Ledger</title>
 
   <!-- Typography: Plus Jakarta Sans, Newsreader Serif & JetBrains Mono -->
@@ -48,70 +63,89 @@
     };
   </script>
 
-  <style>
+    <style>
+    /* CSS Variables for Dark & Light Mode */
     :root {
       color-scheme: dark;
+      --bg-canvas: #08090C;
+      --bg-card: #0E1017;
+      --bg-elevated: #141724;
+      --bg-subtle-hover: #1C2133;
+      --bg-input: #08090C;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text-primary: #FFFFFF;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --header-bg: rgba(8, 9, 12, 0.90);
+      --header-border: rgba(255, 255, 255, 0.08);
+      --nav-pill-bg: #141724;
+      --nav-pill-hover: #1C2133;
+      --tag-bg: rgba(255, 255, 255, 0.04);
+      --tag-border: rgba(255, 255, 255, 0.08);
+      --code-block-bg: #08090C;
+      --window-bar-bg: rgba(255, 255, 255, 0.02);
+      --footer-bg: #060709;
+      --footer-border: rgba(255, 255, 255, 0.07);
+      --card-shadow: none;
+      --explainer-bg: rgba(79, 70, 229, 0.08);
+      --explainer-border: rgba(99, 102, 241, 0.25);
+      --explainer-text: #E0E7FF;
+      --scrollbar-track: #08090C;
+      --scrollbar-thumb: #1F2436;
     }
+
+    html.light {
+      color-scheme: light;
+      --bg-canvas: #F8F9FB;
+      --bg-card: #FFFFFF;
+      --bg-elevated: #F1F5F9;
+      --bg-subtle-hover: #E2E8F0;
+      --bg-input: #FFFFFF;
+      --border-color: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --text-dim: #94A3B8;
+      --header-bg: rgba(255, 255, 255, 0.94);
+      --header-border: #E2E8F0;
+      --nav-pill-bg: #F1F5F9;
+      --nav-pill-hover: #E2E8F0;
+      --tag-bg: #F1F5F9;
+      --tag-border: #E2E8F0;
+      --code-block-bg: #F8FAFC;
+      --window-bar-bg: #F8FAFC;
+      --footer-bg: #F1F5F9;
+      --footer-border: #E2E8F0;
+      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+      --explainer-bg: #EEF2FF;
+      --explainer-border: #C7D2FE;
+      --explainer-text: #1E1B4B;
+      --scrollbar-track: #F1F5F9;
+      --scrollbar-thumb: #CBD5E1;
+    }
+
     body {
-      background-color: #08090C;
-      color: #E2E8F0;
+      background-color: var(--bg-canvas);
+      color: var(--text-secondary);
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-    }
-    .editorial-serif {
-      font-family: 'Newsreader', Georgia, serif;
-      font-style: italic;
-      font-weight: 400;
-    }
-    .material-symbols-outlined {
-      font-family: 'Material Symbols Outlined';
-      font-size: 18px;
-      line-height: 1;
-      display: inline-block;
-      vertical-align: middle;
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* KLYP-inspired Section Labels */
-    .section-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #64748B;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      padding-bottom: 0.65rem;
-      margin-bottom: 1.5rem;
-    }
-    .section-label span:first-child {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: #94A3B8;
-    }
-
-    /* Editorial Headline scale */
-    .hero-cinematic-headline {
-      font-size: clamp(2.4rem, 6.2vw, 4.6rem);
-      line-height: 1.04;
-      letter-spacing: -0.035em;
-      font-weight: 700;
-      color: #FFFFFF;
-    }
-
-    /* Modern Luxury Cards (obsidian-card required by backend tests) */
+    /* Core Card styling */
     .obsidian-card, .clean-card, .premium-card {
-      background: #0E1017;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: var(--bg-card) !important;
+      border: 1px solid var(--border-color) !important;
       border-radius: 16px;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+      box-shadow: var(--card-shadow);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
     }
     .obsidian-card:hover, .clean-card:hover, .premium-card:hover {
-      border-color: rgba(255, 255, 255, 0.16);
+      border-color: var(--border-strong) !important;
     }
 
     /* Window Bar Studio Header */
@@ -120,18 +154,41 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.75rem 1.25rem;
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--window-bar-bg) !important;
+      border-bottom: 1px solid var(--border-color) !important;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
-      color: #94A3B8;
+      color: var(--text-muted) !important;
       letter-spacing: 0.04em;
     }
 
-    /* Buttons */
+    /* Sub Button / Pills */
+    .btn-sub {
+      background: var(--nav-pill-bg) !important;
+      border: 1px solid var(--border-color) !important;
+      color: var(--text-secondary) !important;
+      font-weight: 500;
+      border-radius: 10px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-sub:hover {
+      background: var(--bg-subtle-hover) !important;
+      border-color: var(--border-strong) !important;
+      color: var(--text-primary) !important;
+      transform: translateY(-1px);
+    }
+    .btn-sub:active {
+      transform: translateY(0);
+    }
+
+    /* Primary Accent Button */
     .btn-main {
       background: #4F46E5;
-      color: #FFFFFF;
+      color: #FFFFFF !important;
       font-weight: 600;
       border-radius: 10px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -149,89 +206,45 @@
       transform: translateY(0);
     }
 
-    .btn-sub {
-      background: #141724;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #E2E8F0;
-      font-weight: 500;
-      border-radius: 10px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
+    /* Input & Textareas */
+    input, select, textarea {
+      background-color: var(--bg-input) !important;
+      border-color: var(--border-color) !important;
+      color: var(--text-primary) !important;
+      transition: border-color 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--text-dim) !important;
+    }
+
+    /* Section Labels */
+    .section-label {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim) !important;
+      border-bottom: 1px solid var(--border-color) !important;
+      padding-bottom: 0.65rem;
+      margin-bottom: 1.25rem;
     }
-    .btn-sub:hover {
-      background: #1C2133;
-      border-color: rgba(255, 255, 255, 0.22);
-      color: #FFFFFF;
-      transform: translateY(-1px);
-    }
-    .btn-sub:active {
-      transform: translateY(0);
-    }
-
-    /* Navigation link pill */
-    .nav-link {
-      color: #94A3B8;
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 0.4rem 0.75rem;
-      border-radius: 8px;
-      transition: all 0.15s ease;
-      display: inline-flex;
+    .section-label span:first-child {
+      display: flex;
       align-items: center;
-      gap: 0.35rem;
-    }
-    .nav-link:hover, .nav-link.active {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.05);
+      gap: 0.4rem;
+      color: var(--text-muted) !important;
     }
 
-    /* Preset Pill Buttons */
-    .pill-scenario-active {
-      background: #1C2138 !important;
-      border-color: rgba(99, 102, 241, 0.7) !important;
-      color: #FFFFFF !important;
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
-    }
-    .pill-scenario-active-rose {
-      background: #2D141E !important;
-      border-color: rgba(239, 68, 68, 0.7) !important;
-      color: #FECDD3 !important;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
-    }
-
-    /* OCR Scanner Beam */
-    @keyframes scan-beam {
-      0% { top: 0%; opacity: 0.8; }
-      50% { top: 92%; opacity: 1; }
-      100% { top: 0%; opacity: 0.8; }
-    }
-    .scanner-beam {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, #6366f1 50%, transparent 100%);
-      box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
-      animation: scan-beam 2.2s ease-in-out infinite;
-    }
-
-    /* Minimal Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #08090C;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1F2436;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #333B54;
+    /* Headlines */
+    .hero-cinematic-headline {
+      font-size: clamp(2.4rem, 6.2vw, 4.6rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+      font-weight: 700;
+      color: var(--text-primary) !important;
     }
 
     /* Tag badges */
@@ -242,12 +255,163 @@
       text-transform: uppercase;
       padding: 0.2rem 0.55rem;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #94A3B8;
+      background: var(--tag-bg) !important;
+      border: 1px solid var(--tag-border) !important;
+      color: var(--text-muted) !important;
       display: inline-block;
     }
+
+    /* Editorial Serif */
+    .editorial-serif {
+      font-family: 'Newsreader', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* Plain English Explainer Banner */
+    .plain-explainer-banner {
+      background: var(--explainer-bg);
+      border: 1px solid var(--explainer-border);
+      border-radius: 12px;
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--explainer-text);
+      margin-bottom: 1.5rem;
+    }
+    .plain-explainer-banner span.material-symbols-outlined {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Chapter Segmented Tab Bar */
+    .chapter-tab {
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+    .chapter-tab:hover {
+      color: var(--text-primary);
+      background: var(--nav-pill-bg);
+    }
+    .chapter-tab.active {
+      color: var(--text-primary) !important;
+      background: var(--nav-pill-bg) !important;
+      border-color: var(--border-strong) !important;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    /* View Mode Switcher Pills */
+    .view-mode-pill {
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .view-mode-pill.active {
+      background: #4F46E5 !important;
+      color: #FFFFFF !important;
+    }
+    .view-mode-pill:not(.active) {
+      color: var(--text-muted);
+    }
+    .view-mode-pill:not(.active):hover {
+      color: var(--text-primary);
+    }
+
+    /* Light mode text color overrides for high readability */
+    html.light .text-white {
+      color: #0F172A !important;
+    }
+    html.light .text-slate-100,
+    html.light .text-slate-200,
+    html.light .text-slate-300 {
+      color: #334155 !important;
+    }
+    html.light .text-slate-400 {
+      color: #64748B !important;
+    }
+    html.light .text-slate-500 {
+      color: #94A3B8 !important;
+    }
+    html.light .bg-\[\#08090C\],
+    html.light .bg-\[\#0E1017\],
+    html.light .bg-\[\#121520\],
+    html.light .bg-\[\#141724\] {
+      background-color: var(--bg-card) !important;
+    }
+    html.light .bg-\[\#060709\] {
+      background-color: #F1F5F9 !important;
+    }
+    html.light .border-white\/10,
+    html.light .border-white\/\[0\.07\],
+    html.light .border-white\/\[0\.08\],
+    html.light .border-white\/\[0\.06\],
+    html.light .border-white\/\[0\.05\],
+    html.light .border-white\/\[0\.04\] {
+      border-color: #E2E8F0 !important;
+    }
+    html.light .pill-scenario-active {
+      background: #EEF2FF !important;
+      border-color: #6366F1 !important;
+      color: #3730A3 !important;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.15) !important;
+    }
+    html.light .pill-scenario-active-rose {
+      background: #FEF2F2 !important;
+      border-color: #EF4444 !important;
+      color: #991B1B !important;
+    }
+    html.light pre {
+      background-color: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    html.light header {
+      background-color: rgba(255, 255, 255, 0.92) !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light #chapterBar {
+      background-color: rgba(255, 255, 255, 0.94) !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light table tbody tr:hover {
+      background-color: #F8FAFC !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 9999px;
+    }
+
+    /* In focused mode, hide inactive sections smoothly */
+    .section-hidden {
+      display: none !important;
+    }
   </style>
+
 </head>
 <body class="min-h-screen flex flex-col selection:bg-brand-600/30 selection:text-brand-100">
 
@@ -312,6 +476,16 @@
       </button>
 
       <!-- Audio Feedback Toggle -->
+            <!-- Theme Toggle (Dark / Light) -->
+      <button 
+        id="themeToggleBtn" 
+        onclick="toggleTheme()" 
+        title="Toggle Light / Dark Mode" 
+        class="w-8 h-8 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
+      >
+        <span id="themeIcon" class="material-symbols-outlined text-[16px]">light_mode</span>
+      </button>
+
       <button 
         id="soundToggleBtn" 
         onclick="toggleAudioFeedback()" 
@@ -328,6 +502,50 @@
       </a>
     </div>
   </header>
+
+  <!-- ===================================================================
+       STICKY CHAPTER & VIEW CONTROLLER (SOLVES SCROLLING FATIGUE)
+  ==================================================================== -->
+  <nav id="chapterBar" class="sticky top-16 z-40 w-full backdrop-blur-xl border-b border-white/[0.08] bg-[#08090C]/90 py-2.5 px-4 sm:px-8 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <!-- Chapter Switcher Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 text-xs font-mono">
+        <button onclick="setFocusedChapter('check')" id="tab-check" class="chapter-tab active">
+          <span class="opacity-50">01</span> Console
+        </button>
+        <button onclick="setFocusedChapter('approvals')" id="tab-approvals" class="chapter-tab">
+          <span class="opacity-50">02</span> Safety Gate 
+          <span id="tabPendingBadge" class="ml-1 text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400">2</span>
+        </button>
+        <button onclick="setFocusedChapter('brain')" id="tab-brain" class="chapter-tab">
+          <span class="opacity-50">03</span> Company Brain
+        </button>
+        <button onclick="setFocusedChapter('system')" id="tab-system" class="chapter-tab">
+          <span class="opacity-50">04</span> Ledger &amp; SQL
+        </button>
+        <button onclick="setFocusedChapter('tests')" id="tab-tests" class="chapter-tab">
+          <span class="opacity-50">05</span> 12 Checks
+        </button>
+        <button onclick="setFocusedChapter('guide')" id="tab-guide" class="chapter-tab">
+          <span class="opacity-50">06</span> User Guide
+        </button>
+      </div>
+
+      <!-- Mode Selector: Focused vs All Sections -->
+      <div class="flex items-center gap-2 self-start md:self-auto text-xs font-mono">
+        <span class="text-[11px] uppercase tracking-wider text-slate-400">View Mode:</span>
+        <div class="p-0.5 rounded-lg border border-white/10 flex items-center bg-black/20">
+          <button onclick="setViewDisplayMode('focused')" id="btnModeFocused" class="view-mode-pill active">
+            Focused (1-Tab)
+          </button>
+          <button onclick="setViewDisplayMode('continuous')" id="btnModeContinuous" class="view-mode-pill">
+            All Sections (Scroll)
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
 
   <!-- ===================================================================
        HERO EDITORIAL STATEMENT (KLYP INSPIRATION)
@@ -459,6 +677,14 @@
     </div>
 
     <!-- Studio Console Window Container -->
+          <div class="plain-explainer-banner">
+        <span class="material-symbols-outlined text-indigo-400">lightbulb</span>
+        <div>
+          <b class="font-semibold text-white">What this does in simple words:</b>
+          <span>Paste any code, pull request, or Slack chat message here. Our 4 AI agents analyze all numbers and check if they violate certified company specifications before code is merged. Try the 4 scenario buttons below for instant 1-click tests!</span>
+        </div>
+      </div>
+
     <div class="obsidian-card overflow-hidden border border-white/10 shadow-2xl">
       
       <!-- Window Bar (macOS / Studio Style) -->
@@ -642,6 +868,14 @@
       </div>
     </div>
 
+        <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-amber-400">gavel</span>
+      <div>
+        <b class="font-semibold text-white">What this does in simple words:</b>
+        <span>When an AI flags a rule contradiction, the AI is <strong>never</strong> allowed to overwrite company specifications automatically. It creates an isolated proposal here. A human tech lead inspects the side-by-side diff and clicks Approve or Decline.</span>
+      </div>
+    </div>
+
     <!-- Approvals List Container (Interactive Diffs) -->
     <div id="approvalsListContainer" class="space-y-6"></div>
 
@@ -666,6 +900,14 @@
       <p class="text-sm text-slate-300 leading-relaxed">
         One unified repository of truth. Search across all certified engineering specifications with citation-grounded RAG, or drop raw datasheet images for vision OCR extraction.
       </p>
+    </div>
+
+        <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-emerald-400">menu_book</span>
+      <div>
+        <b class="font-semibold text-white">What this does in simple words:</b>
+        <span>Your centralized knowledge vault. Ask questions in plain English to get answers with exact citations to certified documents, or drag-and-drop hardware datasheet photos to scan them via Multimodal Vision OCR.</span>
+      </div>
     </div>
 
     <!-- Studio Grid: Ask AI + Ingest Datasheets -->
@@ -805,6 +1047,14 @@
       </p>
     </div>
 
+        <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-indigo-400">history_edu</span>
+      <div>
+        <b class="font-semibold text-white">What this does in simple words:</b>
+        <span>An immutable, tamper-evident audit ledger. Every single approved or rejected decision is cryptographically signed with a SHA-256 hash. You can also run live relational SQL queries directly in your browser.</span>
+      </div>
+    </div>
+
     <!-- Decision Ledger Table Card -->
     <div class="obsidian-card p-6 sm:p-7 space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.07] pb-4">
@@ -907,6 +1157,14 @@
       </p>
     </div>
 
+        <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-rose-400">verified_user</span>
+      <div>
+        <b class="font-semibold text-white">What this does in simple words:</b>
+        <span>Deterministic proof that the system is functioning. Runs 12 automated checks covering prompt injection defense, fact extraction, and database persistence. You can also inspect the code or download the full project in 1-click (.zip).</span>
+      </div>
+    </div>
+
     <!-- 12 Automated Verification Tests -->
     <div class="obsidian-card p-6 sm:p-7 space-y-4">
       <div class="flex items-center justify-between border-b border-white/[0.07] pb-3">
@@ -986,6 +1244,14 @@
       <p class="text-sm text-slate-300 leading-relaxed">
         A complete guide explaining what each feature does, when to use it, who has permission to use it, and how to navigate to it.
       </p>
+    </div>
+
+        <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-indigo-400">help</span>
+      <div>
+        <b class="font-semibold text-white">What this does in simple words:</b>
+        <span>The comprehensive user manual. Look here to find out what every button does, when to use it, who has permission to use it, and how to navigate to any feature.</span>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1408,7 +1674,9 @@
             hash: l.hash_signature || l.hash || 'sha256:verified'
           }));
         }
-        window.syncAlaSqlTables();
+              updateThemeIcon();
+      applyDisplayMode();
+      window.syncAlaSqlTables();
         renderApprovals();
         renderCompanyBrainLists();
         renderDecisionLedger();
@@ -1706,7 +1974,9 @@
             status: 'PENDING'
           });
           verdict.stagedDraftId = newDraftId;
-          window.syncAlaSqlTables();
+                updateThemeIcon();
+      applyDisplayMode();
+      window.syncAlaSqlTables();
         } else {
           verdict.stagedDraftId = existing.draft_id;
         }
@@ -2053,6 +2323,8 @@
         }).catch(e => console.warn('Backend approval dispatch:', e));
       }
 
+            updateThemeIcon();
+      applyDisplayMode();
       window.syncAlaSqlTables();
       renderApprovals();
       renderCompanyBrainLists();
@@ -2127,6 +2399,8 @@
         }).catch(e => console.warn('Backend doc sync:', e));
       }
 
+            updateThemeIcon();
+      applyDisplayMode();
       window.syncAlaSqlTables();
       renderCompanyBrainLists();
       runSqlQuery();
@@ -2326,6 +2600,8 @@
     }
 
     window.runSqlQuery = function () {
+            updateThemeIcon();
+      applyDisplayMode();
       window.syncAlaSqlTables();
       const q = document.getElementById('sqlInputBox').value.trim();
       const container = document.getElementById('sqlTableOutputContainer');
@@ -2364,6 +2640,8 @@
 
     function runAllSystemTests() {
       playTone(550, 'sine', 0.1, 0.03);
+            updateThemeIcon();
+      applyDisplayMode();
       window.syncAlaSqlTables();
       const results = [];
 
@@ -2542,21 +2820,7 @@ def test_hardware_voltage_extraction():
      * NAVIGATION & VIEW SWITCHING
      * ------------------------------------------------------------------- */
     function switchView(viewId) {
-      playTone(460, 'sine', 0.04, 0.02);
-      appState.activeView = viewId;
-      const targetSec = document.getElementById(`sec-${viewId}`);
-      if (targetSec) {
-        targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      ['check', 'approvals', 'brain', 'system'].forEach(v => {
-        const navEl = document.getElementById(`nav-${v}`);
-        if (!navEl) return;
-        if (v === viewId) {
-          navEl.classList.add('active');
-        } else {
-          navEl.classList.remove('active');
-        }
-      });
+      setFocusedChapter(viewId);
     }
 
     function updateTopCounters() {
@@ -2565,6 +2829,8 @@ def test_hardware_voltage_extraction():
       if (statEl) statEl.textContent = pending;
       const navCount = document.getElementById('navApprovalCount');
       if (navCount) navCount.textContent = pending;
+      const tabBadge = document.getElementById("tabPendingBadge");
+      if (tabBadge) tabBadge.textContent = pending;
     }
 
     // Global Keyboard Shortcuts (Cmd+K and Cmd+Enter)
@@ -2612,10 +2878,141 @@ def test_hardware_voltage_extraction():
       }
     });
 
+    
+    /* -------------------------------------------------------------------
+     * THEME TOGGLE ENGINE (DARK & LIGHT MODE)
+     * ------------------------------------------------------------------- */
+    function toggleTheme() {
+      playTone(550, 'sine', 0.05, 0.02);
+      const isDark = document.documentElement.classList.contains('dark');
+      const targetTheme = isDark ? 'light' : 'dark';
+      
+      if (targetTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+      
+      try {
+        localStorage.setItem('parishad_theme', targetTheme);
+      } catch(e) {}
+      
+      updateThemeIcon();
+      showToast(targetTheme === 'light' ? 'Light mode activated' : 'Dark obsidian mode activated');
+    }
+
+    function updateThemeIcon() {
+      const icon = document.getElementById('themeIcon');
+      if (!icon) return;
+      const isLight = document.documentElement.classList.contains('light');
+      icon.textContent = isLight ? 'dark_mode' : 'light_mode';
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        btn.title = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+      }
+    }
+
+    /* -------------------------------------------------------------------
+     * FOCUSED CHAPTER NAVIGATION (SOLVES SCROLLING FATIGUE)
+     * ------------------------------------------------------------------- */
+    appState.displayMode = 'focused'; // 'focused' (1 section at a time) or 'continuous' (all sections)
+    appState.activeChapter = 'check';
+
+    const ALL_CHAPTERS = ['check', 'approvals', 'brain', 'system', 'tests', 'guide'];
+
+    function setViewDisplayMode(mode) {
+      playTone(480, 'sine', 0.04, 0.02);
+      appState.displayMode = mode;
+      
+      const btnFoc = document.getElementById('btnModeFocused');
+      const btnCont = document.getElementById('btnModeContinuous');
+      if (btnFoc && btnCont) {
+        if (mode === 'focused') {
+          btnFoc.classList.add('active');
+          btnCont.classList.remove('active');
+        } else {
+          btnCont.classList.add('active');
+          btnFoc.classList.remove('active');
+        }
+      }
+      
+      applyDisplayMode();
+      showToast(mode === 'focused' ? 'Focused View: Showing 1 section at a time' : 'All Sections: Continuous scroll mode');
+    }
+
+    function setFocusedChapter(chapterId) {
+      playTone(460, 'sine', 0.04, 0.02);
+      appState.activeChapter = chapterId;
+      appState.activeView = chapterId;
+      
+      // Update Chapter Tab Pills
+      ALL_CHAPTERS.forEach(c => {
+        const tabEl = document.getElementById(`tab-${c}`);
+        if (tabEl) {
+          if (c === chapterId) {
+            tabEl.classList.add('active');
+          } else {
+            tabEl.classList.remove('active');
+          }
+        }
+        const navEl = document.getElementById(`nav-${c}`);
+        if (navEl) {
+          if (c === chapterId) {
+            navEl.classList.add('active');
+          } else {
+            navEl.classList.remove('active');
+          }
+        }
+      });
+      
+      applyDisplayMode();
+      
+      // Scroll smoothly to chapter bar so user sees the header of the active chapter cleanly
+      const chapterBar = document.getElementById('chapterBar');
+      if (chapterBar) {
+        chapterBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function applyDisplayMode() {
+      if (appState.displayMode === 'focused') {
+        ALL_CHAPTERS.forEach(c => {
+          const sec = document.getElementById(`sec-${c}`);
+          if (sec) {
+            if (c === appState.activeChapter) {
+              sec.classList.remove('section-hidden');
+            } else {
+              sec.classList.add('section-hidden');
+            }
+          }
+        });
+      } else {
+        ALL_CHAPTERS.forEach(c => {
+          const sec = document.getElementById(`sec-${c}`);
+          if (sec) sec.classList.remove('section-hidden');
+        });
+      }
+    }
+
+    // Number key shortcuts to switch chapters (1-6)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key >= '1' && e.key <= '6') {
+        const idx = parseInt(e.key) - 1;
+        if (ALL_CHAPTERS[idx]) {
+          setFocusedChapter(ALL_CHAPTERS[idx]);
+        }
+      }
+    });
+
     /* -------------------------------------------------------------------
      * INITIALIZATION
      * ------------------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', async () => {
+            updateThemeIcon();
+      applyDisplayMode();
       window.syncAlaSqlTables();
       await checkBackendConnectivity();
       runSmartCheck();

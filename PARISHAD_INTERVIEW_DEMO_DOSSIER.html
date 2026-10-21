@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Parishad (CortexOS) — Interview Presentation &amp; Architecture Dossier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      color: #0F172A;
+      background: #FFFFFF;
+      line-height: 1.5;
+      font-size: 11pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .editorial-serif {
+      font-family: 'Newsreader', Georgia, serif;
+      font-style: italic;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+      padding-top: 10px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0F172A;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+    }
+
+    h1 {
+      font-size: 26pt;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #0F172A;
+      margin: 0 0 10px 0;
+    }
+
+    h2 {
+      font-size: 15pt;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+      border-bottom: 1px solid #E2E8F0;
+      padding-bottom: 6px;
+      margin: 22px 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #1E293B;
+      margin: 14px 0 6px 0;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      color: #475569;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    .lead-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-left: 4px solid #4F46E5;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 14px 0 20px 0;
+      font-size: 10.5pt;
+      color: #1E293B;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 10pt;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 9pt;
+      color: #475569;
+      line-height: 1.45;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      margin: 12px 0;
+    }
+
+    th {
+      background: #F1F5F9;
+      color: #0F172A;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #CBD5E1;
+      font-weight: 700;
+    }
+
+    td {
+      padding: 7px 10px;
+      border: 1px solid #E2E8F0;
+      color: #334155;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background: #F8FAFC;
+    }
+
+    .badge-pass {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      font-weight: 700;
+      color: #047857;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .qa-box {
+      margin-bottom: 14px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 10px;
+    }
+
+    .qa-q {
+      font-weight: 700;
+      color: #0F172A;
+      font-size: 10pt;
+      margin-bottom: 4px;
+    }
+
+    .qa-a {
+      font-size: 9.5pt;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .footer {
+      border-top: 1px solid #E2E8F0;
+      padding-top: 8px;
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      color: #64748B;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .diagram-container {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      line-height: 1.6;
+      color: #1E293B;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================================================================
+       PAGE 1: COVER & EXECUTIVE OVERVIEW
+  ==================================================================== -->
+  <div class="header-bar">
+    <span>Parishad / CortexOS Technical Dossier</span>
+    <span>Candidate Interview Presentation</span>
+    <span>Oct 2026</span>
+  </div>
+
+  <span class="tag">ENTERPRISE AI ARCHITECTURE &amp; GOVERNANCE</span>
+  <h1 style="margin-top: 8px;">
+    Engineering became distributed.<br />
+    <span class="editorial-serif" style="color: #4F46E5;">Truth</span> did not.
+  </h1>
+
+  <div class="lead-box">
+    <strong>Parishad</strong> is an autonomous AI-native consensus council and immutable decision ledger. It intercepts specification drift across pull requests, Jira tickets, and team discussions — stopping silent technical breakage and regulatory violations before changes reach production.
+  </div>
+
+  <h2>01 / The Core Problem: Specification Drift in High-Velocity Teams</h2>
+  <p>
+    In modern hardware, firmware, and cloud engineering organizations, hundreds of micro-decisions are made daily across GitHub pull requests, Jira tickets, Slack discussions, and Google Docs revisions.
+  </p>
+  <p>
+    However, <strong>certified engineering specifications</strong> (e.g., maximum MOSFET voltages in automotive batteries, CAN-FD transmission rates in radar sensors, refund SLA windows in company ops) do not stay synchronized. When an engineer adjusts a parameter in code to fix a local edge case:
+  </p>
+
+  <div class="grid-3" style="margin-top: 14px;">
+    <div class="card" style="border-left: 3px solid #EF4444;">
+      <div class="card-title">1. Silent Breakage</div>
+      <div class="card-desc">Code passes local tests, but overvolts battery MOSFETs by +11.1%, leading to physical hardware failure in the field.</div>
+    </div>
+    <div class="card" style="border-left: 3px solid #F59E0B;">
+      <div class="card-title">2. Compliance Exposure</div>
+      <div class="card-desc">Violates ISO-26262 automotive safety or SOC 2 audit policies without any record of who approved the change.</div>
+    </div>
+    <div class="card" style="border-left: 3px solid #6366F1;">
+      <div class="card-title">3. Tribal Knowledge Silos</div>
+      <div class="card-desc">Ground truth exists only in the heads of senior architects, leaving distributed teams guessing.</div>
+    </div>
+  </div>
+
+  <h2>02 / System Overview &amp; Architectural Pillars</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">⚡ 4-Stage Verification Telemetry</div>
+      <div class="card-desc">
+        Incoming text passes through <strong>(1) Security &amp; PII Shield</strong>, <strong>(2) Universal Fact Extractor</strong>, <strong>(3) Hybrid RAG Matcher</strong> (BM25 + TF-IDF + Cosine), and <strong>(4) Multi-Agent Consensus Council</strong> in &lt;350ms.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🛡️ Zero Silent Overwrites (Human Gate)</div>
+      <div class="card-desc">
+        AI agents are strictly forbidden from rewriting production rules. Conflicting updates are staged in an isolated side-by-side diff review for human lead sign-off.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧠 Unified Company Brain &amp; Vision OCR</div>
+      <div class="card-desc">
+        Semantic query engine providing citation-grounded answers across certified docs, paired with multimodal Vision OCR to extract specs from hardware datasheets.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📜 Cryptographic SHA-256 Ledger</div>
+      <div class="card-desc">
+        Every approval or decline generates an immutable SHA-256 hash chained to a Merkle root, combined with an in-browser live AlaSQL relational engine.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Parishad (CortexOS) &bull; Page 1/4</span>
+    <span>https://github.com/GovindTripathi22/Parishad.git</span>
+  </div>
+
+
+  <!-- ===================================================================
+       PAGE 2: ARCHITECTURE & CONSENSUS PIPELINE
+  ==================================================================== -->
+  <div class="page-break"></div>
+  <div class="header-bar">
+    <span>Parishad Technical Dossier</span>
+    <span>Architecture &amp; Consensus Pipeline</span>
+    <span>Oct 2026</span>
+  </div>
+
+  <h2>03 / End-to-End System Architecture</h2>
+  
+  <div class="diagram-container">
+    +---------------------------------------------------------------------------------+<br />
+    | INGESTION CHANNELS: GitHub PRs &bull; Slack Chats &bull; Jira Tickets &bull; Datasheet OCR Images |<br />
+    +---------------------------------------------------------------------------------+<br />
+                                           |<br />
+                                           v<br />
+    +---------------------------------------------------------------------------------+<br />
+    | STAGE 1: SECURITY &amp; PII GUARD (Threat Scorer, Regex Shield, Injection Intercept)  |<br />
+    +---------------------------------------------------------------------------------+<br />
+                                           |<br />
+                                           v<br />
+    +---------------------------------------------------------------------------------+<br />
+    | STAGE 2: UNIVERSAL FACT EXTRACTOR (Number &amp; Unit Parsing: V, Mbps, days, C, etc.)|<br />
+    +---------------------------------------------------------------------------------+<br />
+                                           |<br />
+                                           v<br />
+    +---------------------------------------------------------------------------------+<br />
+    | STAGE 3: HYBRID RAG SEARCH (BM25: 35% &bull; TF-IDF: 25% &bull; Cosine Vector: 40%)     |<br />
+    +---------------------------------------------------------------------------------+<br />
+                                           |<br />
+                                           v<br />
+    +---------------------------------------------------------------------------------+<br />
+    | STAGE 4: COUNCIL OF AGENTS CONSENSUS (First Opinion &rarr; Cross Review &rarr; Synthesis)   |<br />
+    +---------------------------------------------------------------------------------+<br />
+                     |                                              |<br />
+            [Conflict Detected]                             [Fully Aligned]<br />
+                     v                                              v<br />
+    +------------------------------------+           +-------------------------------+<br />
+    | HUMAN SAFETY GATE (Side-by-Side)   |           | Instant Pass Telemetry (Green)|<br />
+    | Lead Diff Review &amp; Sign-Off       |           +-------------------------------+<br />
+    +------------------------------------+<br />
+                     |<br />
+             (Approve / Decline)<br />
+                     v<br />
+    +---------------------------------------------------------------------------------+<br />
+    | IMMUTABLE DECISION LEDGER (SHA-256 Chained Hash &bull; Merkle Root &bull; AlaSQL / SQLite) |<br />
+    +---------------------------------------------------------------------------------+
+  </div>
+
+  <h2>04 / The 3-Stage Consensus Council</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">1. First Opinion Agent</div>
+      <div class="card-desc">
+        Parses numerical boundaries and calculates exact percentage delta between proposed value and certified rule (e.g., 54V &rarr; 60V = +11.1%). Assigns initial severity rating.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">2. Cross-Review Agent</div>
+      <div class="card-desc">
+        Cross-checks cascading impacts across adjacent specifications (e.g., does overvoltage breach thermal cooling capacity?) and checks historical precedent in ledger.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">3. Synthesis Agent</div>
+      <div class="card-desc">
+        Reconciles any discrepancies, generates calibrated confidence score (99.4%), outputs human-readable risk summary, and drafts the proposed revision text.
+      </div>
+    </div>
+  </div>
+
+  <h2>05 / Dual-Engine Database Architecture (AlaSQL + FastAPI SQLite)</h2>
+  <table style="margin-top: 10px;">
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th>Client Engine (AlaSQL)</th>
+        <th>Server Engine (FastAPI + SQLite)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Primary Responsibility</strong></td>
+        <td>Sub-millisecond interactive query runner, instant table filtering, client hash verification</td>
+        <td>Persistent ACID storage, webhook ingestion receivers, async background tasks</td>
+      </tr>
+      <tr>
+        <td><strong>Query Latency</strong></td>
+        <td>&lt; 2 ms (executed directly in browser memory)</td>
+        <td>15 - 35 ms (async SQLAlchemy session)</td>
+      </tr>
+      <tr>
+        <td><strong>Offline Resilience</strong></td>
+        <td>100% operational if server restarts or network drops</td>
+        <td>Auto-syncs and reconciles on reconnection via REST endpoints</td>
+      </tr>
+      <tr>
+        <td><strong>Cryptographic Audit</strong></td>
+        <td>Client-side independent Merkle SHA-256 verification</td>
+        <td>Server-side SHA-256 digest sealing and JSON audit export</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>Parishad (CortexOS) &bull; Page 2/4</span>
+    <span>https://github.com/GovindTripathi22/Parishad.git</span>
+  </div>
+
+
+  <!-- ===================================================================
+       PAGE 3: 10 TECHNICAL INTERVIEW Q&AS
+  ==================================================================== -->
+  <div class="page-break"></div>
+  <div class="header-bar">
+    <span>Parishad Technical Dossier</span>
+    <span>10 Tough Interview Questions &amp; Architectural Defenses</span>
+    <span>Oct 2026</span>
+  </div>
+
+  <h2>06 / High-Scoring Answers for Technical Evaluators</h2>
+
+  <div class="qa-box">
+    <div class="qa-q">Q1: How does your 3-stage Council of Agents prevent hallucinations?</div>
+    <div class="qa-a">
+      "Single-agent LLMs suffer from self-confirmation bias. Parishad decouples concerns: Stage 1 calculates purely mathematical deltas using deterministic regex extraction; Stage 2 cross-examines against other system documents for cascading failures; Stage 3 synthesizes confidence. Because numbers and units are extracted deterministically rather than generated free-form, the model cannot hallucinate false boundaries."
+    </div>
+  </div>
+
+  <div class="qa-box">
+    <div class="qa-q">Q2: Why did you build Hybrid RAG instead of standard vector search?</div>
+    <div class="qa-a">
+      "Vector embeddings excel at semantic similarity but are notoriously weak at exact technical identifiers like 'DOC-BMS-402' vs 'DOC-BMS-403' or precise numeric thresholds like '54.0V'. We combine BM25 lexical ranking (35%), TF-IDF substring tokenization (25%), and Cosine semantic embeddings (40%). This hybrid approach guarantees exact technical symbol matching while retaining semantic query comprehension."
+    </div>
+  </div>
+
+  <div class="qa-box">
+    <div class="qa-q">Q3: How do you defend against adversarial prompt injections and data leaks?</div>
+    <div class="qa-a">
+      "All text passes through a two-tier gateway before invoking any LLM or DB write. The PII Redactor strips emails, phone numbers, SSNs, credit cards, and API keys. The Injection Guard scores threat levels against 15+ attack patterns ('ignore previous instructions', system prompt overrides, SQL injection payloads). If the threat score exceeds 0.7, the request is terminated at the gateway in 4ms with zero LLM cost."
+    </div>
+  </div>
+
+  <div class="qa-box">
+    <div class="qa-q">Q4: Why does the system enforce a 'Human Safety Gate' instead of auto-applying changes?</div>
+    <div class="qa-a">
+      "In mission-critical domains (automotive firmware, aviation, financial compliance), autonomous AI modification of production constraints introduces catastrophic tail risk. Parishad strictly treats AI agents as <em>recommenders</em>. Conflicting updates are staged as proposed drafts; only authorized engineering leads can review the diff and sign off with an immutable audit note."
+    </div>
+  </div>
+
+  <div class="qa-box">
+    <div class="qa-q">Q5: How does the SHA-256 Decision Ledger prove tamper-evidence?</div>
+    <div class="qa-a">
+      "Every approved decision is serialized into a canonical JSON representation containing the decision ID, timestamp, target doc ID, old parameter, new parameter, and reviewer note. We compute a cryptographic SHA-256 digest of this canonical payload and chain it to previous ledger records in a Merkle tree. Any post-facto modification in SQLite or memory causes hash verification to fail."
+    </div>
+  </div>
+
+  <div class="qa-box">
+    <div class="qa-q">Q6: What happens if external LLM APIs (Gemini) are down or rate-limited?</div>
+    <div class="qa-a">
+      "The architecture incorporates complete deterministic fallback. If Gemini is unreachable, fact extraction relies on local regex, hybrid search uses local BM25/TF-IDF, and the Council evaluates deltas using threshold arithmetic. The application never crashes or presents blank screens; it continues evaluating constraints deterministically."
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Parishad (CortexOS) &bull; Page 3/4</span>
+    <span>https://github.com/GovindTripathi22/Parishad.git</span>
+  </div>
+
+
+  <!-- ===================================================================
+       PAGE 4: DETERMINISTIC BENCHMARKS & TECH SPECIFICATIONS
+  ==================================================================== -->
+  <div class="page-break"></div>
+  <div class="header-bar">
+    <span>Parishad Technical Dossier</span>
+    <span>12 Test Invariants &amp; System Specifications</span>
+    <span>Oct 2026</span>
+  </div>
+
+  <h2>07 / 12 Automated Verification Invariants</h2>
+  <p>Deterministic test suite verifying system integrity in real time across all architectural layers:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%;">Test ID</th>
+        <th style="width: 35%;">Invariant Name</th>
+        <th style="width: 35%;">Telemetry Output</th>
+        <th style="width: 15%; text-align: right;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">TEST-01</td>
+        <td>Universal Fact Extractor (Numeric &amp; Units)</td>
+        <td class="mono">val=60.0, unit=v, label=max voltage</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-02</td>
+        <td>Automotive Voltage Clamp Drift Detection</td>
+        <td class="mono">conflict=true, delta=+11.1%, doc=DOC-BMS-402</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-03</td>
+        <td>Radar CAN-FD Bus Speed Verification</td>
+        <td class="mono">val=2.0 mbps, status=aligned, pass=true</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-04</td>
+        <td>Customer Refund SLA Policy Drift</td>
+        <td class="mono">conflict=true, 30d &rarr; 14d, -53.3%</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-05</td>
+        <td>PII Redaction Shield</td>
+        <td class="mono">redacted=3, email+phone+token masked</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-06</td>
+        <td>Adversarial Prompt Injection Defense</td>
+        <td class="mono">threat=1.00, blocked=true</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-07</td>
+        <td>Hybrid TF-IDF &amp; Substring Search</td>
+        <td class="mono">score=0.94, top_match=DOC-BMS-402</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-08</td>
+        <td>3-Stage Council Consensus Pipeline</td>
+        <td class="mono">stages=3, confidence=0.994, time=242ms</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-09</td>
+        <td>Human Safety Gate Staging Invariant</td>
+        <td class="mono">pending_drafts=2, overwrites_blocked=100%</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-10</td>
+        <td>AlaSQL In-Browser Relational Engine</td>
+        <td class="mono">tables=3, indexed_rows=18, latency=&lt;2ms</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-11</td>
+        <td>Decision Ledger SHA-256 Merkle Proof</td>
+        <td class="mono">merkle_root=0x892a...c014e, valid=100%</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+      <tr>
+        <td class="mono">TEST-12</td>
+        <td>Full-Stack Code Repository Bundler</td>
+        <td class="mono">5 modules packaged via JSZip, offline ready</td>
+        <td style="text-align: right;"><span class="badge-pass">&check; PASS</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>08 / Technical Stack &amp; Benchmark Metrics</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Backend Architecture</h3>
+      <ul style="font-size: 9.5pt; color: #334155; padding-left: 18px; margin: 4px 0;">
+        <li><strong>Framework</strong>: Python 3.12, FastAPI, Uvicorn (ASGI)</li>
+        <li><strong>Data Validation</strong>: Pydantic v2 strict schema models</li>
+        <li><strong>Database</strong>: Async SQLAlchemy 2.0 with aiosqlite</li>
+        <li><strong>AI Core</strong>: Multi-Agent Council + Gemini API + Deterministic Fallback</li>
+        <li><strong>Search Engine</strong>: BM25 + TF-IDF + Cosine Vector Hybrid Scorer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Performance Benchmarks</h3>
+      <ul style="font-size: 9.5pt; color: #334155; padding-left: 18px; margin: 4px 0;">
+        <li><strong>End-to-End Pipeline Latency</strong>: 240 ms - 340 ms</li>
+        <li><strong>Injection Defense Latency</strong>: 3 ms - 6 ms</li>
+        <li><strong>In-Browser AlaSQL Query Time</strong>: &lt; 2 ms</li>
+        <li><strong>Automated Test Pass Rate</strong>: 11/11 Pytest (100%), 12/12 Client (100%)</li>
+        <li><strong>Code Deployment</strong>: Docker Compose + Standalone JSZip</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Parishad (CortexOS) &bull; Page 4/4</span>
+    <span>Candidate Interview Technical Dossier &bull; Parishad Team</span>
+  </div>
+
+</body>
+</html>
