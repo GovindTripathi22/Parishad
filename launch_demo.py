@@ -26,7 +26,7 @@ def check_health(url: str = "http://127.0.0.1:8000/api/health") -> bool:
 def main():
     print("=" * 65)
     print("  PARISHAD (CORTEXOS) — AUTONOMOUS COMPANY BRAIN & LEDGER")
-    print("  Live Interview Demo Launcher")
+    print("  Live System Demonstration Launcher")
     print("=" * 65)
 
     if is_port_in_use(8000):
@@ -61,7 +61,7 @@ def main():
     print("  - Tab 5: Press '5' or click '05 12 Checks' -> Re-run automated tests")
     print("  - Theme: Click Sun/Moon icon in header to switch Dark / Light mode")
     print("  - Script: Read d:\\cortexos\\DEMO_SCRIPT_AND_CHEATSHEET.md")
-    print("  - PDF:    Open d:\\cortexos\\PARISHAD_INTERVIEW_DEMO_DOSSIER.pdf")
+    print("  - PDF:    Open d:\\cortexos\\PARISHAD_system demonstration_DEMO_DOSSIER.pdf")
     print("=" * 65)
     print("Press Ctrl+C to close this launcher console.")
 

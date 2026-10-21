@@ -1,4 +1,4 @@
-# Parishad (CortexOS) — Interview Demo Script & Cheatsheet
+# Parishad (CortexOS) — Executive Demonstration Script & Cheatsheet
 
 > **Autonomous Company Brain & Cryptographic Decision Ledger**  
 > *Engineered for high-velocity engineering teams in automotive firmware, radar sensors, cloud infrastructure, and enterprise operations.*
@@ -77,7 +77,7 @@
 
 ---
 
-## 3. Answers to the 10 Toughest Technical Interview Questions
+## 3. Answers to the 10 Toughest Technical presentation Questions
 
 ### Q1: "Why did you use in-browser AlaSQL instead of just making API calls to your backend database?"
 > **Answer**:
@@ -156,12 +156,12 @@
 
 ---
 
-## 4. Emergency Checklist for Live Interview Calls
+## 4. Emergency Checklist for Live presentation Calls
 
 | Scenario | What to do | What to say |
 | :--- | :--- | :--- |
-| **Interviewer asks for quick demo** | Click `⚡ 48V Battery` → `Verify Update` → click `Review & Sign Off` | *"In 2 clicks, you can see specification drift caught, analyzed, and staged for human approval."* |
+| **evaluator asks for quick demo** | Click `⚡ 48V Battery` → `Verify Update` → click `Review & Sign Off` | *"In 2 clicks, you can see specification drift caught, analyzed, and staged for human approval."* |
 | **Backend server accidentally stops** | The frontend auto-switches to `AlaSQL Engine (Offline)` badge | *"Notice our offline resilience badge — in-browser AlaSQL continues running queries and verifications locally."* |
-| **Interviewer asks to see code** | Click `05 12 Checks` → switch tabs (`main.py`, `council.py`) | *"Here is the production FastAPI codebase and 3-stage council orchestrator. You can also download the ZIP archive."* |
-| **Interviewer asks about tests** | Click `Re-Run Checks` in Section 05 | *"All 12 invariant tests run in real time, proving security, extraction, and persistence."* |
-| **Interviewer prefers light mode** | Click the Sun/Moon icon in header | *"We built an editorial light mode with high-contrast typography and clean borders."* |
+| **evaluator asks to see code** | Click `05 12 Checks` → switch tabs (`main.py`, `council.py`) | *"Here is the production FastAPI codebase and 3-stage council orchestrator. You can also download the ZIP archive."* |
+| **evaluator asks about tests** | Click `Re-Run Checks` in Section 05 | *"All 12 invariant tests run in real time, proving security, extraction, and persistence."* |
+| **evaluator prefers light mode** | Click the Sun/Moon icon in header | *"We built an editorial light mode with high-contrast typography and clean borders."* |
