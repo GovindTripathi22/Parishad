@@ -395,15 +395,149 @@
       color: #0F172A !important;
     }
     html.light header {
-      background-color: rgba(255, 255, 255, 0.92) !important;
-      border-color: #E2E8F0 !important;
-    }
-    html.light #chapterBar {
       background-color: rgba(255, 255, 255, 0.94) !important;
       border-color: #E2E8F0 !important;
     }
+    html.light nav.bg-black\/20,
+    html.light .bg-black\/20 {
+      background-color: #F1F5F9 !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light .bg-white\/5 {
+      background-color: #F1F5F9 !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light .bg-\[\#181116\] {
+      background-color: #FFF1F2 !important;
+      border-color: #FECDD3 !important;
+    }
+    html.light .bg-\[\#181116\] .bg-black\/30 {
+      background-color: #FFFFFF !important;
+      border-color: #FFE4E6 !important;
+      color: #9F1239 !important;
+    }
+    html.light .bg-\[\#181116\] .text-slate-300 {
+      color: #881337 !important;
+    }
+    html.light .bg-\[\#0F1813\] {
+      background-color: #F0FDF4 !important;
+      border-color: #BBF7D0 !important;
+    }
+    html.light .bg-\[\#0F1813\] .bg-black\/30 {
+      background-color: #FFFFFF !important;
+      border-color: #DCFCE7 !important;
+      color: #166534 !important;
+    }
+    html.light .bg-\[\#0F1813\] textarea {
+      background-color: #FFFFFF !important;
+      border-color: #86EFAC !important;
+      color: #14532D !important;
+    }
+    html.light .bg-\[\#0F1813\] .text-slate-300 {
+      color: #14532D !important;
+    }
+    html.light .bg-\[\#24131A\] {
+      background-color: #FEF2F2 !important;
+      border-color: #FECDD3 !important;
+      color: #DC2626 !important;
+    }
+    html.light .bg-\[\#321722\] {
+      background-color: #FEE2E2 !important;
+      border-color: #FCA5A5 !important;
+    }
+    html.light .bg-\[\#1C2138\] {
+      background-color: #EEF2FF !important;
+      border-color: #C7D2FE !important;
+      color: #4338CA !important;
+    }
+    html.light .bg-\[\#1C2133\] {
+      background-color: #E2E8F0 !important;
+      color: #1E293B !important;
+    }
+    html.light .bg-indigo-600,
+    html.light .bg-indigo-600 *,
+    html.light .bg-indigo-500,
+    html.light .btn-main,
+    html.light .btn-main *,
+    html.light .view-mode-pill.active {
+      color: #FFFFFF !important;
+    }
+    html.light .text-amber-300,
+    html.light .text-amber-200 {
+      color: #B45309 !important;
+    }
+    html.light .bg-amber-500\/20,
+    html.light .bg-amber-500\/15,
+    html.light .bg-amber-950\/20 {
+      background-color: #FEF3C7 !important;
+      border-color: #FDE68A !important;
+    }
+    html.light .text-emerald-300,
+    html.light .text-emerald-400 {
+      color: #047857 !important;
+    }
+    html.light .bg-emerald-500\/15,
+    html.light .bg-emerald-500\/20,
+    html.light .bg-emerald-950\/20 {
+      background-color: #ECFDF5 !important;
+      border-color: #A7F3D0 !important;
+    }
+    html.light .text-rose-300,
+    html.light .text-rose-400 {
+      color: #B91C1C !important;
+    }
+    html.light .bg-rose-500\/15,
+    html.light .bg-rose-500\/20,
+    html.light .bg-rose-950\/30,
+    html.light .bg-rose-950\/40 {
+      background-color: #FEF2F2 !important;
+      border-color: #FECDD3 !important;
+    }
+    html.light .text-indigo-300,
+    html.light .text-indigo-400 {
+      color: #4338CA !important;
+    }
+    html.light .bg-indigo-500\/20 {
+      background-color: #EEF2FF !important;
+      border-color: #C7D2FE !important;
+    }
+    html.light #demoPresenterOverlay > div {
+      background-color: #FFFFFF !important;
+      border-color: #CBD5E1 !important;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15) !important;
+    }
+    html.light #demoPresenterOverlay .bg-black\/30 {
+      background-color: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light #demoPresenterOverlay .text-slate-200 {
+      color: #334155 !important;
+    }
+    html.light #demoPresenterOverlay .dot-inactive {
+      background-color: #CBD5E1 !important;
+    }
+    html.light #demoPresenterOverlay .text-emerald-400 {
+      color: #059669 !important;
+    }
     html.light table tbody tr:hover {
       background-color: #F8FAFC !important;
+    }
+
+    /* Animated Laser Beam for Multimodal Vision OCR */
+    .scanner-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #6366F1, #A855F7, transparent);
+      box-shadow: 0 0 15px 2px rgba(99, 102, 241, 0.7);
+      animation: scanLaser 1.5s ease-in-out infinite alternate;
+      z-index: 10;
+    }
+    @keyframes scanLaser {
+      0% { top: 5%; opacity: 0.8; }
+      100% { top: 92%; opacity: 1; }
     }
 
     /* Scrollbar */
@@ -563,11 +697,11 @@
 
       <!-- Hero Action Row -->
       <div class="flex flex-wrap items-center gap-3 pt-2">
-        <a href="#sec-check" class="btn-main px-5 py-2.5 text-xs sm:text-sm">
+        <a href="#sec-check" onclick="setFocusedChapter('check'); return false;" class="btn-main px-5 py-2.5 text-xs sm:text-sm">
           <span>Test Live Interactive Console</span>
           <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
         </a>
-        <a href="#sec-approvals" class="btn-sub px-5 py-2.5 text-xs sm:text-sm">
+        <a href="#sec-approvals" onclick="setFocusedChapter('approvals'); return false;" class="btn-sub px-5 py-2.5 text-xs sm:text-sm">
           <span>Review Safety Gate</span>
           <span class="font-mono text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold ml-1">2 Pending</span>
           <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
@@ -801,7 +935,7 @@
             <!-- Step 3 -->
             <div id="step-3" class="p-3 rounded-lg bg-[#0E1017] border border-white/10 space-y-1">
               <div class="flex items-center justify-between font-medium text-white text-[11px]">
-                <span>3. Spec Match</span>
+                <span>3. Hybrid RAG</span>
                 <span id="step-3-icon" class="material-symbols-outlined text-[14px] text-emerald-400">check_circle</span>
               </div>
               <p id="step-3-desc" class="text-[10px] text-slate-400 font-mono">Baseline matched</p>
@@ -809,7 +943,7 @@
             <!-- Step 4 -->
             <div id="step-4" class="p-3 rounded-lg bg-[#0E1017] border border-white/10 space-y-1">
               <div class="flex items-center justify-between font-medium text-white text-[11px]">
-                <span>4. Consensus</span>
+                <span>4. Consensus Council</span>
                 <span id="step-4-icon" class="material-symbols-outlined text-[14px] text-emerald-400">check_circle</span>
               </div>
               <p id="step-4-desc" class="text-[10px] text-slate-400 font-mono">Council verdict</p>
@@ -1736,13 +1870,7 @@
             hash: l.hash_signature || l.hash || 'sha256:verified'
           }));
         }
-              updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
-      window.syncAlaSqlTables();
+        window.syncAlaSqlTables();
         renderApprovals();
         renderCompanyBrainLists();
         renderDecisionLedger();
@@ -2040,13 +2168,7 @@
             status: 'PENDING'
           });
           verdict.stagedDraftId = newDraftId;
-                updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
-      window.syncAlaSqlTables();
+          window.syncAlaSqlTables();
         } else {
           verdict.stagedDraftId = existing.draft_id;
         }
@@ -2194,7 +2316,7 @@
               <span class="text-xs text-slate-400 font-mono">
                 Staged Revision: <strong class="text-indigo-300">${verdict.stagedDraftId || 'REV-NEW'}</strong>
               </span>
-              <a href="#sec-approvals" class="btn-main px-4 py-1.5 text-xs">
+              <a href="#sec-approvals" onclick="setFocusedChapter('approvals'); return false;" class="btn-main px-4 py-1.5 text-xs">
                 <span>Review in Safety Gate</span>
                 <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
               </a>
@@ -2393,12 +2515,6 @@
         }).catch(e => console.warn('Backend approval dispatch:', e));
       }
 
-            updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
       window.syncAlaSqlTables();
       renderApprovals();
       renderCompanyBrainLists();
@@ -2473,12 +2589,6 @@
         }).catch(e => console.warn('Backend doc sync:', e));
       }
 
-            updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
       window.syncAlaSqlTables();
       renderCompanyBrainLists();
       runSqlQuery();
@@ -2678,12 +2788,6 @@
     }
 
     window.runSqlQuery = function () {
-            updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
       window.syncAlaSqlTables();
       const q = document.getElementById('sqlInputBox').value.trim();
       const container = document.getElementById('sqlTableOutputContainer');
@@ -2722,12 +2826,6 @@
 
     function runAllSystemTests() {
       playTone(550, 'sine', 0.1, 0.03);
-            updateThemeIcon();
-      applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
-        setTimeout(() => toggleDemoTour(true), 600);
-      }
       window.syncAlaSqlTables();
       const results = [];
 
@@ -2950,12 +3048,21 @@ def test_hardware_voltage_extraction():
           if (scrollPos >= top && scrollPos < top + height) {
             const shortId = id.replace('sec-', '');
             ['check', 'approvals', 'brain', 'system', 'tests', 'guide'].forEach(v => {
+              const tab = document.getElementById(`tab-${v}`);
+              if (tab) {
+                if (v === shortId) {
+                  tab.classList.add('active');
+                } else {
+                  tab.classList.remove('active');
+                }
+              }
               const nav = document.getElementById(`nav-${v}`);
-              if (!nav) return;
-              if (v === shortId) {
-                nav.classList.add('active');
-              } else {
-                nav.classList.remove('active');
+              if (nav) {
+                if (v === shortId) {
+                  nav.classList.add('active');
+                } else {
+                  nav.classList.remove('active');
+                }
               }
             });
             break;
@@ -3052,13 +3159,19 @@ def test_hardware_voltage_extraction():
           }
         }
       });
-      
+
       applyDisplayMode();
-      
-      // Scroll smoothly to chapter bar so user sees the header of the active chapter cleanly
-      const chapterBar = document.getElementById('chapterBar');
-      if (chapterBar) {
-        chapterBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Scroll smoothly to target section taking into account the 64px sticky header
+      const targetSec = document.getElementById(`sec-${chapterId}`);
+      if (targetSec) {
+        const headerOffset = 76;
+        const elementPosition = targetSec.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth'
+        });
       }
     }
 
@@ -3085,7 +3198,7 @@ def test_hardware_voltage_extraction():
     // Number key shortcuts to switch chapters (1-6)
     window.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key >= '1' && e.key <= '6') {
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key >= '1' && e.key <= '6') {
         const idx = parseInt(e.key) - 1;
         if (ALL_CHAPTERS[idx]) {
           setFocusedChapter(ALL_CHAPTERS[idx]);
@@ -3103,7 +3216,7 @@ def test_hardware_voltage_extraction():
     const LIVE_DEMO_SCENARIOS = [
       {
         step: 1,
-        title: '01 // Live Console: Catching Specification Drift',
+        title: '01 // Automotive 48V Battery Voltage Drift',
         objective: 'Simulate an automotive pull request (PR #418) raising battery clamp limit from 54.0V to 60.0V. Real-time consensus council detects +11.1% drift in 240ms and halts production overwrite.',
         btnText: '▶ Perform Live Drift Check',
         statusText: '✓ Intercepted +11.1% Drift • Baseline Spec Protected',
@@ -3112,12 +3225,11 @@ def test_hardware_voltage_extraction():
           loadScenario('bms');
           const consoleEl = document.getElementById('sec-check');
           if (consoleEl) consoleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => runSmartCheck(), 200);
         }
       },
       {
         step: 2,
-        title: '01 // Security: Adversarial Injection Intercept',
+        title: '02 // Adversarial Injection Attack Intercept',
         objective: 'Simulate an adversary attempting a prompt injection and database drop payload. The two-tier security shield intercepts the attack at Stage 1 with a 1.0 threat score and 0ms LLM cost.',
         btnText: '▶ Perform Live Security Defense',
         statusText: '✓ Cyber Attack Neutralized • Threat Score 1.00 Blocked',
@@ -3126,12 +3238,11 @@ def test_hardware_voltage_extraction():
           loadScenario('security');
           const consoleEl = document.getElementById('sec-check');
           if (consoleEl) consoleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => runSmartCheck(), 200);
         }
       },
       {
         step: 3,
-        title: '02 // Safety Gate: Human-In-The-Loop Diff Sign-Off',
+        title: '03 // Human Safety Gate Diff Review',
         objective: 'Demonstrate zero silent overwrites: AI agents are strictly forbidden from rewriting certified rules alone. Staged updates require tech lead side-by-side diff review and cryptographic sign-off.',
         btnText: '▶ Open Live Safety Gate Review',
         statusText: '✓ Diff Inspected • Side-by-Side Verification Active',
@@ -3139,24 +3250,54 @@ def test_hardware_voltage_extraction():
           setFocusedChapter('approvals');
           const appEl = document.getElementById('sec-approvals');
           if (appEl) appEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            const firstPending = appState.pendingApprovals.find(d => d.status === 'PENDING');
+            if (firstPending) {
+              const noteBox = document.getElementById(`note-${firstPending.draft_id}`);
+              if (noteBox && !noteBox.value) {
+                noteBox.value = 'Verified via hardware bench test: 60.0V exceeds 54.0V MOSFET safe operating area. Retain 54.0V limit.';
+              }
+              const card = noteBox ? noteBox.closest('.obsidian-card') : null;
+              if (card) {
+                card.classList.add('ring-2', 'ring-indigo-500/60');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-indigo-500/60'), 2500);
+              }
+            }
+          }, 250);
         }
       },
       {
         step: 4,
-        title: '03 // Brain: Grounded Knowledge Search & OCR',
+        title: '04 // Company Brain Citation Search & OCR Datasheet Scanner',
         objective: 'Demonstrate citation-grounded semantic retrieval across engineering specifications, plus multimodal vision OCR for extracting limits directly from hardware component datasheets.',
-        btnText: '▶ Query Company Brain Live',
-        statusText: '✓ Citation Grounded • Verified Against DOC-BMS-402',
+        btnText: '▶ Query Brain & Run OCR Live',
+        statusText: '✓ Citation Grounded & OCR Datasheet Parsed',
         action: () => {
           setFocusedChapter('brain');
           const brainEl = document.getElementById('sec-brain');
           if (brainEl) brainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => askBrainPreset('What is the maximum overvoltage limit for BMS?'), 200);
+          setTimeout(() => {
+            askBrainPreset('What is the maximum overvoltage limit for BMS?');
+            const beam = document.getElementById('ocrScannerBeam');
+            const dropText = document.getElementById('ocrDropzoneText');
+            if (beam) beam.classList.remove('hidden');
+            if (dropText) dropText.textContent = 'Scanning TI_BQ76952_BMS_Datasheet.png (48V Li-ion)...';
+            setTimeout(() => {
+              if (beam) beam.classList.add('hidden');
+              if (dropText) dropText.textContent = '✓ Scanned: TI_BQ76952_BMS_Datasheet.png';
+              const titleEl = document.getElementById('newDocTitle');
+              const topicEl = document.getElementById('newDocTopic');
+              const contentEl = document.getElementById('newDocContent');
+              if (titleEl) titleEl.value = 'TI BQ76952 BMS Clamp Spec';
+              if (topicEl) topicEl.value = 'BMS-48V';
+              if (contentEl) contentEl.value = 'TI BQ76952 Datasheet Table 7.5: Absolute maximum rating overvoltage clamp threshold is strictly 54.0V. Transient spike limit <= 55.0V for 10ms.';
+            }, 1200);
+          }, 200);
         }
       },
       {
         step: 5,
-        title: '04 // Audit: SHA-256 Ledger & Live SQL Engine',
+        title: '05 // SHA-256 Ledger & In-Browser SQL',
         objective: 'Demonstrate the immutable cryptographic audit trail with SHA-256 Merkle root verification, and execute sub-millisecond relational SQL queries directly in-browser using AlaSQL.',
         btnText: '▶ Run Live In-Browser SQL',
         statusText: '✓ Query Executed in 1.4ms • Merkle Root Verified',
@@ -3164,7 +3305,7 @@ def test_hardware_voltage_extraction():
           setFocusedChapter('system');
           const sysEl = document.getElementById('sec-system');
           if (sysEl) sysEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => runSqlPreset('SELECT * FROM official_docs'), 200);
+          setTimeout(() => runSqlPreset('SELECT doc_id, topic, title, version FROM official_docs'), 200);
         }
       }
     ];
@@ -3215,7 +3356,7 @@ def test_hardware_voltage_extraction():
           if (i === currentDemoStepIndex) {
             dot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-500 ring-2 ring-indigo-400/30';
           } else {
-            dot.className = 'w-2 h-2 rounded-full bg-white/20';
+            dot.className = 'w-2 h-2 rounded-full bg-white/20 dot-inactive';
           }
         }
       }
@@ -3265,7 +3406,7 @@ def test_hardware_voltage_extraction():
     // Hotkey: D to toggle Demo Mode, Esc to close
     window.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key === 'd' || e.key === 'D') {
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'd' || e.key === 'D')) {
         e.preventDefault();
         toggleDemoTour();
       }
@@ -3279,9 +3420,9 @@ def test_hardware_voltage_extraction():
      * INITIALIZATION
      * ------------------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', async () => {
-            updateThemeIcon();
+      updateThemeIcon();
       applyDisplayMode();
-            const urlParams = new URLSearchParams(window.location.search);
+      const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
         setTimeout(() => toggleDemoTour(true), 600);
       }
