@@ -1,0 +1,20 @@
+{
+  "name": "parishad",
+  "version": "4.2.0",
+  "description": "Parishad (CortexOS) — Autonomous Company Brain & Decision Ledger",
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py",
+    "test": "pytest -v",
+    "lint": "python -m py_compile run.py"
+  },
+  "keywords": [
+    "company-brain",
+    "decision-ledger",
+    "cortexos",
+    "fastapi",
+    "multi-agent",
+    "consensus"
+  ],
+  "license": "MIT"
+}
