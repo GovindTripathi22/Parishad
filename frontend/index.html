@@ -418,9 +418,12 @@
   <!-- ===================================================================
        EDITORIAL TOP NAVIGATION (KLYP MINIMALISM)
   ==================================================================== -->
-  <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.07] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
-    <!-- Brand Mark -->
-    <a href="#hero" class="flex items-center gap-3 group">
+    <!-- ===================================================================
+       UNIFIED MINIMALIST TOP NAVIGATION (ONE SINGLE SLEEK BAR)
+  ==================================================================== -->
+  <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
+    <!-- Left: Brand Mark & Status -->
+    <a href="#hero" class="flex items-center gap-2.5 group">
       <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-xs group-hover:scale-105 transition">
         P
       </div>
@@ -428,123 +431,96 @@
         <span class="text-sm font-bold tracking-tight text-white">Parishad</span>
         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="syncStatusText">FastAPI (:8000) Active</span>
+          <span id="syncStatusText">Active (:8000)</span>
         </span>
       </div>
     </a>
 
-    <!-- Center: Publication Nav Links -->
-    <nav class="hidden lg:flex items-center gap-1">
-      <a id="nav-check" href="#sec-check" onclick="switchView('check')" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">01</span>
+    <!-- Center: The Single Clean Segmented Chapter Navigation -->
+    <nav class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/[0.06]">
+      <button onclick="setFocusedChapter('check')" id="tab-check" class="chapter-tab active">
+        <span class="font-mono text-[11px] opacity-50">01</span>
         <span>Console</span>
-      </a>
-      <a id="nav-approvals" href="#sec-approvals" onclick="switchView('approvals')" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">02</span>
+      </button>
+      <button onclick="setFocusedChapter('approvals')" id="tab-approvals" class="chapter-tab">
+        <span class="font-mono text-[11px] opacity-50">02</span>
         <span>Safety Gate</span>
-        <span id="navApprovalCount" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
-      </a>
-      <a id="nav-brain" href="#sec-brain" onclick="switchView('brain')" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">03</span>
+        <span id="tabPendingBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
+      </button>
+      <button onclick="setFocusedChapter('brain')" id="tab-brain" class="chapter-tab">
+        <span class="font-mono text-[11px] opacity-50">03</span>
         <span>Company Brain</span>
-      </a>
-      <a id="nav-system" href="#sec-system" onclick="switchView('system')" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">04</span>
+      </button>
+      <button onclick="setFocusedChapter('system')" id="tab-system" class="chapter-tab">
+        <span class="font-mono text-[11px] opacity-50">04</span>
         <span>Ledger &amp; SQL</span>
-      </a>
-      <a id="nav-tests" href="#sec-tests" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">05</span>
+      </button>
+      <button onclick="setFocusedChapter('tests')" id="tab-tests" class="chapter-tab">
+        <span class="font-mono text-[11px] opacity-50">05</span>
         <span>12 Checks</span>
-      </a>
-      <a id="nav-guide" href="#sec-guide" class="nav-link">
-        <span class="font-mono text-[11px] text-slate-500">06</span>
-        <span>User Guide</span>
-      </a>
+      </button>
+      <button onclick="setFocusedChapter('guide')" id="tab-guide" class="chapter-tab">
+        <span class="font-mono text-[11px] opacity-50">06</span>
+        <span>Guide</span>
+      </button>
     </nav>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-2.5">
-      <!-- Quick search shortcut -->
+    <!-- Right Controls: View Mode Toggle, Interactive Demo Button, Theme, Audio -->
+    <div class="flex items-center gap-2">
+      <!-- View Mode Selector Pill (Focused vs All) -->
+      <div class="hidden xl:flex items-center p-0.5 rounded-lg border border-white/10 bg-black/20 text-xs font-mono">
+        <button onclick="setViewDisplayMode('focused')" id="btnModeFocused" class="view-mode-pill active" title="Show 1 section at a time (no scrolling fatigue)">
+          Focused
+        </button>
+        <button onclick="setViewDisplayMode('continuous')" id="btnModeContinuous" class="view-mode-pill" title="Show all sections continuously">
+          All
+        </button>
+      </div>
+
+      <!-- Quick Search Shortcut -->
       <button 
-        onclick="switchView('brain'); setTimeout(() => { const el = document.getElementById('brainQuestionInput'); if(el) el.focus(); }, 300);" 
+        onclick="setFocusedChapter('brain'); setTimeout(() => { const el = document.getElementById('brainQuestionInput'); if(el) el.focus(); }, 300);" 
         title="Search Company Brain (Cmd+K)" 
-        class="hidden sm:flex items-center gap-2 text-xs text-slate-400 bg-[#121520] border border-white/10 px-3 py-1.5 rounded-lg hover:text-white transition cursor-pointer"
+        class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition cursor-pointer"
       >
         <span class="material-symbols-outlined text-[14px]">search</span>
-        <span>Search Brain</span>
-        <kbd class="font-mono text-[10px] text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">⌘K</kbd>
+        <kbd class="font-mono text-[10px] text-slate-400">⌘K</kbd>
       </button>
 
-      <!-- Audio Feedback Toggle -->
-            <!-- Theme Toggle (Dark / Light) -->
+      <!-- Theme Toggle (Dark / Light) -->
       <button 
         id="themeToggleBtn" 
         onclick="toggleTheme()" 
         title="Toggle Light / Dark Mode" 
-        class="w-8 h-8 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
+        class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
       >
         <span id="themeIcon" class="material-symbols-outlined text-[16px]">light_mode</span>
       </button>
 
+      <!-- Audio Feedback Toggle -->
       <button 
         id="soundToggleBtn" 
         onclick="toggleAudioFeedback()" 
         title="Toggle Audio Feedback" 
-        class="w-8 h-8 rounded-lg bg-[#121520] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
+        class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
       >
         <span id="soundIcon" class="material-symbols-outlined text-[16px]">volume_up</span>
       </button>
 
-      <!-- Primary Action CTA -->
-      <a href="#sec-check" class="btn-main px-4 py-1.5 text-xs">
-        <span>Experience Console</span>
-        <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
-      </a>
+      <!-- Guided Demo Mode Trigger CTA -->
+      <button 
+        id="demoTourBtn" 
+        onclick="toggleDemoTour()" 
+        title="Launch Guided Interview Demo Mode (Press D)" 
+        class="btn-main px-3.5 py-1.5 text-xs shadow-md flex items-center gap-1.5 cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[15px]">auto_awesome</span>
+        <span>Guided Demo</span>
+        <kbd class="hidden sm:inline font-mono text-[9px] bg-white/20 px-1 py-0.2 rounded border border-white/25">D</kbd>
+      </button>
     </div>
   </header>
 
-  <!-- ===================================================================
-       STICKY CHAPTER & VIEW CONTROLLER (SOLVES SCROLLING FATIGUE)
-  ==================================================================== -->
-  <nav id="chapterBar" class="sticky top-16 z-40 w-full backdrop-blur-xl border-b border-white/[0.08] bg-[#08090C]/90 py-2.5 px-4 sm:px-8 transition-colors">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
-      <!-- Chapter Switcher Tabs -->
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 text-xs font-mono">
-        <button onclick="setFocusedChapter('check')" id="tab-check" class="chapter-tab active">
-          <span class="opacity-50">01</span> Console
-        </button>
-        <button onclick="setFocusedChapter('approvals')" id="tab-approvals" class="chapter-tab">
-          <span class="opacity-50">02</span> Safety Gate 
-          <span id="tabPendingBadge" class="ml-1 text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400">2</span>
-        </button>
-        <button onclick="setFocusedChapter('brain')" id="tab-brain" class="chapter-tab">
-          <span class="opacity-50">03</span> Company Brain
-        </button>
-        <button onclick="setFocusedChapter('system')" id="tab-system" class="chapter-tab">
-          <span class="opacity-50">04</span> Ledger &amp; SQL
-        </button>
-        <button onclick="setFocusedChapter('tests')" id="tab-tests" class="chapter-tab">
-          <span class="opacity-50">05</span> 12 Checks
-        </button>
-        <button onclick="setFocusedChapter('guide')" id="tab-guide" class="chapter-tab">
-          <span class="opacity-50">06</span> User Guide
-        </button>
-      </div>
-
-      <!-- Mode Selector: Focused vs All Sections -->
-      <div class="flex items-center gap-2 self-start md:self-auto text-xs font-mono">
-        <span class="text-[11px] uppercase tracking-wider text-slate-400">View Mode:</span>
-        <div class="p-0.5 rounded-lg border border-white/10 flex items-center bg-black/20">
-          <button onclick="setViewDisplayMode('focused')" id="btnModeFocused" class="view-mode-pill active">
-            Focused (1-Tab)
-          </button>
-          <button onclick="setViewDisplayMode('continuous')" id="btnModeContinuous" class="view-mode-pill">
-            All Sections (Scroll)
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
 
 
   <!-- ===================================================================
@@ -1379,6 +1355,58 @@
     </div>
   </footer>
 
+    <!-- ===================================================================
+       FLOATING INTERACTIVE DEMO TELEPROMPTER (INTERVIEW PRESENTER MODE)
+  ==================================================================== -->
+  <div id="demoPresenterOverlay" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4 transition-all duration-300 hidden">
+    <div class="obsidian-card p-4 sm:p-5 shadow-2xl border border-indigo-500/40 bg-[#0E1017]/95 backdrop-blur-xl rounded-2xl space-y-3">
+      <!-- Header row: Step pill, Title, Close -->
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[11px] font-bold border border-indigo-500/30 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+            <span id="demoStepBadge">DEMO STEP 1 OF 5</span>
+          </span>
+          <span id="demoStepTitle" class="text-xs font-bold text-white uppercase tracking-wider">Automotive Battery Drift</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="toggleDemoTour(false)" title="Close Demo Tour (Esc or D)" class="text-slate-400 hover:text-white text-xs flex items-center gap-1 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Script / Talking Point for the Candidate -->
+      <div class="space-y-1">
+        <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px] text-indigo-400">mic</span>
+          <span>What to say out loud to the interviewer:</span>
+        </div>
+        <p id="demoStepSpeech" class="text-xs text-slate-200 leading-relaxed font-sans bg-black/25 p-2.5 rounded-lg border border-white/5 select-text">
+          "Here is the interactive console. I will simulate an automotive pull request that tries to change the 48V battery sensor clamp limit from 54V to 60V. Watch how the 4-stage consensus pipeline detects the +11.1% specification drift in under 300ms."
+        </p>
+      </div>
+
+      <!-- Action buttons row: Run Action, Prev, Next -->
+      <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center gap-2">
+          <button id="demoRunActionBtn" onclick="runDemoStepAction()" class="btn-main px-4 py-1.5 text-xs shadow-md cursor-pointer">
+            <span class="material-symbols-outlined text-[15px]">play_arrow</span>
+            <span id="demoActionBtnText">▶ Run 48V Drift Test</span>
+          </button>
+          <span id="demoActionStatus" class="text-[11px] font-mono text-emerald-400 hidden flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">check</span>
+            <span>Triggered</span>
+          </span>
+        </div>
+        <div class="flex items-center gap-1.5 font-mono text-xs">
+          <button onclick="prevDemoStep()" class="btn-sub px-3 py-1.5 text-xs cursor-pointer">◀ Prev</button>
+          <button onclick="nextDemoStep()" class="btn-main px-3.5 py-1.5 text-xs cursor-pointer">Next ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Banner -->
   <div id="toastBanner" class="fixed bottom-6 right-6 z-50 hidden max-w-md obsidian-card px-4 py-3 shadow-2xl text-xs border border-white/20 text-white transition-all">
     <div class="flex items-center gap-2.5">
@@ -1676,6 +1704,10 @@
         }
               updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
         renderApprovals();
         renderCompanyBrainLists();
@@ -1976,6 +2008,10 @@
           verdict.stagedDraftId = newDraftId;
                 updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
         } else {
           verdict.stagedDraftId = existing.draft_id;
@@ -2325,6 +2361,10 @@
 
             updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
       renderApprovals();
       renderCompanyBrainLists();
@@ -2401,6 +2441,10 @@
 
             updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
       renderCompanyBrainLists();
       runSqlQuery();
@@ -2602,6 +2646,10 @@
     window.runSqlQuery = function () {
             updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
       const q = document.getElementById('sqlInputBox').value.trim();
       const container = document.getElementById('sqlTableOutputContainer');
@@ -2642,6 +2690,10 @@
       playTone(550, 'sine', 0.1, 0.03);
             updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
       const results = [];
 
@@ -3007,12 +3059,163 @@ def test_hardware_voltage_extraction():
       }
     });
 
+    
+    /* -------------------------------------------------------------------
+     * GUIDED INTERVIEW DEMO TOUR ENGINE (HOTKEY: D)
+     * ------------------------------------------------------------------- */
+    let demoTourActive = false;
+    let currentDemoStepIndex = 0;
+
+    const DEMO_STEPS = [
+      {
+        step: 1,
+        title: '01 // Console: Catching Specification Drift',
+        speech: '"Here is the live console. I will simulate an automotive pull request that raises the 48V battery clamp threshold from 54V to 60V. Notice how the 4-stage consensus pipeline detects the +11.1% specification drift in under 300ms."',
+        btnText: '▶ Run 48V Drift Test',
+        action: () => {
+          setFocusedChapter('check');
+          loadScenario('bms');
+          runSmartCheck();
+        }
+      },
+      {
+        step: 2,
+        title: '01 // Security: Adversarial Injection Defense',
+        speech: '"Security is foundational. If an attacker submits a prompt injection or SQL payload like \'DROP TABLE\', our regex and heuristic shields intercept it at Stage 1 and block it immediately with a 1.0 threat score."',
+        btnText: '▶ Run Injection Defense Test',
+        action: () => {
+          setFocusedChapter('check');
+          loadScenario('security');
+          runSmartCheck();
+        }
+      },
+      {
+        step: 3,
+        title: '02 // Safety Gate: Human-In-The-Loop Diff Sign-Off',
+        speech: '"AI agents are strictly forbidden from rewriting production rules. Conflicting updates are staged in an isolated side-by-side diff. As a tech lead, I inspect the change, type an audit note, and sign off."',
+        btnText: '▶ Jump to Safety Gate Diff',
+        action: () => {
+          setFocusedChapter('approvals');
+        }
+      },
+      {
+        step: 4,
+        title: '03 // Brain: Grounded Search & Multimodal OCR',
+        speech: '"This is the company\'s single source of truth. Engineers can ask questions in plain English to get answers with exact citations, or drop physical hardware datasheet photos to scan specs via Vision OCR."',
+        btnText: '▶ Ask Brain: 48V Voltage Limit',
+        action: () => {
+          setFocusedChapter('brain');
+          askBrainPreset('What is the maximum overvoltage limit for BMS?');
+        }
+      },
+      {
+        step: 5,
+        title: '04 // Audit: SHA-256 Ledger & In-Browser SQL',
+        speech: '"Every approved decision is sealed with a SHA-256 cryptographic signature and tied to a Merkle root for compliance. We also embedded the AlaSQL database in the browser, allowing sub-millisecond SQL queries."',
+        btnText: '▶ Run Live AlaSQL Query',
+        action: () => {
+          setFocusedChapter('system');
+          runSqlPreset('SELECT * FROM official_docs');
+        }
+      }
+    ];
+
+    function toggleDemoTour(forceState) {
+      playTone(520, 'sine', 0.05, 0.02);
+      if (typeof forceState === 'boolean') {
+        demoTourActive = forceState;
+      } else {
+        demoTourActive = !demoTourActive;
+      }
+
+      const overlay = document.getElementById('demoPresenterOverlay');
+      if (overlay) {
+        if (demoTourActive) {
+          overlay.classList.remove('hidden');
+          renderDemoStep();
+          showToast('Interactive Demo Mode active (Press D to close)');
+        } else {
+          overlay.classList.add('hidden');
+          showToast('Demo Mode closed');
+        }
+      }
+    }
+
+    function renderDemoStep() {
+      const stepData = DEMO_STEPS[currentDemoStepIndex];
+      if (!stepData) return;
+
+      const badge = document.getElementById('demoStepBadge');
+      const title = document.getElementById('demoStepTitle');
+      const speech = document.getElementById('demoStepSpeech');
+      const btnText = document.getElementById('demoActionBtnText');
+      const status = document.getElementById('demoActionStatus');
+
+      if (badge) badge.textContent = `DEMO STEP ${stepData.step} OF ${DEMO_STEPS.length}`;
+      if (title) title.textContent = stepData.title;
+      if (speech) speech.textContent = stepData.speech;
+      if (btnText) btnText.textContent = stepData.btnText;
+      if (status) status.classList.add('hidden');
+    }
+
+    function runDemoStepAction() {
+      playTone(600, 'sine', 0.06, 0.02);
+      const stepData = DEMO_STEPS[currentDemoStepIndex];
+      if (stepData && typeof stepData.action === 'function') {
+        stepData.action();
+        const status = document.getElementById('demoActionStatus');
+        if (status) {
+          status.classList.remove('hidden');
+          setTimeout(() => status.classList.add('hidden'), 2500);
+        }
+      }
+    }
+
+    function nextDemoStep() {
+      playTone(480, 'sine', 0.04, 0.02);
+      if (currentDemoStepIndex < DEMO_STEPS.length - 1) {
+        currentDemoStepIndex++;
+      } else {
+        currentDemoStepIndex = 0; // loop back
+      }
+      renderDemoStep();
+      runDemoStepAction();
+    }
+
+    function prevDemoStep() {
+      playTone(420, 'sine', 0.04, 0.02);
+      if (currentDemoStepIndex > 0) {
+        currentDemoStepIndex--;
+      } else {
+        currentDemoStepIndex = DEMO_STEPS.length - 1;
+      }
+      renderDemoStep();
+      runDemoStepAction();
+    }
+
+    // Hotkey: D to toggle Demo Mode, Esc to close
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        toggleDemoTour();
+      }
+      if (e.key === 'Escape' && demoTourActive) {
+        e.preventDefault();
+        toggleDemoTour(false);
+      }
+    });
+
     /* -------------------------------------------------------------------
      * INITIALIZATION
      * ------------------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', async () => {
             updateThemeIcon();
       applyDisplayMode();
+            const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === '1' || urlParams.get('demo') === 'true') {
+        setTimeout(() => toggleDemoTour(true), 600);
+      }
       window.syncAlaSqlTables();
       await checkBackendConnectivity();
       runSmartCheck();
