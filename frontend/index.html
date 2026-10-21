@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#FAF9F6]">
+<html lang="en" class="dark h-full bg-[#080A0F]">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parishad — Autonomous Company Brain & Decision Ledger</title>
 
-  <!-- Typography: Geist (Linear/Vercel standard) & JetBrains Mono -->
+  <!-- Typography: Geist & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS & Libraries -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.0/dist/alasql.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
@@ -26,34 +26,36 @@
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            canvas: '#FAF9F6',
-            surface: '#FFFFFF',
-            subtle: '#F4F4F5',
-            borderSubtle: '#E4E4E7',
-            borderHover: '#D4D4D8',
-            ink: '#09090B',
-            inkSecondary: '#52525B',
-            inkMuted: '#71717A',
-            brandIndigo: '#4F46E5',
-            brandIndigoBg: '#EEF2FF',
-            brandEmerald: '#10B981',
-            brandEmeraldBg: '#ECFDF5',
-            brandAmber: '#D97706',
-            brandAmberBg: '#FFFBEB',
-            brandRose: '#E11D48',
-            brandRoseBg: '#FFF1F2'
+            obsidian: '#080A0F',
+            surface: '#101420',
+            surfaceElevated: '#171C2C',
+            surfaceHigh: '#21273C',
+            cyanGlow: '#00F2FE',
+            tealGlow: '#4FACFE',
+            emeraldGlow: '#10B981',
+            amberGlow: '#F59E0B',
+            roseGlow: '#EF4444',
+            violetGlow: '#8B5CF6',
           }
         }
       }
-    }
+    };
   </script>
 
   <style>
+    :root {
+      color-scheme: dark;
+    }
     body {
-      background-color: #FAF9F6;
-      color: #09090B;
+      background-color: #080A0F;
+      color: #E2E8F0;
       font-family: 'Geist', sans-serif;
       -webkit-font-smoothing: antialiased;
+      background-image: 
+        radial-gradient(circle at 12% 15%, rgba(0, 242, 254, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 88% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
     }
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined';
@@ -63,114 +65,225 @@
       vertical-align: middle;
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     }
-    .stitch-card {
-      background: #FFFFFF;
-      border: 1px solid #E4E4E7;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-      transition: all 0.15s ease-in-out;
+    
+    /* Obsidian Glassmorphism */
+    .obsidian-card {
+      background: rgba(16, 20, 32, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .stitch-card:hover {
-      border-color: #D4D4D8;
-      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+    .obsidian-card:hover {
+      border-color: rgba(0, 242, 254, 0.25);
+      box-shadow: 0 12px 40px -4px rgba(0, 242, 254, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
     }
-    .pill-nav-active {
-      background-color: #09090B;
-      color: #FFFFFF;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    /* Glow Accents */
+    .glow-cyan-btn {
+      background: linear-gradient(135deg, #00F2FE 0%, #3B82F6 100%);
+      color: #080A0F;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+      transition: all 0.2s ease;
     }
-    .pill-nav-inactive {
-      color: #52525B;
+    .glow-cyan-btn:hover {
+      box-shadow: 0 0 28px rgba(0, 242, 254, 0.6);
+      transform: translateY(-1px);
     }
-    .pill-nav-inactive:hover {
-      background-color: #F4F4F5;
-      color: #09090B;
+    .glow-cyan-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
     }
+
+    .glow-subtle-cyan {
+      box-shadow: 0 0 24px -4px rgba(0, 242, 254, 0.18);
+    }
+    .glow-subtle-emerald {
+      box-shadow: 0 0 24px -4px rgba(16, 185, 129, 0.22);
+    }
+    .glow-subtle-amber {
+      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.22);
+    }
+    .glow-subtle-rose {
+      box-shadow: 0 0 24px -4px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Nav Pills */
+    .pill-active {
+      background: rgba(0, 242, 254, 0.12);
+      color: #00F2FE;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+    .pill-inactive {
+      color: #94A3B8;
+      border: 1px solid transparent;
+    }
+    .pill-inactive:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #F8FAFC;
+    }
+
     @keyframes pulse-ring {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.92); }
+      50% { opacity: 0.3; transform: scale(0.9); }
     }
     .pulse-dot {
       animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
+
+    /* OCR Scanner Beam Effect */
+    @keyframes scan-beam {
+      0% { top: 0%; opacity: 0.8; }
+      50% { top: 92%; opacity: 1; }
+      100% { top: 0%; opacity: 0.8; }
+    }
+    .scanner-beam {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #00f2fe 50%, transparent 100%);
+      box-shadow: 0 0 12px #00f2fe, 0 0 20px #00f2fe;
+      animation: scan-beam 2.2s ease-in-out infinite;
+    }
+
+    /* Active Preset Indicator Glow */
+    .preset-active {
+      border-color: rgba(0, 242, 254, 0.7) !important;
+      background: rgba(0, 242, 254, 0.16) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+    }
+    .preset-active-rose {
+      border-color: rgba(239, 68, 68, 0.7) !important;
+      background: rgba(239, 68, 68, 0.2) !important;
+      color: #FECDD3 !important;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Pipeline Step Conduit */
+    .conduit-track {
+      background: linear-gradient(90deg, rgba(0, 242, 254, 0.2) 0%, rgba(16, 185, 129, 0.35) 50%, rgba(0, 242, 254, 0.2) 100%);
+      background-size: 200% 100%;
+      animation: conduit-flow 3s linear infinite;
+    }
+    @keyframes conduit-flow {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #FAF9F6;
+      background: #080A0F;
     }
     ::-webkit-scrollbar-thumb {
-      background: #D4D4D8;
+      background: #272F45;
       border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F2FE;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/20 selection:text-cyan-300">
 
   <!-- ===================================================================
-       STITCH HEADER: SLIM MINIMALIST TOP BAR
+       OBSIDIAN TELEMETRY TOP HEADER
   ==================================================================== -->
-  <header class="w-full h-14 px-4 sm:px-8 flex items-center justify-between border-b border-borderSubtle bg-white sticky top-0 z-50">
-    <!-- Brand & Version -->
+  <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#0A0D15]/85 backdrop-blur-xl sticky top-0 z-50">
+    <!-- Left: Brand & Quick Search -->
     <div class="flex items-center gap-6">
-      <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchView('check')">
-        <div class="w-7 h-7 rounded-lg bg-ink text-white flex items-center justify-center font-mono text-xs font-semibold tracking-tighter shadow-sm">
-          ¶
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchView('check')">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 p-[1px] shadow-[0_0_16px_rgba(0,242,254,0.35)]">
+          <div class="w-full h-full bg-[#0B0F19] rounded-[7px] flex items-center justify-center">
+            <span class="material-symbols-outlined text-cyan-400 text-[18px]">hub</span>
+          </div>
         </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-sm font-semibold tracking-tight text-ink">Parishad</span>
-          <span class="font-mono text-[10px] text-inkMuted bg-subtle px-1.5 py-0.5 rounded border border-borderSubtle">v2.4</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold tracking-wider uppercase text-white font-mono">PARISHAD</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-semibold">v4.2 PRO</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+            </span>
+            <span class="text-[9px] font-mono tracking-widest text-cyan-300/80 uppercase">AUTONOMOUS MESH ACTIVE</span>
+          </div>
         </div>
       </div>
 
       <!-- Quick Command Bar -->
       <div class="relative hidden lg:block w-72">
-        <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-inkMuted">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
           <span class="material-symbols-outlined text-[15px]">search</span>
         </div>
         <input 
           id="globalQuickSearch" 
           type="text" 
-          placeholder="Ask or search brain..." 
+          placeholder="Ask AI or search ledger..." 
           onkeydown="if(event.key==='Enter'){askQuickQuestion(this.value); switchView('brain');}"
-          class="w-full h-8 pl-8 pr-12 bg-[#FAF9F6] border border-borderSubtle rounded-lg text-xs text-ink placeholder-inkMuted focus:outline-none focus:ring-1 focus:ring-ink focus:border-ink transition"
+          class="w-full h-8 pl-9 pr-12 bg-[#121624] border border-white/10 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition font-mono"
         />
         <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
-          <kbd class="font-mono text-[10px] text-inkMuted bg-white px-1.5 py-0.5 rounded border border-borderSubtle">⌘K</kbd>
+          <kbd class="font-mono text-[9px] text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">⌘K</kbd>
         </div>
       </div>
     </div>
 
-    <!-- 4 Pill Tabs Nav -->
-    <nav class="flex items-center gap-1 bg-[#FAF9F6] p-1 rounded-xl border border-borderSubtle">
-      <button id="nav-check" onclick="switchView('check')" class="pill-nav-active px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-        <span class="material-symbols-outlined text-[15px]">verified</span>
+    <!-- Center: 4 View Navigation Pills -->
+    <nav class="flex items-center gap-1 bg-[#101422] p-1 rounded-xl border border-white/10">
+      <button id="nav-check" onclick="switchView('check')" class="pill-active px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">verified</span>
         <span>Check Update</span>
       </button>
-      <button id="nav-approvals" onclick="switchView('approvals')" class="pill-nav-inactive px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-        <span class="material-symbols-outlined text-[15px]">rate_review</span>
+      <button id="nav-approvals" onclick="switchView('approvals')" class="pill-inactive px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">rate_review</span>
         <span>Approvals</span>
-        <span id="navApprovalCount" class="font-mono text-[10px] bg-brandAmber text-white px-1.5 py-0.2 rounded-full font-bold">2</span>
+        <span id="navApprovalCount" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded-full font-bold">2</span>
       </button>
-      <button id="nav-brain" onclick="switchView('brain')" class="pill-nav-inactive px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-        <span class="material-symbols-outlined text-[15px]">psychology</span>
+      <button id="nav-brain" onclick="switchView('brain')" class="pill-inactive px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">psychology</span>
         <span>Company Brain</span>
       </button>
-      <button id="nav-system" onclick="switchView('system')" class="pill-nav-inactive px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-        <span class="material-symbols-outlined text-[15px]">terminal</span>
+      <button id="nav-system" onclick="switchView('system')" class="pill-inactive px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">terminal</span>
         <span>Ledger & SQL</span>
       </button>
     </nav>
 
-    <!-- Right Controls: Status & Health -->
+    <!-- Right: Telemetry Mini-Strip & Audio Toggle -->
     <div class="flex items-center gap-3">
-      <div id="cloudSyncBadge" class="hidden sm:flex items-center gap-1.5 bg-brandEmeraldBg border border-emerald-200 px-2.5 py-1 rounded-lg text-[11px] font-mono text-emerald-800">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
-        <span id="syncStatusText">Backend Active (Port 8000)</span>
+      <!-- Live Sync Status -->
+      <div id="cloudSyncBadge" class="hidden sm:flex items-center gap-2 bg-emerald-950/40 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-[11px] font-mono text-emerald-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+        <span id="syncStatusText">FastAPI Mesh Active (:8000)</span>
       </div>
 
-      <div class="hidden md:flex items-center gap-1.5 text-xs text-inkSecondary font-medium pl-2 border-l border-borderSubtle">
-        <span class="text-[11px] text-inkMuted font-mono">12/12 Verified</span>
+      <!-- Audio Interaction Toggle -->
+      <button 
+        id="soundToggleBtn" 
+        onclick="toggleAudioFeedback()" 
+        title="Toggle Sound Effects"
+        class="w-8 h-8 rounded-lg bg-[#141828] border border-white/10 flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition"
+      >
+        <span id="soundIcon" class="material-symbols-outlined text-[16px]">volume_up</span>
+      </button>
+
+      <!-- Epoch Stats Badge -->
+      <div class="hidden xl:flex items-center gap-2.5 text-xs text-slate-400 font-mono pl-3 border-l border-white/10">
+        <span class="text-cyan-400 font-bold">#8,421</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-slate-300">120ms p99</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-emerald-400 font-semibold">12/12 PASS</span>
       </div>
     </div>
   </header>
@@ -178,88 +291,168 @@
   <!-- ===================================================================
        MAIN CONTAINER
   ==================================================================== -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-    <!-- Top KPI Strip -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-      <div class="stitch-card rounded-xl p-3.5">
-        <div class="text-[11px] font-medium text-inkMuted mb-0.5">Official Documents</div>
-        <div class="flex items-baseline justify-between">
-          <span id="statDocs" class="font-mono text-xl font-semibold text-ink">4</span>
-          <span class="text-[11px] text-emerald-600 font-medium">100% Grounded</span>
+    <!-- Top Telemetry & Glass KPI Grid -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Card 1: Autonomous Accuracy -->
+      <div onclick="switchView('system')" title="Click to view 12 Automated Verification Tests" class="obsidian-card rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-cyan-400/40 group transition-all">
+        <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="flex items-center gap-1.5 uppercase tracking-wider text-[10px] group-hover:text-cyan-300 transition">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Autonomous Accuracy
+          </span>
+          <span class="text-emerald-400 font-semibold">+0.4%</span>
+        </div>
+        <div class="my-2 flex items-baseline justify-between">
+          <span class="text-2xl font-bold font-mono tracking-tight text-white group-hover:text-cyan-300 transition">99.4%</span>
+          <span class="text-[11px] text-slate-400 font-mono">100% Grounded</span>
+        </div>
+        <!-- Sparkline Curve SVG -->
+        <div class="w-full h-8 overflow-hidden">
+          <svg class="w-full h-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 28">
+            <defs>
+              <linearGradient id="cyanSpark" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.35"></stop>
+                <stop offset="100%" stop-color="#00f2fe" stop-opacity="0.0"></stop>
+              </linearGradient>
+            </defs>
+            <path d="M0,22 Q15,20 25,14 T50,15 T75,8 T100,4 L100,28 L0,28 Z" fill="url(#cyanSpark)"></path>
+            <path d="M0,22 Q15,20 25,14 T50,15 T75,8 T100,4" fill="none" stroke="#00f2fe" stroke-width="1.8"></path>
+          </svg>
         </div>
       </div>
-      <div class="stitch-card rounded-xl p-3.5">
-        <div class="text-[11px] font-medium text-inkMuted mb-0.5">Pending Sign-offs</div>
-        <div class="flex items-baseline justify-between">
-          <span id="statPending" class="font-mono text-xl font-semibold text-amber-600">2</span>
-          <span class="text-[11px] text-amber-600 font-medium">Needs Human Review</span>
+
+      <!-- Card 2: Consensus Quorum -->
+      <div onclick="switchView('approvals')" title="Click to view Pending Approvals" class="obsidian-card rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-emerald-400/40 group transition-all">
+        <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="flex items-center gap-1.5 uppercase tracking-wider text-[10px] group-hover:text-emerald-300 transition">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Consensus Quorum
+          </span>
+          <span class="text-cyan-400 text-[10px] uppercase font-bold">Dual-Key HSM</span>
+        </div>
+        <div class="my-1.5 flex items-center justify-between">
+          <div>
+            <span class="text-2xl font-bold font-mono text-white group-hover:text-emerald-300 transition">3 / 3</span>
+            <div class="text-[11px] text-emerald-400 font-medium">Signed & Sealed</div>
+          </div>
+          <!-- Circular Progress Ring SVG -->
+          <div class="relative w-10 h-10 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+              <path class="text-emerald-400" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-width="3"></path>
+            </svg>
+            <span class="material-symbols-outlined text-[14px] text-emerald-400 absolute">lock</span>
+          </div>
+        </div>
+        <div class="text-[10px] font-mono text-slate-400 border-t border-white/[0.06] pt-1.5 flex items-center justify-between">
+          <span>Pending Sign-offs: <strong id="statPending" class="text-amber-400">2</strong></span>
+          <span class="text-cyan-400">Human Safety Gate</span>
         </div>
       </div>
-      <div class="stitch-card rounded-xl p-3.5">
-        <div class="text-[11px] font-medium text-inkMuted mb-0.5">Inscribed Decisions</div>
-        <div class="flex items-baseline justify-between">
-          <span id="statApproved" class="font-mono text-xl font-semibold text-ink">2</span>
-          <span class="text-[11px] text-inkMuted font-mono">SHA-256 Ledger</span>
+
+      <!-- Card 3: Ledger Block Epoch -->
+      <div onclick="switchView('system')" title="Click to view Decision Ledger" class="obsidian-card rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-blue-400/40 group transition-all">
+        <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="flex items-center gap-1.5 uppercase tracking-wider text-[10px] group-hover:text-blue-300 transition">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+            Ledger Block Epoch
+          </span>
+          <span class="text-slate-400 text-[10px]">1.2s Inscribe</span>
+        </div>
+        <div class="my-1.5">
+          <div class="text-2xl font-bold font-mono text-white group-hover:text-blue-300 transition">#8,421</div>
+          <div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">
+            Hash: <span class="text-cyan-300">0x9a8f...3f12</span>
+          </div>
+        </div>
+        <div class="text-[10px] font-mono text-slate-400 border-t border-white/[0.06] pt-1.5 flex items-center justify-between">
+          <span>Inscribed: <strong id="statApproved" class="text-white">2</strong></span>
+          <span class="text-emerald-400">Zero Stale Blocks</span>
         </div>
       </div>
-      <div class="stitch-card rounded-xl p-3.5">
-        <div class="text-[11px] font-medium text-inkMuted mb-0.5">Autonomous Verification</div>
-        <div class="flex items-baseline justify-between">
-          <span class="font-mono text-xl font-semibold text-emerald-600">12/12</span>
-          <span class="text-[11px] text-emerald-600 font-medium">All Checks PASS</span>
+
+      <!-- Card 4: Swarm Telemetry & Latency Wave -->
+      <div onclick="switchView('check')" title="Click to view Consensus Pipeline" class="obsidian-card rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-violet-400/40 group transition-all">
+        <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="flex items-center gap-1.5 uppercase tracking-wider text-[10px] group-hover:text-violet-300 transition">
+            <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+            Swarm Telemetry
+          </span>
+          <span class="text-cyan-400 text-[10px] font-bold">14 Active Agents</span>
+        </div>
+        <div class="my-1 flex items-baseline justify-between">
+          <span class="text-lg font-bold font-mono text-white group-hover:text-violet-300 transition">184ms → 112ms</span>
+          <div class="text-[10px] font-mono text-emerald-400">p99 (-39%)</div>
+        </div>
+        <!-- Dual Wave SVG -->
+        <div class="w-full h-8 overflow-hidden">
+          <svg class="w-full h-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 30">
+            <path d="M0,24 C20,24 30,12 50,16 C70,20 80,8 100,6" stroke="#00f2fe" stroke-dasharray="2 1" stroke-width="1.5"></path>
+            <path d="M0,20 C25,18 40,26 65,12 C85,2 95,6 100,2" stroke="#10b981" stroke-width="1.8"></path>
+          </svg>
         </div>
       </div>
+
     </section>
 
     <!-- =================================================================
-         VIEW 1: CHECK AN UPDATE (CLEAN MULTI-AGENT GUARDRAIL)
+         VIEW 1: CHECK AN UPDATE (AUTONOMOUS SWARM GUARDRAIL)
     ================================================================== -->
     <section id="view-check" class="space-y-6">
       
       <!-- Input Card -->
-      <div class="stitch-card rounded-2xl p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSubtle pb-4">
+      <div class="obsidian-card rounded-2xl p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
           <div>
-            <h2 class="text-base font-semibold text-ink">Verify Proposed Update Against Official Truth</h2>
-            <p class="text-xs text-inkMuted">Paste any team message, PR summary, or policy change. Parishad scans for rule conflicts and drafts human approvals.</p>
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-cyan-400 text-[22px]">verified_user</span>
+              <h2 class="text-base font-bold text-white tracking-wide">Verify Proposed Update Against Official Truth</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Autonomous multi-agent guardrail scans code commits, PRs, and Slack chatter for specification drift.</p>
           </div>
-          <div class="flex items-center gap-2">
-            <label class="flex items-center gap-1.5 text-xs text-inkSecondary cursor-pointer select-none">
-              <input id="privacyGuardCheckbox" type="checkbox" checked class="rounded border-borderSubtle text-ink focus:ring-0" />
-              <span>PII & Injection Guard</span>
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+              <input id="privacyGuardCheckbox" type="checkbox" checked class="rounded bg-[#121624] border-white/20 text-cyan-400 focus:ring-0" />
+              <span>PII & Threat Guard</span>
             </label>
-            <span class="text-borderSubtle">|</span>
-            <label class="flex items-center gap-1.5 text-xs text-brandIndigo font-medium cursor-pointer select-none">
-              <input id="useLiveGeminiCheckbox" type="checkbox" checked class="rounded border-indigo-300 text-brandIndigo focus:ring-0" />
+            <span class="text-slate-600">|</span>
+            <label class="flex items-center gap-2 text-xs text-cyan-300 font-medium cursor-pointer select-none">
+              <input id="useLiveGeminiCheckbox" type="checkbox" checked class="rounded bg-[#121624] border-cyan-400/50 text-cyan-400 focus:ring-0" />
               <span>Council of Agents</span>
             </label>
           </div>
         </div>
 
         <!-- Presets Row -->
-        <div class="flex flex-wrap items-center gap-1.5 pt-1">
-          <span class="text-xs text-inkMuted mr-1">Quick Scenarios:</span>
-          <button onclick="loadScenario('bms')" class="px-2.5 py-1 rounded-lg bg-subtle hover:bg-zinc-200 text-ink text-xs font-medium transition">
-            ⚡ 48V Battery Limit (54V → 60V)
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-mono text-slate-400 mr-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px] text-cyan-400">bolt</span>
+            Quick Scenarios:
+          </span>
+          <button id="btn-scenario-bms" onclick="loadScenario('bms')" class="preset-active px-3 py-1.5 rounded-xl bg-[#141928] hover:bg-[#1C2338] border border-white/10 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+            <span>⚡ 48V Battery Limit (54V → 60V)</span>
           </button>
-          <button onclick="loadScenario('refund')" class="px-2.5 py-1 rounded-lg bg-subtle hover:bg-zinc-200 text-ink text-xs font-medium transition">
-            📋 Refund Window (30d → 14d)
+          <button id="btn-scenario-refund" onclick="loadScenario('refund')" class="px-3 py-1.5 rounded-xl bg-[#141928] hover:bg-[#1C2338] border border-white/10 hover:border-cyan-500/40 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+            <span>📋 Refund Window (30d → 14d)</span>
           </button>
-          <button onclick="loadScenario('radar')" class="px-2.5 py-1 rounded-lg bg-subtle hover:bg-zinc-200 text-ink text-xs font-medium transition">
-            📡 Radar Frequency (Compliant 2.0Mbps)
+          <button id="btn-scenario-radar" onclick="loadScenario('radar')" class="px-3 py-1.5 rounded-xl bg-[#141928] hover:bg-[#1C2338] border border-white/10 hover:border-cyan-500/40 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+            <span>📡 Radar CAN-FD (Compliant 2.0Mbps)</span>
           </button>
-          <button onclick="loadScenario('security')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-medium border border-rose-200 transition">
-            🛡️ Prompt Injection Attack
+          <button id="btn-scenario-security" onclick="loadScenario('security')" class="px-3 py-1.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-medium border border-rose-500/40 transition flex items-center gap-1.5">
+            <span>🛡️ Prompt Injection Attack</span>
           </button>
         </div>
 
+
         <!-- Main Input Controls -->
-        <div class="space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-medium text-inkMuted uppercase tracking-wider mb-1">Source Channel</label>
-              <select id="inputSource" class="w-full bg-[#FAF9F6] border border-borderSubtle rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:border-ink">
+              <label class="block text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1.5">Source Channel</label>
+              <select id="inputSource" class="w-full bg-[#121624] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
                 <option value="GitHub PR (#418)">GitHub Pull Request (#418)</option>
                 <option value="Slack Channel (#product-ops)">Slack Team Chat (#product-ops)</option>
                 <option value="Jira Ticket (PROJ-891)">Jira Ticket (PROJ-891)</option>
@@ -267,8 +460,8 @@
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-medium text-inkMuted uppercase tracking-wider mb-1">Domain Specification Category</label>
-              <select id="inputCategory" class="w-full bg-[#FAF9F6] border border-borderSubtle rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:border-ink">
+              <label class="block text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1.5">Domain Specification Category</label>
+              <select id="inputCategory" class="w-full bg-[#121624] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
                 <option value="AUTO">✨ Auto-Detect from Content</option>
                 <option value="BMS-48V">BMS-48V (Battery Overvoltage & Thermal)</option>
                 <option value="RADAR-77GHZ">RADAR-77GHZ (CAN-FD Bus Speed)</option>
@@ -283,62 +476,90 @@
               id="inputMessage" 
               rows="3" 
               placeholder="Paste any engineering update, commit message, or policy change..."
-              class="w-full bg-[#FAF9F6] border border-borderSubtle rounded-xl p-3 text-xs text-ink placeholder-inkMuted focus:outline-none focus:border-ink transition font-mono leading-relaxed"
+              class="w-full bg-[#121624] border border-white/10 rounded-xl p-3.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition font-mono leading-relaxed"
             >Update battery clamp overvoltage threshold from 54.0V to 60.0V in firmware v2.5 to handle regenerative spikes.</textarea>
           </div>
 
           <div class="flex items-center justify-between pt-1">
-            <span id="engineModePill" class="text-[11px] font-mono text-inkMuted">Ready • Standby</span>
+            <span id="engineModePill" class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 pulse-dot"></span>
+              Ready • Standby for Input Verification
+            </span>
             <button 
               id="analyzeBtn" 
               onclick="runSmartCheck()" 
-              class="px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-2 active:scale-[0.99]"
+              class="glow-cyan-btn px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 active:scale-[0.98]"
             >
-              <span class="material-symbols-outlined text-[16px]">bolt</span>
+              <span class="material-symbols-outlined text-[17px]">bolt</span>
               <span id="analyzeBtnText">Verify Update Against Truth</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- 4-Stage Visual Pipeline Stepper -->
-      <div class="stitch-card rounded-2xl p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs border-b border-borderSubtle pb-2.5">
-          <span class="font-semibold text-ink uppercase tracking-wider text-[11px]">4-Stage Autonomous Consensus Stepper</span>
-          <span class="font-mono text-inkMuted text-[11px]">Zero-Drift Pipeline</span>
+      <!-- 4-Stage Autonomous Consensus Stepper -->
+      <div class="obsidian-card rounded-2xl p-5 space-y-3 relative overflow-hidden">
+        <!-- Background Conduit Glow Track -->
+        <div class="hidden sm:block absolute top-[68px] left-12 right-12 h-[2px] conduit-track opacity-40 pointer-events-none z-0"></div>
+
+        <div class="flex items-center justify-between text-xs border-b border-white/[0.08] pb-3 relative z-10">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-cyan-400 text-[18px]">linear_scale</span>
+            <span class="font-bold text-white uppercase tracking-wider text-[11px] font-mono">Autonomous Consensus Pipeline</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-dot"></span>
+            <span class="font-mono text-cyan-300 text-[11px] bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded">Zero-Drift Mesh</span>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-          <div id="step-1" class="p-3 rounded-xl bg-subtle border border-borderSubtle space-y-1">
-            <div class="flex items-center gap-1.5 text-xs font-medium text-ink">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>1. Privacy Guard</span>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 relative z-10">
+          <!-- Step 1 -->
+          <div id="step-1" class="p-3.5 rounded-xl bg-[#131726] border border-white/10 space-y-1 transition-all">
+            <div class="flex items-center justify-between text-xs font-semibold text-white">
+              <span class="flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-white/10 text-cyan-400 text-[10px] font-mono flex items-center justify-center font-bold">1</span>
+                <span>Privacy Guard</span>
+              </span>
+              <span id="step-1-icon" class="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
             </div>
-            <p id="step-1-desc" class="text-[11px] text-inkMuted">PII & secrets protected</p>
+            <p id="step-1-desc" class="text-[11px] font-mono text-slate-400">PII & secrets protected</p>
           </div>
 
-          <div id="step-2" class="p-3 rounded-xl bg-subtle border border-borderSubtle space-y-1">
-            <div class="flex items-center gap-1.5 text-xs font-medium text-ink">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>2. Fact Extractor</span>
+          <!-- Step 2 -->
+          <div id="step-2" class="p-3.5 rounded-xl bg-[#131726] border border-white/10 space-y-1 transition-all">
+            <div class="flex items-center justify-between text-xs font-semibold text-white">
+              <span class="flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-white/10 text-cyan-400 text-[10px] font-mono flex items-center justify-center font-bold">2</span>
+                <span>Fact Extractor</span>
+              </span>
+              <span id="step-2-icon" class="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
             </div>
-            <p id="step-2-desc" class="text-[11px] text-inkMuted">Unit & delta extracted</p>
+            <p id="step-2-desc" class="text-[11px] font-mono text-slate-400">Unit & delta extracted</p>
           </div>
 
-          <div id="step-3" class="p-3 rounded-xl bg-subtle border border-borderSubtle space-y-1">
-            <div class="flex items-center gap-1.5 text-xs font-medium text-ink">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>3. Hybrid RAG Match</span>
+          <!-- Step 3 -->
+          <div id="step-3" class="p-3.5 rounded-xl bg-[#131726] border border-white/10 space-y-1 transition-all">
+            <div class="flex items-center justify-between text-xs font-semibold text-white">
+              <span class="flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-white/10 text-cyan-400 text-[10px] font-mono flex items-center justify-center font-bold">3</span>
+                <span>Hybrid RAG Match</span>
+              </span>
+              <span id="step-3-icon" class="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
             </div>
-            <p id="step-3-desc" class="text-[11px] text-inkMuted">Matched official spec</p>
+            <p id="step-3-desc" class="text-[11px] font-mono text-slate-400">Matched official spec</p>
           </div>
 
-          <div id="step-4" class="p-3 rounded-xl bg-subtle border border-borderSubtle space-y-1">
-            <div class="flex items-center gap-1.5 text-xs font-medium text-ink">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>4. Consensus Council</span>
+          <!-- Step 4 -->
+          <div id="step-4" class="p-3.5 rounded-xl bg-[#131726] border border-white/10 space-y-1 transition-all">
+            <div class="flex items-center justify-between text-xs font-semibold text-white">
+              <span class="flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-white/10 text-cyan-400 text-[10px] font-mono flex items-center justify-center font-bold">4</span>
+                <span>Consensus Council</span>
+              </span>
+              <span id="step-4-icon" class="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
             </div>
-            <p id="step-4-desc" class="text-[11px] text-inkMuted">Multi-agent consensus</p>
+            <p id="step-4-desc" class="text-[11px] font-mono text-slate-400">Multi-agent consensus</p>
           </div>
         </div>
       </div>
@@ -352,16 +573,17 @@
          VIEW 2: APPROVALS (HUMAN-IN-THE-LOOP SAFETY GATE)
     ================================================================== -->
     <section id="view-approvals" class="space-y-6 hidden">
-      <div class="stitch-card rounded-2xl p-6 bg-white space-y-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brandAmber pulse-dot"></span>
-            <h2 class="text-base font-semibold text-ink">Pending Proposals Requiring Human Sign-Off</h2>
+      <div class="obsidian-card rounded-2xl p-6 space-y-3 relative overflow-hidden">
+        <div class="absolute -right-24 -top-24 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 pulse-dot"></span>
+            <h2 class="text-base font-bold text-white tracking-wide">Pending Proposals Requiring Human Sign-Off</h2>
           </div>
-          <span class="text-xs text-inkMuted font-mono">Strict "Drafts Only" Architecture</span>
+          <span class="text-xs text-amber-300 font-mono bg-amber-950/60 border border-amber-500/30 px-2.5 py-0.5 rounded-lg">Strict "Drafts Only" Architecture</span>
         </div>
-        <p class="text-xs text-inkSecondary leading-relaxed">
-          Autonomous agents will <strong>never</strong> overwrite production specifications automatically. When an incoming code change drifts from certified specs, Parishad stages an editable proposal below for human verification.
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Autonomous agents will <strong>never</strong> overwrite certified production specifications automatically. When an incoming code change drifts from the truth, Parishad stages an interactive diff below for human executive sign-off.
         </p>
       </div>
 
@@ -370,7 +592,7 @@
 
 
     <!-- =================================================================
-         VIEW 3: COMPANY BRAIN (ASK AI, MULTIMODAL OCR, DOCS & RULES)
+         VIEW 3: COMPANY BRAIN (ASK AI, MULTIMODAL OCR, CERTIFIED SPECS)
     ================================================================== -->
     <section id="view-brain" class="space-y-6 hidden">
       
@@ -378,14 +600,14 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Ask AI Card -->
-        <div class="stitch-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+        <div class="obsidian-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
           <div>
-            <div class="flex items-center justify-between border-b border-borderSubtle pb-3 mb-3">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-brandIndigo">psychology</span>
-                <h3 class="text-sm font-semibold text-ink">Query the Company Brain</h3>
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-cyan-400 text-[20px]">psychology</span>
+                <h3 class="text-sm font-bold text-white">Query the Company Brain</h3>
               </div>
-              <span class="text-[11px] font-mono text-inkMuted">Corrective RAG</span>
+              <span class="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded">Corrective RAG</span>
             </div>
 
             <div class="flex items-center gap-2 mb-3">
@@ -394,43 +616,43 @@
                 type="text" 
                 placeholder="Ask anything (e.g. What is the max voltage limit?)"
                 onkeydown="if(event.key==='Enter') askCompanyBrain();"
-                class="flex-1 bg-[#FAF9F6] border border-borderSubtle rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:border-ink transition"
+                class="flex-1 bg-[#121624] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono transition"
               />
               <button 
                 id="askBrainBtn" 
                 onclick="askCompanyBrain()" 
-                class="px-4 py-2 bg-ink hover:bg-zinc-800 text-white rounded-xl text-xs font-medium transition"
+                class="glow-cyan-btn px-4 py-2 rounded-xl text-xs font-bold transition"
               >
                 Ask AI
               </button>
             </div>
 
             <!-- Chips -->
-            <div class="flex flex-wrap gap-1.5 mb-3">
-              <button onclick="askBrainPreset('What is the maximum overvoltage limit for BMS?')" class="text-[11px] px-2 py-0.5 rounded-lg bg-subtle hover:bg-zinc-200 text-inkSecondary transition">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button onclick="askBrainPreset('What is the maximum overvoltage limit for BMS?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 transition">
                 ⚡ 48V Voltage Limit?
               </button>
-              <button onclick="askBrainPreset('What is the customer refund SLA policy?')" class="text-[11px] px-2 py-0.5 rounded-lg bg-subtle hover:bg-zinc-200 text-inkSecondary transition">
+              <button onclick="askBrainPreset('What is the customer refund SLA policy?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 transition">
                 📋 Refund SLA?
               </button>
-              <button onclick="askBrainPreset('Summarize past architectural decisions in decision ledger')" class="text-[11px] px-2 py-0.5 rounded-lg bg-subtle hover:bg-zinc-200 text-inkSecondary transition">
+              <button onclick="askBrainPreset('Summarize past architectural decisions in decision ledger')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 transition">
                 📜 Past Decisions?
               </button>
             </div>
 
             <!-- Answer Box -->
-            <div id="brainAnswerBox" class="p-3.5 rounded-xl bg-[#FAF9F6] border border-borderSubtle text-xs text-inkSecondary leading-relaxed min-h-[90px]">
+            <div id="brainAnswerBox" class="p-4 rounded-xl bg-[#121624] border border-white/10 text-xs text-slate-300 leading-relaxed min-h-[90px]">
               Ask any question above. Answers are citation-backed against official company specifications.
             </div>
           </div>
         </div>
 
         <!-- Add / Ingest Spec Card (with OCR) -->
-        <div class="stitch-card rounded-2xl p-6 space-y-3">
-          <div class="flex items-center justify-between border-b border-borderSubtle pb-3">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[18px] text-brandEmerald">add_circle</span>
-              <h3 class="text-sm font-semibold text-ink">Ingest Official Spec or Rule</h3>
+        <div class="obsidian-card rounded-2xl p-6 space-y-3.5">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-emerald-400 text-[20px]">add_circle</span>
+              <h3 class="text-sm font-bold text-white">Ingest Official Spec or Rule</h3>
             </div>
             
             <!-- Multimodal OCR file upload trigger -->
@@ -438,27 +660,44 @@
               <input id="imageOcrInput" type="file" accept="image/*" class="hidden" onchange="handleImageOcrUpload(event)" />
               <button 
                 onclick="document.getElementById('imageOcrInput').click()" 
-                class="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-brandIndigo font-medium border border-indigo-200 transition flex items-center gap-1"
+                class="text-[11px] px-3 py-1 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-300 font-medium border border-cyan-500/40 transition flex items-center gap-1.5"
               >
-                <span class="material-symbols-outlined text-[14px]">document_scanner</span>
+                <span class="material-symbols-outlined text-[15px]">document_scanner</span>
                 <span id="ocrUploadLabel">Scan Datasheet (OCR)</span>
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <input id="newDocTitle" type="text" placeholder="Document Title (e.g., BMS Safety Spec)" class="bg-[#FAF9F6] border border-borderSubtle rounded-lg px-2.5 py-1.5 text-xs text-ink focus:outline-none" />
-            <input id="newDocTopic" type="text" placeholder="Topic Tag (e.g., BMS-48V)" class="bg-[#FAF9F6] border border-borderSubtle rounded-lg px-2.5 py-1.5 text-xs text-ink focus:outline-none uppercase" />
+          <!-- Interactive Drag & Drop Area with Scanner Beam -->
+          <div 
+            id="ocrDropzone" 
+            ondragover="event.preventDefault(); this.classList.add('border-cyan-400', 'bg-cyan-950/20');" 
+            ondragleave="this.classList.remove('border-cyan-400', 'bg-cyan-950/20');" 
+            ondrop="event.preventDefault(); this.classList.remove('border-cyan-400', 'bg-cyan-950/20'); handleImageOcrDrop(event);" 
+            onclick="document.getElementById('imageOcrInput').click()"
+            class="relative overflow-hidden p-3 rounded-xl border border-dashed border-white/20 hover:border-cyan-400/50 transition cursor-pointer text-center bg-[#0D101B]/60 group"
+          >
+            <div id="ocrScannerBeam" class="scanner-beam hidden"></div>
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-300 group-hover:text-cyan-300 transition font-mono">
+              <span class="material-symbols-outlined text-cyan-400 text-[18px]">document_scanner</span>
+              <span id="ocrDropzoneText">Drop engineering datasheet image or click to scan (Multimodal OCR)</span>
+            </div>
           </div>
 
-          <textarea id="newDocContent" rows="3" placeholder="Enter specification text with exact numbers and units (e.g., Maximum voltage is 54.0V)..." class="w-full bg-[#FAF9F6] border border-borderSubtle rounded-lg p-2.5 text-xs text-ink focus:outline-none font-mono"></textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <input id="newDocTitle" type="text" placeholder="Document Title (e.g., BMS Safety Spec)" class="bg-[#121624] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono" />
+            <input id="newDocTopic" type="text" placeholder="Topic Tag (e.g., BMS-48V)" class="bg-[#121624] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono uppercase" />
+          </div>
+
+          <textarea id="newDocContent" rows="3" placeholder="Enter specification text with exact numbers and units (e.g., Maximum voltage is 54.0V)..." class="w-full bg-[#121624] border border-white/10 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono leading-relaxed"></textarea>
 
           <div class="flex items-center justify-between pt-1">
             <input id="fileUploadInput" type="file" accept=".txt,.md" class="hidden" onchange="handleFileUpload(event)" />
-            <button onclick="document.getElementById('fileUploadInput').click()" class="text-xs text-inkMuted hover:text-ink transition">
+            <button onclick="document.getElementById('fileUploadInput').click()" class="text-xs text-slate-400 hover:text-cyan-400 transition flex items-center gap-1 font-mono">
+              <span class="material-symbols-outlined text-[14px]">upload_file</span>
               Upload .txt/.md file
             </button>
-            <button onclick="addNewOfficialDoc()" class="px-4 py-1.5 bg-ink hover:bg-zinc-800 text-white rounded-lg text-xs font-medium transition">
+            <button onclick="addNewOfficialDoc()" class="glow-cyan-btn px-4 py-2 rounded-xl text-xs font-bold transition">
               Index Document
             </button>
           </div>
@@ -469,8 +708,11 @@
       <!-- Official Documents Grid -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-sm font-semibold text-ink">Active Official Documents & Certified Rules</h3>
-          <span class="text-xs text-inkMuted font-mono">Indexed in SQLite & AlaSQL</span>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-cyan-400 text-[18px]">verified</span>
+            <h3 class="text-sm font-bold text-white">Active Official Documents & Certified Rules</h3>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Indexed in SQLite & AlaSQL Engine</span>
         </div>
         <div id="officialDocsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
@@ -484,47 +726,73 @@
     <section id="view-system" class="space-y-6 hidden">
       
       <!-- Immutable Decision Ledger Table -->
-      <div class="stitch-card rounded-2xl p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSubtle pb-4">
+      <div class="obsidian-card rounded-2xl p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
           <div>
-            <h2 class="text-base font-semibold text-ink">Immutable Decision Ledger</h2>
-            <p class="text-xs text-inkMuted">Cryptographic SHA-256 audit trail of every approved or declined specification change.</p>
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-cyan-400 text-[20px]">security</span>
+              <h2 class="text-base font-bold text-white tracking-wide">Immutable Decision Ledger</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Cryptographic SHA-256 audit trail of every approved or declined specification change.</p>
           </div>
-          <button onclick="exportLedgerJson()" class="px-3 py-1.5 bg-subtle hover:bg-zinc-200 text-ink rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[15px]">download</span>
-            <span>Export Audit Trail (JSON)</span>
-          </button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="relative">
+              <input 
+                id="ledgerFilterInput" 
+                type="text" 
+                placeholder="Filter ledger (topic/hash)..." 
+                oninput="renderDecisionLedger(this.value)" 
+                class="bg-[#121624] border border-white/10 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-cyan-400 w-44 sm:w-56" 
+              />
+              <span class="material-symbols-outlined text-[15px] text-slate-500 absolute left-2.5 top-2 pointer-events-none">filter_alt</span>
+            </div>
+            <button onclick="exportLedgerJson()" class="px-3.5 py-1.5 bg-[#141928] hover:bg-[#1C2338] text-slate-200 border border-white/10 hover:border-cyan-500/40 rounded-xl text-xs font-mono transition flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-cyan-400">download</span>
+              <span>Export (JSON)</span>
+            </button>
+          </div>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr class="border-b border-borderSubtle text-[11px] font-medium text-inkMuted uppercase">
-                <th class="py-2 px-3">Decision ID</th>
-                <th class="py-2 px-3">Date</th>
-                <th class="py-2 px-3">Domain Topic</th>
-                <th class="py-2 px-3">Parameter Shift</th>
-                <th class="py-2 px-3">Audit Note</th>
-                <th class="py-2 px-3">SHA-256 Hash</th>
-                <th class="py-2 px-3">Status</th>
+              <tr class="border-b border-white/[0.08] text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                <th class="py-2.5 px-3">Decision ID</th>
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">Domain Topic</th>
+                <th class="py-2.5 px-3">Parameter Shift</th>
+                <th class="py-2.5 px-3">Audit Note</th>
+                <th class="py-2.5 px-3">SHA-256 Hash</th>
+                <th class="py-2.5 px-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody id="decisionLedgerTableBody" class="divide-y divide-borderSubtle"></tbody>
+            <tbody id="decisionLedgerTableBody" class="divide-y divide-white/[0.06] font-mono text-[11px]"></tbody>
           </table>
+        </div>
+
+        <!-- Merkle Root Seal Footer -->
+        <div class="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-400 text-[16px]">verified</span>
+            <span>Merkle Root Hash: <span class="text-cyan-300 font-mono">0x892a...c014e</span> (Synchronized across 24 validators)</span>
+          </div>
+          <span class="text-emerald-400 font-semibold font-mono">100% Tamper Evident</span>
         </div>
       </div>
 
       <!-- Live SQL Query Runner (AlaSQL + Backend SQLite) -->
-      <div class="stitch-card rounded-2xl p-6 space-y-3">
-        <div class="flex items-center justify-between border-b border-borderSubtle pb-3">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px] text-brandIndigo">database</span>
-            <h3 class="text-sm font-semibold text-ink">Live SQL Query Runner (AlaSQL & SQLite)</h3>
+      <div class="obsidian-card rounded-2xl p-6 space-y-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-cyan-400 text-[20px]">database</span>
+            <h3 class="text-sm font-bold text-white">Live SQL Query Runner (AlaSQL & SQLite)</h3>
+            <span id="sqlExecBadge" class="text-[10px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 rounded">Ready</span>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="runSqlPreset('SELECT * FROM official_docs')" class="text-[11px] font-mono px-2 py-0.5 rounded bg-subtle hover:bg-zinc-200 text-inkSecondary">official_docs</button>
-            <button onclick="runSqlPreset('SELECT * FROM pending_approvals')" class="text-[11px] font-mono px-2 py-0.5 rounded bg-subtle hover:bg-zinc-200 text-inkSecondary">pending_approvals</button>
-            <button onclick="runSqlPreset('SELECT * FROM decision_ledger')" class="text-[11px] font-mono px-2 py-0.5 rounded bg-subtle hover:bg-zinc-200 text-inkSecondary">decision_ledger</button>
+          <div class="flex items-center gap-1.5 font-mono flex-wrap">
+            <button onclick="runSqlPreset('SELECT * FROM official_docs')" class="text-[10px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 hover:border-cyan-500/40 transition">official_docs</button>
+            <button onclick="runSqlPreset('SELECT * FROM pending_approvals')" class="text-[10px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 hover:border-cyan-500/40 transition">pending_approvals</button>
+            <button onclick="runSqlPreset('SELECT * FROM decision_ledger')" class="text-[10px] px-2.5 py-1 rounded-lg bg-[#141928] hover:bg-[#1C2338] text-slate-300 border border-white/10 hover:border-cyan-500/40 transition">decision_ledger</button>
+            <button onclick="runSqlPreset('SELECT topic, count(*) as total_rules FROM official_docs GROUP BY topic')" class="text-[10px] px-2.5 py-1 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-300 border border-cyan-500/30 transition">GROUP BY topic</button>
           </div>
         </div>
 
@@ -533,88 +801,169 @@
             id="sqlInputBox" 
             type="text" 
             value="SELECT doc_id, topic, title, version FROM official_docs" 
-            class="flex-1 bg-[#FAF9F6] border border-borderSubtle rounded-xl px-3 py-2 text-xs font-mono text-ink focus:outline-none"
+            class="flex-1 bg-[#121624] border border-white/10 rounded-xl px-3.5 py-2 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-400"
           />
-          <button onclick="runSqlQuery()" class="px-4 py-2 bg-ink hover:bg-zinc-800 text-white rounded-xl text-xs font-medium transition">
-            Run SQL
+          <button onclick="runSqlQuery()" class="glow-cyan-btn px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[15px]">play_arrow</span>
+            <span>Run SQL</span>
           </button>
         </div>
 
-        <div id="sqlTableOutputContainer" class="p-3 rounded-xl bg-[#FAF9F6] border border-borderSubtle text-xs overflow-x-auto min-h-[60px]"></div>
+
+        <div id="sqlTableOutputContainer" class="p-3.5 rounded-xl bg-[#121624] border border-white/10 text-xs overflow-x-auto min-h-[60px]"></div>
       </div>
 
       <!-- 12 Automated Verification Tests -->
-      <div class="stitch-card rounded-2xl p-6 space-y-4">
-        <div class="flex items-center justify-between border-b border-borderSubtle pb-3">
+      <div class="obsidian-card rounded-2xl p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div>
-            <h3 class="text-sm font-semibold text-ink">12 Automated End-to-End Verification Tests</h3>
-            <p class="text-xs text-inkMuted">Deterministic checks covering injection defense, unit parsing, vector ranking, and consensus.</p>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-400 text-[20px]">task_alt</span>
+              <h3 class="text-sm font-bold text-white">12 Automated End-to-End Verification Tests</h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Deterministic checks covering injection defense, unit parsing, vector ranking, and consensus.</p>
           </div>
-          <button onclick="runAllSystemTests()" class="px-3 py-1.5 bg-subtle hover:bg-zinc-200 text-ink rounded-lg text-xs font-medium transition">
-            Re-Run All 12 Checks
+          <button onclick="runAllSystemTests()" class="px-3.5 py-1.5 bg-[#141928] hover:bg-[#1C2338] text-slate-200 border border-white/10 hover:border-cyan-500/40 rounded-xl text-xs font-mono transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[15px] text-cyan-400">refresh</span>
+            <span>Re-Run All 12 Checks</span>
           </button>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr class="border-b border-borderSubtle text-[11px] font-medium text-inkMuted uppercase">
+              <tr class="border-b border-white/[0.08] text-[10px] font-mono text-slate-400 uppercase tracking-wider">
                 <th class="py-2 px-3">ID</th>
                 <th class="py-2 px-3">Test Specification</th>
                 <th class="py-2 px-3">Verified Output</th>
                 <th class="py-2 px-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody id="systemTestsTableBody" class="divide-y divide-borderSubtle"></tbody>
+            <tbody id="systemTestsTableBody" class="divide-y divide-white/[0.06] font-mono text-[11px]"></tbody>
           </table>
         </div>
       </div>
 
       <!-- Full-Stack Repo Code Explorer & ZIP Download -->
-      <div class="stitch-card rounded-2xl p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSubtle pb-3">
+      <div class="obsidian-card rounded-2xl p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
           <div>
-            <h3 class="text-sm font-semibold text-ink">Production Full-Stack Python Repository</h3>
-            <p class="text-xs text-inkMuted">FastAPI backend, multi-agent consensus orchestrator, and test suite.</p>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-cyan-400 text-[20px]">folder_zip</span>
+              <h3 class="text-sm font-bold text-white">Production Full-Stack Python Repository</h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">FastAPI backend, multi-agent consensus orchestrator, and test suite.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="copyCodeToClipboard()" class="px-3 py-1.5 bg-subtle hover:bg-zinc-200 text-ink rounded-lg text-xs font-medium transition">
+            <button onclick="copyCodeToClipboard()" class="px-3.5 py-1.5 bg-[#141928] hover:bg-[#1C2338] text-slate-200 border border-white/10 hover:border-cyan-500/40 rounded-xl text-xs font-mono transition">
               Copy Active Code
             </button>
-            <button onclick="downloadFullStackZip()" class="px-4 py-1.5 bg-brandIndigo hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-sm">
-              <span class="material-symbols-outlined text-[15px]">archive</span>
+            <button onclick="downloadFullStackZip()" class="glow-cyan-btn px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">archive</span>
               <span>Download Full-Stack Repo (.zip)</span>
             </button>
           </div>
         </div>
 
         <!-- File Tabs -->
-        <div class="flex flex-wrap gap-1 border-b border-borderSubtle pb-2">
-          <button id="tab-main" onclick="showBackendCode('main.py')" class="px-2.5 py-1 rounded text-xs font-mono font-medium bg-ink text-white">main.py</button>
-          <button id="tab-council" onclick="showBackendCode('council.py')" class="px-2.5 py-1 rounded text-xs font-mono font-medium bg-subtle text-inkSecondary hover:text-ink">council.py</button>
-          <button id="tab-rag" onclick="showBackendCode('hybrid_rag.py')" class="px-2.5 py-1 rounded text-xs font-mono font-medium bg-subtle text-inkSecondary hover:text-ink">hybrid_rag.py</button>
-          <button id="tab-docker" onclick="showBackendCode('docker-compose.yml')" class="px-2.5 py-1 rounded text-xs font-mono font-medium bg-subtle text-inkSecondary hover:text-ink">docker-compose.yml</button>
-          <button id="tab-e2e" onclick="showBackendCode('test_e2e.py')" class="px-2.5 py-1 rounded text-xs font-mono font-medium bg-subtle text-inkSecondary hover:text-ink">test_e2e.py</button>
+        <div class="flex flex-wrap gap-1.5 border-b border-white/[0.08] pb-2.5 font-mono">
+          <button id="tab-main" onclick="showBackendCode('main.py')" class="px-3 py-1 rounded-lg text-xs font-medium bg-cyan-950/80 text-cyan-400 border border-cyan-500/40">main.py</button>
+          <button id="tab-council" onclick="showBackendCode('council.py')" class="px-3 py-1 rounded-lg text-xs font-medium bg-[#141928] text-slate-400 hover:text-white border border-transparent">council.py</button>
+          <button id="tab-rag" onclick="showBackendCode('hybrid_rag.py')" class="px-3 py-1 rounded-lg text-xs font-medium bg-[#141928] text-slate-400 hover:text-white border border-transparent">hybrid_rag.py</button>
+          <button id="tab-docker" onclick="showBackendCode('docker-compose.yml')" class="px-3 py-1 rounded-lg text-xs font-medium bg-[#141928] text-slate-400 hover:text-white border border-transparent">docker-compose.yml</button>
+          <button id="tab-e2e" onclick="showBackendCode('test_e2e.py')" class="px-3 py-1 rounded-lg text-xs font-medium bg-[#141928] text-slate-400 hover:text-white border border-transparent">test_e2e.py</button>
         </div>
 
-        <pre id="backendCodeBlock" class="p-4 rounded-xl bg-zinc-950 text-zinc-100 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-[380px]"></pre>
+        <pre id="backendCodeBlock" class="p-4 rounded-xl bg-[#0B0E17] text-cyan-300/90 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-[380px] border border-white/[0.06]"></pre>
       </div>
 
     </section>
 
   </main>
 
+  <!-- Ambient Footer -->
+  <footer class="w-full border-t border-white/[0.08] bg-[#0A0D15]/80 px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-2 mt-8">
+    <div class="flex items-center gap-3">
+      <span class="text-white font-bold">PARISHAD AI</span>
+      <span>•</span>
+      <span>CortexOS Autonomous Engine</span>
+      <span>•</span>
+      <span class="text-emerald-400">Cluster Status: All Shards Nominal</span>
+    </div>
+    <div class="flex items-center gap-4 text-slate-500">
+      <span class="text-cyan-400">SYS.SECURE // LIVE</span>
+    </div>
+  </footer>
+
   <!-- Toast Notification System -->
-  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-ink text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium border border-zinc-800 transition">
-    <span id="toastText">Notification</span>
+  <div id="toastBanner" class="fixed bottom-6 right-6 z-50 hidden max-w-md obsidian-card px-4 py-3 rounded-xl shadow-2xl text-xs font-mono border border-cyan-500/40 text-white transition-all">
+    <div class="flex items-center gap-2.5">
+      <span class="w-2 h-2 rounded-full bg-cyan-400 pulse-dot"></span>
+      <span id="toastText">Notification</span>
+    </div>
   </div>
 
   <!-- ===================================================================
-       CORE APPLICATION LOGIC (DUAL-MODE FASTAPI + ALASQL ENGINE)
+       CORE APPLICATION LOGIC (FASTAPI + ALASQL + WEB AUDIO)
   ==================================================================== -->
   <script>
-    const apiKey = ""; // Optional client-side Gemini key
+    /* -------------------------------------------------------------------
+     * WEB AUDIO SYNTHESIZER (MICRO-INTERACTIONS)
+     * ------------------------------------------------------------------- */
+    let audioCtx = null;
+    let audioEnabled = true;
 
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function toggleAudioFeedback() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (icon) {
+        icon.textContent = audioEnabled ? 'volume_up' : 'volume_off';
+      }
+      showToast(audioEnabled ? '🔊 Audio micro-interactions enabled' : '🔇 Audio muted');
+      if (audioEnabled) playTone(587.33, 'sine', 0.1, 0.05); // D5 pleasant ping
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.04) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playSuccessChime() {
+      if (!audioEnabled) return;
+      playTone(523.25, 'sine', 0.12, 0.05); // C5
+      setTimeout(() => playTone(659.25, 'sine', 0.12, 0.05), 80); // E5
+      setTimeout(() => playTone(783.99, 'sine', 0.2, 0.06), 160); // G5
+    }
+
+    function playAlertBeep() {
+      if (!audioEnabled) return;
+      playTone(330, 'triangle', 0.15, 0.08); // E4
+      setTimeout(() => playTone(293.66, 'sawtooth', 0.18, 0.08), 120); // D4
+    }
+
+    /* -------------------------------------------------------------------
+     * STATE MANAGEMENT
+     * ------------------------------------------------------------------- */
     window.appState = {
       activeView: 'check',
       activeCodeFile: 'main.py',
@@ -751,11 +1100,13 @@
         if (res.ok) {
           backendAvailable = true;
           const statusText = document.getElementById('syncStatusText');
-          if (statusText) statusText.textContent = 'Backend Active (Port 8000)';
+          if (statusText) statusText.textContent = 'FastAPI Mesh Active (:8000)';
           await syncStateFromBackend();
         }
       } catch (e) {
-        console.log('Running in client AlaSQL mode');
+        console.log('Running in local AlaSQL node mode');
+        const statusText = document.getElementById('syncStatusText');
+        if (statusText) statusText.textContent = 'AlaSQL In-Memory Mode';
       }
     }
 
@@ -767,15 +1118,45 @@
           fetch(`${BACKEND_BASE}/api/v1/ledger`).then(r => r.json()).catch(() => null),
         ]);
         if (Array.isArray(docsRes) && docsRes.length > 0) {
-          appState.officialDocs = docsRes.map(d => ({
-            doc_id: d.doc_id,
-            topic: d.topic,
-            title: d.title,
-            version: d.version,
-            updated_at: d.updated_at ? String(d.updated_at).slice(0, 10) : 'Verified',
-            content: d.content,
-            rules: (d.rules || []).map(r => ({ unit: (r.unit || '').toLowerCase(), label: r.label, value: r.value }))
-          }));
+          appState.officialDocs = docsRes.map(d => {
+            let parsedRules = [];
+            if (Array.isArray(d.rules_detail) && d.rules_detail.length > 0) {
+              parsedRules = d.rules_detail.map(r => ({
+                unit: (r.unit || '').toLowerCase(),
+                label: r.label || 'Constraint',
+                value: typeof r.value === 'number' ? r.value : parseFloat(r.value) || 0
+              }));
+            } else if (Array.isArray(d.rules) && d.rules.length > 0) {
+              parsedRules = d.rules.map(r => {
+                if (typeof r === 'object' && r !== null) {
+                  return {
+                    unit: (r.unit || '').toLowerCase(),
+                    label: r.label || 'Constraint',
+                    value: typeof r.value === 'number' ? r.value : parseFloat(r.value) || 0
+                  };
+                }
+                const str = String(r);
+                const match = str.match(/^(.*?):\s*(\d+(?:\.\d+)?)\s*([A-Za-z°%$]+)/);
+                if (match) {
+                  return {
+                    label: match[1].trim(),
+                    value: parseFloat(match[2]),
+                    unit: match[3].trim().toLowerCase()
+                  };
+                }
+                return { label: str, value: 0, unit: '' };
+              });
+            }
+            return {
+              doc_id: d.doc_id,
+              topic: d.topic,
+              title: d.title,
+              version: d.version,
+              updated_at: d.updated_at ? String(d.updated_at).slice(0, 10) : 'Verified',
+              content: d.content,
+              rules: parsedRules
+            };
+          });
         }
         if (Array.isArray(appsRes) && appsRes.length > 0) {
           appState.pendingApprovals = appsRes.map(a => ({
@@ -786,13 +1167,13 @@
             target_doc_id: a.target_doc_id,
             parameter_label: a.parameter_label,
             unit: (a.unit || '').toLowerCase(),
-            old_value: a.old_value,
-            new_value: a.new_value,
-            numeric_new: a.numeric_new,
-            reason: a.reason,
+            old_value: a.old_value || a.official_value,
+            new_value: a.new_value || a.proposed_value,
+            numeric_new: typeof a.numeric_new === 'number' ? a.numeric_new : (parseFloat(a.numeric_new) || (parseFloat(a.proposed_value) || 0)),
+            reason: a.reason || a.explanation || 'Specification change awaiting sign-off.',
             old_text: a.old_text,
             proposed_text: a.proposed_text,
-            status: a.status
+            status: String(a.status || 'PENDING').toUpperCase()
           }));
         }
         if (Array.isArray(ledgRes) && ledgRes.length > 0) {
@@ -803,7 +1184,7 @@
             parameter: l.parameter,
             old_value: l.old_value,
             new_value: l.new_value,
-            status: l.status,
+            status: String(l.status || 'APPROVED').toUpperCase(),
             doc_id: l.target_doc_id || l.doc_id,
             note: l.note,
             hash: l.hash_signature || l.hash || 'sha256:verified'
@@ -994,6 +1375,7 @@
      * MAIN VERIFICATION PIPELINE (VIEW 1)
      * ------------------------------------------------------------------- */
     async function runSmartCheck() {
+      playTone(440, 'sine', 0.08, 0.04);
       const rawText = document.getElementById('inputMessage').value.trim();
       const source = document.getElementById('inputSource').value;
       const category = document.getElementById('inputCategory').value;
@@ -1007,11 +1389,12 @@
       const guard = checkPrivacyAndSafety(rawText, enforcePrivacy);
       if (!guard.safe) {
         appState.blockedCount++;
+        playAlertBeep();
         updateStepVisuals('blocked', guard, null, null, null);
         renderVerdictCard({
           status: 'BLOCKED_ATTACK',
-          title: 'Unsafe Prompt Blocked by Security Guard',
-          summary: 'This message attempted to override safety rules or expose restricted secrets. Parishad safely rejected it before touching the Company Brain.'
+          title: 'Unsafe Hostile Prompt Blocked by Security Guard',
+          summary: 'This message attempted to override safety constraints or expose sensitive secrets. Parishad rejected it before touching the Company Brain.'
         });
         updateTopCounters();
         return;
@@ -1033,7 +1416,7 @@
 
       // Call Backend API or Council if available
       if (backendAvailable && useCouncil) {
-        btnText.textContent = 'Running Council of Agents...';
+        btnText.textContent = 'Swarm Council Analyzing...';
         try {
           const apiRes = await fetch(`${BACKEND_BASE}/api/v1/check`, {
             method: 'POST',
@@ -1047,9 +1430,27 @@
           });
           if (apiRes.ok) {
             const data = await apiRes.json();
-            if (data.council && data.council.synthesis) {
-              verdict.aiInsight = data.council.synthesis.human_summary || data.council.synthesis.recommended_action;
-              verdict.aiRiskLevel = data.council.synthesis.risk_level || 'HIGH';
+            if (data.is_safe === false || data.verdict === 'blocked') {
+              appState.blockedCount++;
+              playAlertBeep();
+              updateStepVisuals('blocked', guard, null, null, null);
+              renderVerdictCard({
+                status: 'BLOCKED_ATTACK',
+                title: data.title || 'Unsafe Hostile Prompt Blocked by Security Guard',
+                summary: data.blocked_reason || data.explanation || 'Rejected by multi-agent security guard.'
+              });
+              updateTopCounters();
+              btnText.textContent = 'Verify Update Against Truth';
+              return;
+            }
+            if (data.council_reasoning || data.explanation || data.message) {
+              verdict.aiInsight = data.council_reasoning || data.explanation || data.message;
+            }
+            if (data.has_conflict !== undefined) {
+              verdict.hasConflict = data.has_conflict;
+            }
+            if (data.pending_approval_id) {
+              verdict.stagedDraftId = data.pending_approval_id;
             }
           }
         } catch (e) {
@@ -1061,10 +1462,10 @@
       // Stage Draft if Conflict Found
       if (verdict.hasConflict) {
         const existing = appState.pendingApprovals.find(
-          d => d.target_doc_id === topDoc.doc_id && d.numeric_new === verdict.numericNew && d.status === 'PENDING'
+          d => d.target_doc_id === topDoc.doc_id && d.numeric_new === verdict.numericNew && String(d.status).toUpperCase() === 'PENDING'
         );
         if (!existing) {
-          const newDraftId = `REV-${100 + appState.pendingApprovals.length + 1}`;
+          const newDraftId = verdict.stagedDraftId || `REV-${100 + appState.pendingApprovals.length + 1}`;
           const oldRuleVal = topDoc.rules.find(r => r.unit === verdict.unit)?.value;
           const updatedSnippet = oldRuleVal !== undefined
             ? topDoc.content.replace(new RegExp(String(oldRuleVal), 'g'), String(verdict.numericNew))
@@ -1091,9 +1492,15 @@
         } else {
           verdict.stagedDraftId = existing.draft_id;
         }
+        playAlertBeep();
+      } else {
+        playSuccessChime();
       }
 
-      document.getElementById('engineModePill').textContent = `Verified against ${topDoc.doc_id} • Status: ${verdict.status}`;
+      document.getElementById('engineModePill').innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        Verified against <strong class="text-white">${topDoc.doc_id}</strong> • Status: <span class="text-cyan-400 font-bold">${verdict.status}</span>
+      `;
 
       updateStepVisuals('complete', guard, facts, topDoc, verdict);
       renderVerdictCard(verdict, guard);
@@ -1103,29 +1510,70 @@
 
     function updateStepVisuals(mode, guard, facts, topDoc, verdict) {
       const s1 = document.getElementById('step-1');
+      const icon1 = document.getElementById('step-1-icon');
+      const s2 = document.getElementById('step-2');
+      const icon2 = document.getElementById('step-2-icon');
+      const s3 = document.getElementById('step-3');
+      const icon3 = document.getElementById('step-3-icon');
+      const s4 = document.getElementById('step-4');
+      const icon4 = document.getElementById('step-4-icon');
+
       if (mode === 'blocked') {
-        s1.className = 'p-3 rounded-xl bg-brandRoseBg border border-rose-300';
+        s1.className = 'p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/50 glow-subtle-rose space-y-1 transition-all';
+        icon1.textContent = 'cancel';
+        icon1.className = 'material-symbols-outlined text-[16px] text-rose-400';
         document.getElementById('step-1-desc').textContent = 'Blocked unsafe prompt';
+
+        s2.className = 'p-3.5 rounded-xl bg-[#131726]/60 border border-white/5 opacity-40 space-y-1 transition-all';
+        icon2.textContent = 'block';
+        icon2.className = 'material-symbols-outlined text-[16px] text-slate-500';
+        document.getElementById('step-2-desc').textContent = 'Halted (safety trip)';
+
+        s3.className = 'p-3.5 rounded-xl bg-[#131726]/60 border border-white/5 opacity-40 space-y-1 transition-all';
+        icon3.textContent = 'block';
+        icon3.className = 'material-symbols-outlined text-[16px] text-slate-500';
+        document.getElementById('step-3-desc').textContent = 'Brain shielded';
+
+        s4.className = 'p-3.5 rounded-xl bg-[#131726]/60 border border-white/5 opacity-40 space-y-1 transition-all';
+        icon4.textContent = 'block';
+        icon4.className = 'material-symbols-outlined text-[16px] text-slate-500';
+        document.getElementById('step-4-desc').textContent = 'Consensus bypassed';
         return;
       }
-      s1.className = 'p-3 rounded-xl bg-brandEmeraldBg border border-emerald-200';
-      document.getElementById('step-1-desc').textContent = guard.redactedCount > 0 ? `Redacted ${guard.redactedCount} items` : 'Clean & safe';
 
-      const s2 = document.getElementById('step-2');
-      s2.className = 'p-3 rounded-xl bg-brandEmeraldBg border border-emerald-200';
-      document.getElementById('step-2-desc').textContent = facts.proposedFact ? `${facts.proposedFact.value} ${facts.proposedFact.displayUnit}` : 'No numbers';
+      // Mode: complete
+      s1.className = 'p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 glow-subtle-emerald space-y-1 transition-all';
+      icon1.textContent = 'check_circle';
+      icon1.className = 'material-symbols-outlined text-[16px] text-emerald-400';
+      document.getElementById('step-1-desc').textContent = guard.redactedCount > 0 ? `Redacted ${guard.redactedCount} secrets` : 'Clean & safe';
 
-      const s3 = document.getElementById('step-3');
-      s3.className = 'p-3 rounded-xl bg-brandEmeraldBg border border-emerald-200';
+      if (facts && facts.hasSignal && facts.proposedFact) {
+        s2.className = 'p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 glow-subtle-emerald space-y-1 transition-all';
+        icon2.textContent = 'check_circle';
+        icon2.className = 'material-symbols-outlined text-[16px] text-emerald-400';
+        document.getElementById('step-2-desc').textContent = `${facts.proposedFact.value} ${facts.proposedFact.displayUnit}`;
+      } else {
+        s2.className = 'p-3.5 rounded-xl bg-[#131726] border border-white/10 space-y-1 transition-all';
+        icon2.textContent = 'info';
+        icon2.className = 'material-symbols-outlined text-[16px] text-slate-400';
+        document.getElementById('step-2-desc').textContent = 'No numeric parameters';
+      }
+
+      s3.className = 'p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 glow-subtle-emerald space-y-1 transition-all';
+      icon3.textContent = 'check_circle';
+      icon3.className = 'material-symbols-outlined text-[16px] text-emerald-400';
       document.getElementById('step-3-desc').textContent = topDoc ? `${topDoc.doc_id} (${Math.round(topDoc.matchScore * 100)}%)` : 'Matched';
 
-      const s4 = document.getElementById('step-4');
       if (verdict && verdict.hasConflict) {
-        s4.className = 'p-3 rounded-xl bg-brandAmberBg border border-amber-300';
-        document.getElementById('step-4-desc').textContent = `Conflict Staged (${verdict.deltaPct}%)`;
+        s4.className = 'p-3.5 rounded-xl bg-amber-950/40 border border-amber-500/50 glow-subtle-amber space-y-1 transition-all';
+        icon4.textContent = 'warning';
+        icon4.className = 'material-symbols-outlined text-[16px] text-amber-400';
+        document.getElementById('step-4-desc').textContent = `Drift Staged (${verdict.deltaPct}%)`;
       } else {
-        s4.className = 'p-3 rounded-xl bg-brandEmeraldBg border border-emerald-200';
-        document.getElementById('step-4-desc').textContent = 'Consensus Aligned';
+        s4.className = 'p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 glow-subtle-emerald space-y-1 transition-all';
+        icon4.textContent = 'check_circle';
+        icon4.className = 'material-symbols-outlined text-[16px] text-emerald-400';
+        document.getElementById('step-4-desc').textContent = 'Swarm Consensus Aligned';
       }
     }
 
@@ -1133,12 +1581,17 @@
       const container = document.getElementById('verdictContainer');
       if (verdict.status === 'BLOCKED_ATTACK') {
         container.innerHTML = `
-          <div class="stitch-card rounded-2xl p-6 bg-brandRoseBg border-rose-200 space-y-2">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-rose-600">security</span>
-              <h3 class="text-sm font-bold text-rose-950">${verdict.title}</h3>
+          <div class="obsidian-card rounded-2xl p-6 bg-rose-950/30 border border-rose-500/50 glow-subtle-rose space-y-3">
+            <div class="flex items-center justify-between border-b border-rose-500/30 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-rose-400 text-[22px]">security</span>
+                <h3 class="text-sm font-bold text-rose-200">${verdict.title}</h3>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase">
+                Threat Neutralized
+              </span>
             </div>
-            <p class="text-xs text-rose-800 leading-relaxed">${verdict.summary}</p>
+            <p class="text-xs text-rose-300 leading-relaxed font-mono">${verdict.summary}</p>
           </div>
         `;
         return;
@@ -1146,57 +1599,88 @@
 
       if (verdict.hasConflict) {
         container.innerHTML = `
-          <div class="stitch-card rounded-2xl p-6 bg-brandAmberBg border-amber-200 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-600">warning</span>
-                <h3 class="text-sm font-bold text-amber-950">${verdict.title}</h3>
+          <div class="obsidian-card rounded-2xl p-6 bg-amber-950/30 border border-amber-500/50 glow-subtle-amber space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/30 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-400 text-[22px]">warning</span>
+                <h3 class="text-sm font-bold text-amber-200">${verdict.title}</h3>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-200 text-amber-900 border border-amber-300">
-                Action Required
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+                Human Sign-Off Required
               </span>
             </div>
 
             <!-- Old vs New Values -->
-            <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-              <div class="p-3 rounded-xl bg-white/80 border border-amber-200">
-                <div class="text-[11px] text-inkMuted uppercase">Current Official Value</div>
-                <div class="text-base font-bold text-rose-700 mt-0.5">${verdict.officialValueFormatted}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+              <div class="p-3.5 rounded-xl bg-[#14101A] border border-rose-500/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Current Official Value</span>
+                  <span class="text-rose-400">Baseline</span>
+                </div>
+                <div class="text-xl font-bold text-rose-400 mt-1">${verdict.officialValueFormatted}</div>
               </div>
-              <div class="p-3 rounded-xl bg-white/80 border border-amber-200">
-                <div class="text-[11px] text-inkMuted uppercase">Proposed New Value</div>
-                <div class="text-base font-bold text-emerald-700 mt-0.5">${verdict.proposedValueFormatted}</div>
+              <div class="p-3.5 rounded-xl bg-[#0E1B18] border border-emerald-500/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Proposed New Value</span>
+                  <span class="text-emerald-400 font-bold">+${verdict.deltaPct}% Delta</span>
+                </div>
+                <div class="text-xl font-bold text-emerald-400 mt-1">${verdict.proposedValueFormatted}</div>
               </div>
             </div>
 
-            <p class="text-xs text-amber-900 leading-relaxed">${verdict.aiInsight || verdict.summary}</p>
+            <p class="text-xs text-slate-300 leading-relaxed bg-[#121624] p-3 rounded-xl border border-white/10 font-mono">
+              <strong class="text-amber-300">Council Assessment:</strong> ${verdict.aiInsight || verdict.summary}
+            </p>
 
             <div class="flex items-center justify-between pt-1">
-              <span class="text-xs text-amber-800 font-mono">Draft Staged: <strong>${verdict.stagedDraftId || 'REV-NEW'}</strong></span>
-              <button onclick="switchView('approvals')" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-1.5">
+              <span class="text-xs text-slate-400 font-mono">
+                Staged Revision: <strong class="text-cyan-300">${verdict.stagedDraftId || 'REV-NEW'}</strong>
+              </span>
+              <button onclick="switchView('approvals')" class="glow-cyan-btn px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
                 <span>Review & Approve in Step 2</span>
-                <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
               </button>
             </div>
           </div>
         `;
       } else {
         container.innerHTML = `
-          <div class="stitch-card rounded-2xl p-6 bg-brandEmeraldBg border-emerald-200 space-y-2">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-600">check_circle</span>
-              <h3 class="text-sm font-bold text-emerald-950">${verdict.title}</h3>
+          <div class="obsidian-card rounded-2xl p-6 bg-emerald-950/30 border border-emerald-500/40 glow-subtle-emerald space-y-3">
+            <div class="flex items-center justify-between border-b border-emerald-500/30 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-emerald-400 text-[22px]">check_circle</span>
+                <h3 class="text-sm font-bold text-emerald-200">${verdict.title}</h3>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+                100% Aligned
+              </span>
             </div>
-            <p class="text-xs text-emerald-800 leading-relaxed">${verdict.summary}</p>
+            <p class="text-xs text-slate-300 leading-relaxed font-mono">${verdict.summary}</p>
           </div>
         `;
       }
     }
 
     function loadScenario(key) {
+      playTone(400, 'sine', 0.05, 0.03);
       const msg = document.getElementById('inputMessage');
       const src = document.getElementById('inputSource');
       const cat = document.getElementById('inputCategory');
+
+      // Update button visual active indicators
+      ['bms', 'refund', 'radar', 'security'].forEach(k => {
+        const btn = document.getElementById(`btn-scenario-${k}`);
+        if (!btn) return;
+        if (k === key) {
+          btn.className = k === 'security'
+            ? 'preset-active-rose px-3 py-1.5 rounded-xl text-rose-200 text-xs font-medium border transition flex items-center gap-1.5'
+            : 'preset-active px-3 py-1.5 rounded-xl text-slate-100 text-xs font-medium transition flex items-center gap-1.5';
+        } else {
+          btn.className = k === 'security'
+            ? 'px-3 py-1.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-medium border border-rose-500/40 transition flex items-center gap-1.5'
+            : 'px-3 py-1.5 rounded-xl bg-[#141928] hover:bg-[#1C2338] border border-white/10 hover:border-cyan-500/40 text-slate-200 text-xs font-medium transition flex items-center gap-1.5';
+        }
+      });
 
       if (key === 'bms') {
         src.value = 'GitHub PR (#418)';
@@ -1219,7 +1703,7 @@
     }
 
     /* -------------------------------------------------------------------
-     * VIEW 2: APPROVALS (HUMAN-IN-THE-LOOP)
+     * VIEW 2: APPROVALS (HUMAN-IN-THE-LOOP & SIDE-BY-SIDE DIFF)
      * ------------------------------------------------------------------- */
     function renderApprovals() {
       const container = document.getElementById('approvalsListContainer');
@@ -1227,58 +1711,70 @@
       document.getElementById('navApprovalCount').textContent = pendingCount;
 
       if (appState.pendingApprovals.length === 0) {
-        container.innerHTML = `<div class="stitch-card rounded-2xl p-8 text-center text-xs text-inkMuted">No pending proposals waiting for sign-off.</div>`;
+        container.innerHTML = `<div class="obsidian-card rounded-2xl p-8 text-center text-xs text-slate-400 font-mono">No pending proposals waiting for sign-off.</div>`;
         return;
       }
 
       container.innerHTML = appState.pendingApprovals.map(item => {
         const isPending = item.status === 'PENDING';
         return `
-          <div class="stitch-card rounded-2xl p-6 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-borderSubtle pb-3">
-              <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-subtle text-ink border border-borderSubtle">${item.draft_id}</span>
-                <span class="text-sm font-semibold text-ink">${item.parameter_label}: ${item.old_value} → ${item.new_value}</span>
-                <span class="text-xs text-inkMuted font-normal">(${item.source})</span>
+          <div class="obsidian-card rounded-2xl p-6 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-400 border border-cyan-500/40">${item.draft_id}</span>
+                <span class="text-sm font-bold text-white">${item.parameter_label}: <span class="text-rose-400 font-mono">${item.old_value}</span> → <span class="text-emerald-400 font-mono">${item.new_value}</span></span>
+                <span class="text-xs text-slate-400 font-normal">(${item.source})</span>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                isPending ? 'bg-amber-100 text-amber-900 border border-amber-300' :
-                item.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' :
-                'bg-rose-100 text-rose-900 border border-rose-300'
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium ${
+                isPending ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
+                item.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' :
+                'bg-rose-500/20 text-rose-300 border border-rose-500/40'
               }">
-                ${isPending ? 'Awaiting Human Sign-off' : item.status === 'APPROVED' ? '✓ Approved & Inscribed' : '✕ Declined'}
+                ${isPending ? '⚠️ Awaiting Human Sign-off' : item.status === 'APPROVED' ? '✓ Inscribed in Ledger' : '✕ Declined'}
               </span>
             </div>
 
-            <p class="text-xs text-inkSecondary bg-[#FAF9F6] p-3 rounded-xl border border-borderSubtle leading-relaxed">
-              <strong class="text-ink">Context / Rationale:</strong> ${item.reason}
+            <p class="text-xs text-slate-300 bg-[#121624] p-3 rounded-xl border border-white/10 leading-relaxed font-mono">
+              <strong class="text-white">Context / Rationale:</strong> ${item.reason}
             </p>
 
-            <!-- Side-by-Side Diff -->
+            <!-- Side-by-Side Diff Inspector -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
-              <div class="p-3.5 rounded-xl bg-brandRoseBg/50 border border-rose-200 space-y-1">
-                <div class="text-[10px] uppercase font-bold text-rose-900">Current Official Specification (${item.target_doc_id})</div>
-                <p class="text-ink text-[11.5px] leading-relaxed">${item.old_text}</p>
+              <!-- Baseline Spec -->
+              <div class="p-4 rounded-xl bg-[#14101A] border border-rose-500/30 space-y-1.5">
+                <div class="text-[10px] uppercase font-bold text-rose-400 flex items-center justify-between">
+                  <span>Current Baseline Spec (${item.target_doc_id})</span>
+                  <span class="px-1.5 py-0.2 rounded bg-rose-950 text-rose-300 border border-rose-500/30">LOCKED</span>
+                </div>
+                <div class="text-slate-300 text-[11.5px] leading-relaxed bg-black/30 p-2.5 rounded-lg border border-white/[0.04]">
+                  ${item.old_text}
+                </div>
               </div>
-              <div class="p-3.5 rounded-xl bg-brandEmeraldBg/50 border border-emerald-200 space-y-1">
-                <div class="text-[10px] uppercase font-bold text-emerald-900">Proposed Document Update (Editable)</div>
+
+              <!-- Proposed Revision -->
+              <div class="p-4 rounded-xl bg-[#0E1B18] border border-emerald-500/30 space-y-1.5">
+                <div class="text-[10px] uppercase font-bold text-emerald-400 flex items-center justify-between">
+                  <span>Proposed Revision (Editable)</span>
+                  <span class="px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30">PROPOSAL</span>
+                </div>
                 ${isPending 
-                  ? `<textarea id="edit-${item.draft_id}" rows="3" class="w-full bg-white border border-emerald-300 rounded-lg p-2 text-[11.5px] text-ink focus:outline-none">${item.proposed_text}</textarea>`
-                  : `<p class="text-ink text-[11.5px] leading-relaxed">${item.proposed_text}</p>`
+                  ? `<textarea id="edit-${item.draft_id}" rows="3" class="w-full bg-[#121624] border border-emerald-500/50 rounded-lg p-2.5 text-[11.5px] text-emerald-300 focus:outline-none focus:border-cyan-400 leading-relaxed font-mono">${item.proposed_text}</textarea>`
+                  : `<div class="text-slate-300 text-[11.5px] leading-relaxed bg-black/30 p-2.5 rounded-lg border border-white/[0.04]">${item.proposed_text}</div>`
                 }
               </div>
             </div>
 
             ${isPending ? `
-              <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-borderSubtle">
-                <input id="note-${item.draft_id}" type="text" placeholder="Audit note (e.g., Validated on dynamometer test bench)..." class="flex-1 min-w-[200px] bg-[#FAF9F6] border border-borderSubtle rounded-xl px-3 py-1.5 text-xs text-ink focus:outline-none" />
-                <div class="flex items-center gap-2">
-                  <button onclick="handleApprovalDecision('${item.draft_id}', 'DECLINED')" class="px-3.5 py-2 rounded-xl text-rose-700 bg-rose-50 hover:bg-rose-100 text-xs font-medium border border-rose-200 transition">
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
+                <input id="note-${item.draft_id}" type="text" placeholder="Audit note (e.g., Validated on dynamometer test bench)..." class="flex-1 min-w-[200px] bg-[#121624] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono" />
+                <div class="flex items-center gap-2.5">
+                  <button onclick="handleApprovalDecision('${item.draft_id}', 'DECLINED')" class="px-4 py-2 rounded-xl text-rose-300 bg-rose-950/40 hover:bg-rose-900/50 text-xs font-mono font-medium border border-rose-500/40 transition">
                     Decline Change
                   </button>
-                  <button onclick="handleApprovalDecision('${item.draft_id}', 'APPROVED')" class="px-4 py-2 rounded-xl bg-ink hover:bg-zinc-800 text-white text-xs font-semibold shadow-sm transition flex items-center gap-1.5 active:scale-[0.99]">
+                  <button onclick="handleApprovalDecision('${item.draft_id}', 'APPROVED')" class="glow-cyan-btn px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-[16px]">verified</span>
                     <span>Approve & Inscribe to Ledger</span>
-                    <kbd class="font-mono text-[9px] bg-zinc-700 text-zinc-100 px-1 py-0.5 rounded">⌘↵</kbd>
+                    <kbd class="font-mono text-[9px] bg-black/40 text-cyan-300 px-1 py-0.5 rounded border border-cyan-400/30">⌘↵</kbd>
                   </button>
                 </div>
               </div>
@@ -1311,6 +1807,9 @@
           const rule = doc.rules.find(r => r.unit === item.unit);
           if (rule && !isNaN(item.numeric_new)) rule.value = item.numeric_new;
         }
+        playSuccessChime();
+      } else {
+        playAlertBeep();
       }
 
       appState.decisionLedger.unshift({
@@ -1341,7 +1840,7 @@
       renderDecisionLedger();
       runSqlQuery();
       updateTopCounters();
-      showToast(decision === 'APPROVED' ? `✓ Inscribed ${item.target_doc_id} update to immutable ledger.` : `✕ Declined ${draftId}.`);
+      showToast(decision === 'APPROVED' ? `✓ Inscribed ${item.target_doc_id} to SHA-256 Decision Ledger!` : `✕ Proposal ${draftId} declined.`);
     }
 
     /* -------------------------------------------------------------------
@@ -1350,20 +1849,20 @@
     function renderCompanyBrainLists() {
       const container = document.getElementById('officialDocsContainer');
       container.innerHTML = appState.officialDocs.map(doc => `
-        <div class="stitch-card rounded-2xl p-5 space-y-2.5">
+        <div class="obsidian-card rounded-2xl p-5 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-subtle text-ink border border-borderSubtle">${doc.doc_id}</span>
-              <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-brandEmeraldBg text-emerald-800 border border-emerald-200">${doc.version}</span>
-              <span class="text-xs text-inkMuted">${doc.topic}</span>
+              <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-400 border border-cyan-500/40">${doc.doc_id}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 border border-emerald-500/30">${doc.version}</span>
+              <span class="text-xs text-slate-400 font-mono">${doc.topic}</span>
             </div>
-            <span class="text-[11px] text-inkMuted font-mono">${doc.updated_at}</span>
+            <span class="text-[11px] text-slate-500 font-mono">${doc.updated_at}</span>
           </div>
-          <h4 class="text-xs font-semibold text-ink">${doc.title}</h4>
-          <p class="text-xs text-inkSecondary leading-relaxed bg-[#FAF9F6] p-3 rounded-xl border border-borderSubtle font-mono text-[11.5px]">${doc.content}</p>
+          <h4 class="text-xs font-bold text-white">${doc.title}</h4>
+          <p class="text-xs text-slate-300 leading-relaxed bg-[#121624] p-3 rounded-xl border border-white/10 font-mono text-[11.5px]">${doc.content}</p>
           <div class="flex flex-wrap gap-1.5 pt-1">
             ${(doc.rules || []).map(r => `
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-50 text-brandIndigo border border-indigo-200 font-medium">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 font-medium">
                 ${r.label}: ${r.value} ${String(r.unit).toUpperCase()}
               </span>
             `).join('')}
@@ -1373,6 +1872,7 @@
     }
 
     function addNewOfficialDoc() {
+      playTone(500, 'sine', 0.08, 0.04);
       const title = document.getElementById('newDocTitle').value.trim();
       const topic = (document.getElementById('newDocTopic').value.trim() || 'CUSTOM-POLICY').toUpperCase();
       const content = document.getElementById('newDocContent').value.trim();
@@ -1412,6 +1912,7 @@
       renderCompanyBrainLists();
       runSqlQuery();
       updateTopCounters();
+      playSuccessChime();
       showToast(`Indexed "${title}" into Company Brain.`);
     }
 
@@ -1428,11 +1929,30 @@
       reader.readAsText(file);
     }
 
+    function handleImageOcrDrop(event) {
+      const files = event.dataTransfer?.files;
+      if (files && files.length > 0) {
+        handleImageOcrUpload({ target: { files: files } });
+      }
+    }
+
     async function handleImageOcrUpload(event) {
       const file = event.target.files?.[0];
       if (!file) return;
       const label = document.getElementById('ocrUploadLabel');
-      label.textContent = 'Scanning...';
+      const beam = document.getElementById('ocrScannerBeam');
+      const dropText = document.getElementById('ocrDropzoneText');
+
+      if (label) label.textContent = 'Scanning...';
+      if (beam) beam.classList.remove('hidden');
+      if (dropText) dropText.textContent = `Scanning ${file.name} with Multimodal Vision OCR...`;
+      playTone(587, 'sine', 0.12, 0.05);
+
+      const cleanupScanner = () => {
+        if (label) label.textContent = 'Scan Datasheet (OCR)';
+        if (beam) beam.classList.add('hidden');
+        if (dropText) dropText.textContent = 'Drop engineering datasheet image or click to scan (Multimodal OCR)';
+      };
 
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -1453,8 +1973,9 @@
               document.getElementById('newDocTitle').value = data.title;
               document.getElementById('newDocTopic').value = data.topic;
               document.getElementById('newDocContent').value = data.content;
+              playSuccessChime();
               showToast('✨ Multimodal Vision OCR scanned specification!');
-              label.textContent = 'Scan Datasheet (OCR)';
+              cleanupScanner();
               return;
             }
           } catch (err) {}
@@ -1464,7 +1985,8 @@
         document.getElementById('newDocTitle').value = file.name.replace(/\.[^/.]+$/, '');
         document.getElementById('newDocTopic').value = 'OCR-SPEC';
         document.getElementById('newDocContent').value = `Scanned specification from ${file.name}: Maximum voltage limit is 54.0V and response time is 10 ms.`;
-        label.textContent = 'Scan Datasheet (OCR)';
+        cleanupScanner();
+        playSuccessChime();
         showToast('Image scanned — ready to index.');
       };
       reader.readAsDataURL(file);
@@ -1476,16 +1998,18 @@
     }
 
     function askBrainPreset(q) {
+      playTone(480, 'sine', 0.05, 0.03);
       document.getElementById('brainQuestionInput').value = q;
       askCompanyBrain();
     }
 
     async function askCompanyBrain() {
+      playTone(520, 'sine', 0.08, 0.04);
       const q = document.getElementById('brainQuestionInput').value.trim();
       if (!q) return;
 
       const box = document.getElementById('brainAnswerBox');
-      box.innerHTML = `<span class="text-inkMuted">Retrieving grounded context from Company Brain...</span>`;
+      box.innerHTML = `<span class="text-cyan-400 font-mono">Retrieving grounded context from Company Brain...</span>`;
 
       // Try Backend RAG
       if (backendAvailable) {
@@ -1497,15 +2021,16 @@
           });
           if (res.ok) {
             const data = await res.json();
+            playSuccessChime();
             box.innerHTML = `
-              <div class="space-y-2">
+              <div class="space-y-2 font-mono">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-mono text-emerald-800 font-semibold">✓ Verified Citation</span>
-                  <span class="text-[10px] text-inkMuted font-mono">FastAPI Corrective RAG</span>
+                  <span class="text-[11px] text-emerald-400 font-semibold">✓ Verified Citation</span>
+                  <span class="text-[10px] text-slate-400">FastAPI Corrective RAG</span>
                 </div>
-                <p class="text-xs text-ink leading-relaxed font-sans">${data.answer}</p>
+                <p class="text-xs text-white leading-relaxed font-sans">${data.answer}</p>
                 ${data.pending_alert ? `
-                  <div class="p-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
+                  <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/40 text-[11px] text-amber-300">
                     ⚠️ ${data.pending_alert}
                   </div>
                 ` : ''}
@@ -1519,13 +2044,14 @@
       // Local Fallback
       const matched = findMatchingOfficialDocs(q, 'AUTO', null);
       const top = matched[0];
+      playSuccessChime();
       box.innerHTML = `
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between text-[11px] font-mono text-emerald-800">
+        <div class="space-y-2 font-mono">
+          <div class="flex items-center justify-between text-[11px] text-emerald-400">
             <span>✓ Grounded in ${top.doc_id} (${top.version})</span>
             <span>Match: ${Math.round(top.matchScore * 100)}%</span>
           </div>
-          <p class="text-xs text-ink leading-relaxed">"${top.content}"</p>
+          <p class="text-xs text-slate-200 leading-relaxed">"${top.content}"</p>
         </div>
       `;
     }
@@ -1533,18 +2059,35 @@
     /* -------------------------------------------------------------------
      * VIEW 4: DECISION LEDGER, SQL & TESTS
      * ------------------------------------------------------------------- */
-    function renderDecisionLedger() {
+    function renderDecisionLedger(filterText = '') {
       const tbody = document.getElementById('decisionLedgerTableBody');
-      tbody.innerHTML = appState.decisionLedger.map(row => `
-        <tr class="hover:bg-subtle transition">
-          <td class="py-2.5 px-3 font-mono font-medium text-ink">${row.id}</td>
-          <td class="py-2.5 px-3 text-inkMuted">${row.timestamp}</td>
-          <td class="py-2.5 px-3 font-mono text-inkSecondary">${row.topic}</td>
-          <td class="py-2.5 px-3 font-medium text-ink">${row.parameter}: <span class="text-inkMuted">${row.old_value}</span> → <span class="font-semibold">${row.new_value}</span></td>
-          <td class="py-2.5 px-3 text-inkSecondary max-w-[200px] truncate">${row.note}</td>
-          <td class="py-2.5 px-3 font-mono text-[10px] text-inkMuted">${row.hash}</td>
-          <td class="py-2.5 px-3">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${row.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+      const q = (filterText || '').toLowerCase().trim();
+      const filtered = q
+        ? appState.decisionLedger.filter(row =>
+            (row.id || '').toLowerCase().includes(q) ||
+            (row.topic || '').toLowerCase().includes(q) ||
+            (row.parameter || '').toLowerCase().includes(q) ||
+            (row.note || '').toLowerCase().includes(q) ||
+            (row.hash || '').toLowerCase().includes(q) ||
+            (row.status || '').toLowerCase().includes(q)
+          )
+        : appState.decisionLedger;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-500 font-mono text-xs">No matching entries found in Decision Ledger.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(row => `
+        <tr class="hover:bg-white/[0.04] transition">
+          <td class="py-2.5 px-3 font-bold text-cyan-300">${row.id}</td>
+          <td class="py-2.5 px-3 text-slate-400">${row.timestamp}</td>
+          <td class="py-2.5 px-3 text-slate-300">${row.topic}</td>
+          <td class="py-2.5 px-3 text-white">${row.parameter}: <span class="text-slate-400">${row.old_value}</span> → <span class="font-bold text-cyan-300">${row.new_value}</span></td>
+          <td class="py-2.5 px-3 text-slate-300 max-w-[200px] truncate">${row.note}</td>
+          <td class="py-2.5 px-3 text-[10px] text-slate-400">${row.hash}</td>
+          <td class="py-2.5 px-3 text-right">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${row.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
               ${row.status}
             </span>
           </td>
@@ -1553,6 +2096,7 @@
     }
 
     function exportLedgerJson() {
+      playTone(600, 'sine', 0.08, 0.04);
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState.decisionLedger, null, 2));
       const a = document.createElement('a');
       a.href = dataStr;
@@ -1562,6 +2106,7 @@
     }
 
     function runSqlPreset(query) {
+      playTone(440, 'sine', 0.05, 0.03);
       document.getElementById('sqlInputBox').value = query;
       runSqlQuery();
     }
@@ -1575,35 +2120,36 @@
       try {
         const res = alasql(q);
         if (!Array.isArray(res) || res.length === 0) {
-          container.innerHTML = `<div class="p-2 text-inkMuted font-mono">0 rows returned.</div>`;
+          container.innerHTML = `<div class="p-2 text-slate-400 font-mono">0 rows returned.</div>`;
           return;
         }
         const cols = Object.keys(res[0]);
         container.innerHTML = `
-          <div class="mb-1.5 flex items-center justify-between text-[11px] font-mono text-emerald-800">
+          <div class="mb-2 flex items-center justify-between text-[11px] font-mono text-emerald-400">
             <span>✓ AlaSQL Executed: ${res.length} row(s) returned</span>
           </div>
           <table class="w-full text-left border-collapse font-mono text-[11px]">
             <thead>
-              <tr class="border-b border-borderSubtle text-inkMuted uppercase">
-                ${cols.map(c => `<th class="py-1 px-2">${c}</th>`).join('')}
+              <tr class="border-b border-white/10 text-slate-400 uppercase">
+                ${cols.map(c => `<th class="py-1 px-2.5">${c}</th>`).join('')}
               </tr>
             </thead>
-            <tbody class="divide-y divide-borderSubtle">
+            <tbody class="divide-y divide-white/[0.04]">
               ${res.map(row => `
-                <tr class="hover:bg-white">
-                  ${cols.map(c => `<td class="py-1 px-2 text-ink">${row[c] !== undefined ? String(row[c]).slice(0, 80) : ''}</td>`).join('')}
+                <tr class="hover:bg-white/[0.04]">
+                  ${cols.map(c => `<td class="py-1.5 px-2.5 text-slate-200">${row[c] !== undefined ? String(row[c]).slice(0, 80) : ''}</td>`).join('')}
                 </tr>
               `).join('')}
             </tbody>
           </table>
         `;
       } catch (err) {
-        container.innerHTML = `<div class="p-2 text-rose-700 font-mono text-xs">SQL Error: ${err.message}</div>`;
+        container.innerHTML = `<div class="p-2 text-rose-400 font-mono text-xs">SQL Error: ${err.message}</div>`;
       }
     };
 
     function runAllSystemTests() {
+      playTone(550, 'sine', 0.1, 0.04);
       window.syncAlaSqlTables();
       const results = [];
 
@@ -1652,12 +2198,12 @@
 
       const tbody = document.getElementById('systemTestsTableBody');
       tbody.innerHTML = results.map(r => `
-        <tr class="hover:bg-subtle transition">
-          <td class="py-2 px-3 font-mono font-medium text-ink">${r.id}</td>
-          <td class="py-2 px-3 font-medium text-ink">${r.name}</td>
-          <td class="py-2 px-3 font-mono text-inkMuted">${r.output}</td>
-          <td class="py-2 px-3 text-right">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.pass ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+        <tr class="hover:bg-white/[0.04] transition">
+          <td class="py-2.5 px-3 font-bold text-cyan-300">${r.id}</td>
+          <td class="py-2.5 px-3 text-white">${r.name}</td>
+          <td class="py-2.5 px-3 text-slate-400">${r.output}</td>
+          <td class="py-2.5 px-3 text-right">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.pass ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'}">
               ${r.pass ? '✓ PASS' : '✕ FAIL'}
             </span>
           </td>
@@ -1677,7 +2223,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import routes_check, routes_approvals, routes_brain, routes_docs, routes_ledger, routes_system
 
-app = FastAPI(title="Parishad Autonomous Company Brain", version="3.0.0")
+app = FastAPI(title="Parishad Autonomous Company Brain", version="4.2.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 app.include_router(routes_check.router)
@@ -1726,6 +2272,7 @@ def test_hardware_voltage_extraction():
     };
 
     function showBackendCode(filename) {
+      playTone(400, 'sine', 0.04, 0.02);
       appState.activeCodeFile = filename;
       document.getElementById('backendCodeBlock').textContent = backendFiles[filename] || '';
       ['main', 'council', 'rag', 'docker', 'e2e'].forEach(k => {
@@ -1737,12 +2284,13 @@ def test_hardware_voltage_extraction():
                         (k === 'docker' && filename === 'docker-compose.yml') ||
                         (k === 'e2e' && filename === 'test_e2e.py');
         btn.className = matches 
-          ? 'px-2.5 py-1 rounded text-xs font-mono font-medium bg-ink text-white' 
-          : 'px-2.5 py-1 rounded text-xs font-mono font-medium bg-subtle text-inkSecondary hover:text-ink';
+          ? 'px-3 py-1 rounded-lg text-xs font-medium bg-cyan-950/80 text-cyan-400 border border-cyan-500/40' 
+          : 'px-3 py-1 rounded-lg text-xs font-medium bg-[#141928] text-slate-400 hover:text-white border border-transparent';
       });
     }
 
     function copyCodeToClipboard() {
+      playTone(520, 'sine', 0.06, 0.03);
       const code = backendFiles[appState.activeCodeFile] || '';
       navigator.clipboard.writeText(code).then(() => {
         showToast(`Copied ${appState.activeCodeFile} to clipboard.`);
@@ -1750,6 +2298,7 @@ def test_hardware_voltage_extraction():
     }
 
     async function downloadFullStackZip() {
+      playTone(600, 'sine', 0.1, 0.04);
       if (typeof JSZip === 'undefined') {
         showToast('JSZip loading...');
         return;
@@ -1771,13 +2320,15 @@ def test_hardware_voltage_extraction():
       a.download = 'parishad_autonomous_brain_fullstack.zip';
       a.click();
       URL.revokeObjectURL(url);
+      playSuccessChime();
       showToast('📦 Downloaded parishad_autonomous_brain_fullstack.zip archive!');
     }
 
     /* -------------------------------------------------------------------
-     * NAVIGATION & TAB SWITCHER
+     * NAVIGATION & KEYBOARD SHORTCUTS
      * ------------------------------------------------------------------- */
     function switchView(viewId) {
+      playTone(460, 'sine', 0.05, 0.03);
       appState.activeView = viewId;
       ['check', 'approvals', 'brain', 'system'].forEach(v => {
         const sec = document.getElementById(`view-${v}`);
@@ -1785,21 +2336,36 @@ def test_hardware_voltage_extraction():
         if (!sec || !btn) return;
         if (v === viewId) {
           sec.classList.remove('hidden');
-          btn.className = 'pill-nav-active px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5';
+          btn.className = 'pill-active px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2';
         } else {
           sec.classList.add('hidden');
-          btn.className = 'pill-nav-inactive px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5';
+          btn.className = 'pill-inactive px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2';
         }
       });
     }
 
     function updateTopCounters() {
-      document.getElementById('statDocs').textContent = appState.officialDocs.length;
       const pending = appState.pendingApprovals.filter(d => d.status === 'PENDING').length;
       document.getElementById('statPending').textContent = pending;
       document.getElementById('navApprovalCount').textContent = pending;
       document.getElementById('statApproved').textContent = appState.decisionLedger.length;
     }
+
+    // Global Keyboard Shortcuts (Cmd+K and Cmd+Enter)
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const search = document.getElementById('globalQuickSearch');
+        if (search) search.focus();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        const firstPending = appState.pendingApprovals.find(d => d.status === 'PENDING');
+        if (firstPending && appState.activeView === 'approvals') {
+          e.preventDefault();
+          handleApprovalDecision(firstPending.draft_id, 'APPROVED');
+        }
+      }
+    });
 
     /* -------------------------------------------------------------------
      * INITIALIZATION
