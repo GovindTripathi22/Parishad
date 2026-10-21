@@ -264,6 +264,7 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
             source=source_val,
             topic=top_doc_dict.get("topic", topic_val) if top_doc_dict else topic_val,
             target_doc_id=top_doc_id or "DOC-GEN-001",
+            target_doc_version=top_doc_dict.get("version", "v1.0") if top_doc_dict else "v1.0",
             parameter_label=param_label,
             unit=unit_val,
             old_value=official_val or "Certified Limit",
@@ -292,6 +293,7 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
         pipeline_findings.append({
             "finding_id": "FIND-01",
             "category": "policy_conflict",
+            "severity": "high",
             "proposed_value": proposed_val,
             "official_value": official_val,
             "delta_pct": council.opinion.delta_pct if council.opinion else 0.0,

@@ -105,22 +105,51 @@ async def analyze_opinion(
 
     doc_rules = matched_doc.get("rules", [])
     matching_rule = None
-    for r in doc_rules:
-        r_unit = r.get("unit", "")
-        if r_unit.lower() == str(prop_unit).lower():
-            matching_rule = r
-            break
-    if not matching_rule and doc_rules:
-        matching_rule = doc_rules[0]
+    prop_unit_norm = str(prop_unit).lower().strip()
+    update_text_lower = update_text.lower()
 
+    # Parameter-aware matching:
+    # 1. Exact unit match
+    unit_matched_rules = [
+        r for r in doc_rules
+        if r.get("unit", "").lower().strip() == prop_unit_norm
+    ]
+
+    if len(unit_matched_rules) == 1:
+        matching_rule = unit_matched_rules[0]
+    elif len(unit_matched_rules) > 1:
+        # Disambiguate by parameter label keywords matching update text
+        best_r = None
+        best_score = -1
+        for r in unit_matched_rules:
+            lbl = r.get("label", "").lower()
+            score = sum(1 for word in lbl.split() if len(word) > 3 and word in update_text_lower)
+            if score > best_score:
+                best_score = score
+                best_r = r
+        matching_rule = best_r or unit_matched_rules[0]
+    else:
+        # Fallback ONLY if parameter name matches explicitly in rule label
+        for r in doc_rules:
+            lbl = r.get("label", "").lower()
+            if any(term in lbl for term in ["voltage", "cutoff", "speed", "refund", "thermal", "latency", "frequency"] if term in update_text_lower):
+                # Verify dimension compatibility
+                r_unit = r.get("unit", "").lower()
+                if (prop_unit_norm in ["v", "volts"] and r_unit in ["v", "volts"]) or \
+                   (prop_unit_norm in ["mbps", "kbps"] and r_unit in ["mbps", "kbps"]) or \
+                   (prop_unit_norm in ["days", "hours"] and r_unit in ["days", "hours"]):
+                    matching_rule = r
+                    break
+
+    # Strictly DO NOT fall back to doc_rules[0] when no parameter corresponds!
     if not matching_rule or prop_val is None:
         return OpinionResult(
             has_conflict=False,
             severity="low",
             parameter_label=prop_label,
-            proposed_value=f"{prop_val} {prop_display_unit}",
-            reasoning=f"Parameter verified against '{matched_doc.get('title')}'. No conflicting rule constraint found.",
-            confidence=0.88,
+            proposed_value=f"{prop_val} {prop_display_unit}" if prop_val is not None else "",
+            reasoning=f"INSUFFICIENT_EVIDENCE: No matching parameter or rule constraint found for '{prop_label}' in official document '{matched_doc.get('title')}'.",
+            confidence=0.75,
         )
 
     official_num = float(matching_rule.get("value", 0.0))
@@ -132,11 +161,17 @@ async def analyze_opinion(
     proposed_formatted = f"{proposed_num} {rule_unit.upper()}"
 
     if official_num != proposed_num:
-        delta = abs((proposed_num - official_num) / (official_num if official_num != 0 else 1.0)) * 100.0
-        delta_pct = round(delta, 1)
+        # Deterministic percentage formula with explicit zero-baseline handling
+        if official_num != 0.0:
+            delta = abs((proposed_num - official_num) / abs(official_num)) * 100.0
+            delta_pct = round(delta, 1)
+            is_zero_baseline = False
+        else:
+            delta_pct = 100.0
+            is_zero_baseline = True
 
         severity = "low"
-        if delta_pct > 50.0:
+        if delta_pct > 50.0 or is_zero_baseline:
             severity = "critical"
         elif delta_pct > 20.0:
             severity = "high"
@@ -152,10 +187,18 @@ async def analyze_opinion(
             proposed_formatted,
         )
 
-        reasoning = ai_reason or (
-            f"Update changes {rule_label} from official {official_formatted} to {proposed_formatted} "
-            f"({delta_pct}% shift). This exceeds certified tolerances in {matched_doc.get('doc_id')}."
-        )
+        if is_zero_baseline:
+            base_reason = (
+                f"Special Case: Official baseline for {rule_label} is 0 {rule_unit}. "
+                f"Proposed value introduces a non-zero threshold of {proposed_formatted}, requiring human review."
+            )
+        else:
+            base_reason = (
+                f"Update changes {rule_label} from official {official_formatted} to {proposed_formatted} "
+                f"({delta_pct}% shift). This exceeds certified tolerances in {matched_doc.get('doc_id')}."
+            )
+
+        reasoning = ai_reason or base_reason
 
         return OpinionResult(
             has_conflict=True,

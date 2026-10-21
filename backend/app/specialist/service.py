@@ -253,7 +253,7 @@ class ReviewSummaryService:
             overall_status = "blocking"
             review_title = "Security Alert & Rule Violation Review"
             summary = "The submission contains security alerts or hazardous parameter violations requiring immediate intervention."
-        elif has_blocking or any(f.severity in ("critical", "high") for f in findings):
+        elif has_blocking or any(f.severity in ("critical", "high") for f in findings) or any(f.category in ("policy_conflict", "tolerance_drift") for f in findings):
             overall_status = "blocking"
             review_title = f"Blocking Policy Conflicts in {top_doc_id}"
             summary = (

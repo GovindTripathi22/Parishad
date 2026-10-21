@@ -2,9 +2,10 @@
 CortexOS — Embedding Generation Module.
 
 Generates normalized dense vector embeddings for documents and queries.
-When `GEMINI_API_KEY` is configured, uses Gemini API (text-embedding-004).
-Otherwise, falls back to a deterministic, vocabulary-weighted subword TF-IDF
+When `GEMINI_API_KEY` is configured, uses Google Gemini API (`gemini-embedding-001`).
+Otherwise, falls back to a deterministic, vocabulary-weighted subword n-gram hash-vector
 768-dimensional normalized embedding generator so semantic search works offline.
+Note: The local fallback is an engineering hash-vector representation, not a learned neural embedding.
 """
 from __future__ import annotations
 

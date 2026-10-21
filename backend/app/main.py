@@ -18,6 +18,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 
+FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -82,10 +84,38 @@ app.add_middleware(
 
 @app.get("/api/health", tags=["system"])
 async def root_health():
+    from app.config import get_settings
+    cfg = get_settings()
+    frontend_mounted = FRONTEND_DIR.is_dir() and (FRONTEND_DIR / "index.html").exists()
+
+    db_status = "connected"
+    try:
+        from app.database.connection import async_session_factory
+        from sqlalchemy import text
+        async with async_session_factory() as session:
+            await session.execute(text("SELECT 1"))
+    except Exception as exc:
+        db_status = f"unreachable: {exc}"
+
+    specialist_status = "disabled"
+    if cfg.PARISHAD_LOCAL_SUMMARY_ENABLED:
+        specialist_status = "enabled (adapter configured)"
+    else:
+        specialist_status = "disabled (deterministic fallback active)"
+
+    is_healthy = db_status == "connected"
     return {
-        "status": "healthy",
+        "status": "healthy" if is_healthy else "degraded",
         "service": "CortexOS",
-        "version": "3.0.0",
+        "service_name": "CortexOS — Parishad Autonomous Company Brain",
+        "version": "4.3.0",
+        "components": {
+            "backend": "ready",
+            "frontend": "mounted" if frontend_mounted else "unmounted",
+            "database": db_status,
+            "specialist_model": specialist_status,
+            "gemini_api": "configured" if bool(cfg.GEMINI_API_KEY) else "unconfigured (local fallback active)",
+        },
         "checks_verified": 12,
     }
 
@@ -141,63 +171,33 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
 
 
 # ---------------------------------------------------------------------------
-# Include all API routers
+# Include all API routers (Fail-Fast: All 7 Routers Required)
 # ---------------------------------------------------------------------------
 
 try:
     from app.api.routes_check import router as check_router
-
-    app.include_router(check_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_check: %s", exc)
-
-try:
     from app.api.routes_approvals import router as approvals_router
-
-    app.include_router(approvals_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_approvals: %s", exc)
-
-try:
     from app.api.routes_brain import router as brain_router
-
-    app.include_router(brain_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_brain: %s", exc)
-
-try:
     from app.api.routes_docs import router as docs_router
-
-    app.include_router(docs_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_docs: %s", exc)
-
-try:
     from app.api.routes_ingestion import router as ingestion_router
-
-    app.include_router(ingestion_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_ingestion: %s", exc)
-
-try:
     from app.api.routes_ledger import router as ledger_router
-
-    app.include_router(ledger_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_ledger: %s", exc)
-
-try:
     from app.api.routes_system import router as system_router
 
+    app.include_router(check_router)
+    app.include_router(approvals_router)
+    app.include_router(brain_router)
+    app.include_router(docs_router)
+    app.include_router(ingestion_router)
+    app.include_router(ledger_router)
     app.include_router(system_router)
-except ImportError as exc:
-    logger.warning("Could not load routes_system: %s", exc)
+    logger.info("All 7 core API routers successfully verified and mounted.")
+except Exception as exc:
+    logger.critical("Fatal: Failed to load required API router: %s", exc)
+    raise RuntimeError(f"Application startup failed due to missing required router dependency: {exc}") from exc
 
 # ---------------------------------------------------------------------------
 # Static files — serve frontend
 # ---------------------------------------------------------------------------
-
-FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 
 if FRONTEND_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")

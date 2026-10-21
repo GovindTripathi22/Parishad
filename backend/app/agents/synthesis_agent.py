@@ -84,16 +84,39 @@ async def synthesize_recommendation(
     doc_title = original_doc.get("title", "Official Specification") if original_doc else "Official Specification"
     doc_id = original_doc.get("doc_id", "DOC") if original_doc else "DOC"
 
-    # Draft proposed updated document text
+    # Parameter-aware proposed updated document text (avoids naive global number substitution)
     proposed_doc_text = doc_content
     if official_val and proposed_val:
-        # Extract purely the numbers to do an exact replacement
         m_old = re.search(r"(\d+(?:\.\d+)?)", official_val)
         m_new = re.search(r"(\d+(?:\.\d+)?)", proposed_val)
-        if m_old and m_new and m_old.group(1) in doc_content:
-            proposed_doc_text = doc_content.replace(m_old.group(1), m_new.group(1), 1)
-        else:
-            proposed_doc_text = f"{doc_content} (Updated {param_label}: {proposed_val})"
+        if m_old and m_new:
+            old_num_str = m_old.group(1)
+            new_num_str = m_new.group(1)
+            param_keywords = [w.lower() for w in param_label.split() if len(w) > 3]
+
+            # Split sentences and find the sentence specifically referencing this parameter
+            sentences = re.split(r"(?<=[.!?])\s+", doc_content)
+            replaced_in_sentence = False
+            updated_sentences = []
+
+            for s in sentences:
+                s_lower = s.lower()
+                # Check if this sentence mentions the parameter keywords AND contains the old number
+                if not replaced_in_sentence and old_num_str in s and any(kw in s_lower for kw in param_keywords):
+                    # Replace only inside this targeted parameter sentence
+                    s_updated = s.replace(old_num_str, new_num_str, 1)
+                    updated_sentences.append(s_updated)
+                    replaced_in_sentence = True
+                else:
+                    updated_sentences.append(s)
+
+            if replaced_in_sentence:
+                proposed_doc_text = " ".join(updated_sentences)
+            elif old_num_str in doc_content:
+                # If no specific sentence matched keywords, replace old_num_str specifically
+                proposed_doc_text = doc_content.replace(old_num_str, new_num_str, 1)
+            else:
+                proposed_doc_text = f"{doc_content}\n\n[Proposed Update: {param_label} changed from {official_val} to {proposed_val}]"
 
     checklist: list[str] = []
     if has_conflict:

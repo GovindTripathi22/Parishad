@@ -50,9 +50,31 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def init_db() -> None:
-    """Create all tables and seed initial data if empty."""
+    """Create all tables and seed initial data if empty. Safely adds any missing columns."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+        # Schema evolution helper for SQLite
+        try:
+            from sqlalchemy import text
+            # Check decision_ledger columns
+            res = await conn.execute(text("PRAGMA table_info(decision_ledger)"))
+            columns = [row[1] for row in res.fetchall()]
+            if "prev_hash" not in columns:
+                await conn.execute(text(f"ALTER TABLE decision_ledger ADD COLUMN prev_hash VARCHAR(128) DEFAULT '{'0'*64}'"))
+            if "doc_version" not in columns:
+                await conn.execute(text("ALTER TABLE decision_ledger ADD COLUMN doc_version VARCHAR(32) DEFAULT 'v1.0'"))
+            if "canonical_payload" not in columns:
+                await conn.execute(text("ALTER TABLE decision_ledger ADD COLUMN canonical_payload TEXT"))
+
+            # Check pending_approvals columns
+            res_p = await conn.execute(text("PRAGMA table_info(pending_approvals)"))
+            p_cols = [row[1] for row in res_p.fetchall()]
+            if "target_doc_version" not in p_cols:
+                await conn.execute(text("ALTER TABLE pending_approvals ADD COLUMN target_doc_version VARCHAR(32) DEFAULT 'v1.0'"))
+        except Exception as exc:
+            logger.warning("Column migration check notice: %s", exc)
+
     logger.info("Database tables created/verified.")
 
     async with async_session_factory() as session:
@@ -179,7 +201,34 @@ async def _seed_initial_data(session: AsyncSession) -> None:
     for a in approvals:
         session.add(a)
 
-    # ── Decision Ledger seed ──────────────────────────────────
+    # ── Decision Ledger seed (Cryptographically Chained with Full SHA-256) ──
+    genesis_prev = "0" * 64
+    d1_payload = {
+        "decision_id": "DEC-2026-01",
+        "doc_id": "DOC-BMS-402",
+        "doc_version": "v2.4",
+        "parameter": "Max Voltage Limit",
+        "old_value": "52 V",
+        "new_value": "54 V",
+        "status": "APPROVED",
+        "timestamp": "2026-09-12T00:00:00Z",
+    }
+    canon_d1 = json.dumps(d1_payload, sort_keys=True)
+    hash_d1 = "sha256:" + hashlib.sha256((canon_d1 + genesis_prev).encode("utf-8")).hexdigest()
+
+    d2_payload = {
+        "decision_id": "DEC-2026-02",
+        "doc_id": "DOC-POLICY-101",
+        "doc_version": "v1.8",
+        "parameter": "Refund Window",
+        "old_value": "15 days",
+        "new_value": "30 days",
+        "status": "APPROVED",
+        "timestamp": "2026-10-01T00:00:00Z",
+    }
+    canon_d2 = json.dumps(d2_payload, sort_keys=True)
+    hash_d2 = "sha256:" + hashlib.sha256((canon_d2 + hash_d1).encode("utf-8")).hexdigest()
+
     ledger = [
         DecisionLedgerEntry(
             decision_id="DEC-2026-01",
@@ -190,8 +239,12 @@ async def _seed_initial_data(session: AsyncSession) -> None:
             new_value="54 V",
             status="APPROVED",
             doc_id="DOC-BMS-402",
+            doc_version="v2.4",
             note="Validated 54V clamp limit in thermal chamber test.",
-            hash="sha256:" + hashlib.sha256(b"DEC-2026-01").hexdigest()[:8],
+            prev_hash=genesis_prev,
+            canonical_payload=canon_d1,
+            hash=hash_d1,
+            reviewed_by="lead_auditor",
         ),
         DecisionLedgerEntry(
             decision_id="DEC-2026-02",
@@ -202,8 +255,12 @@ async def _seed_initial_data(session: AsyncSession) -> None:
             new_value="30 days",
             status="APPROVED",
             doc_id="DOC-POLICY-101",
+            doc_version="v1.8",
             note="Standardized 30-day customer refund policy for Q4.",
-            hash="sha256:" + hashlib.sha256(b"DEC-2026-02").hexdigest()[:8],
+            prev_hash=hash_d1,
+            canonical_payload=canon_d2,
+            hash=hash_d2,
+            reviewed_by="ops_governance",
         ),
     ]
     for entry in ledger:

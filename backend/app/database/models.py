@@ -93,6 +93,7 @@ class PendingApproval(Base):
     reason = Column(Text, nullable=False)
     old_text = Column(Text, nullable=False)
     proposed_text = Column(Text, nullable=False)
+    target_doc_version = Column(String(32), default="v1.0", nullable=False)
     status = Column(String(16), default="PENDING", index=True)  # PENDING | APPROVED | DECLINED
     reviewed_at = Column(DateTime, nullable=True)
     review_note = Column(Text, nullable=True)
@@ -117,7 +118,10 @@ class DecisionLedgerEntry(Base):
     new_value = Column(String(128), nullable=False)
     status = Column(String(16), nullable=False)  # APPROVED | DECLINED
     doc_id = Column(String(32), nullable=False)
+    doc_version = Column(String(32), default="v1.0", nullable=False)
     note = Column(Text, nullable=True)
+    prev_hash = Column(String(128), default="0" * 64, nullable=False)
+    canonical_payload = Column(Text, nullable=True)
     hash = Column(String(128), nullable=False)
     source_draft_id = Column(String(32), nullable=True)
     reviewed_by = Column(String(128), default="admin")

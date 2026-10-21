@@ -9,6 +9,10 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+CANONICAL_DB_FILE = (PROJECT_ROOT / "cortexos.db").as_posix()
+
+
 class Settings(BaseSettings):
     """Central configuration loaded from environment / .env file."""
 
@@ -21,13 +25,13 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "*"
 
     # ── Database ────────────────────────────────────────────────
-    DATABASE_URL: str = "sqlite+aiosqlite:///./cortexos.db"
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{CANONICAL_DB_FILE}"
     DATABASE_ECHO: bool = False
 
     # ── Gemini AI ───────────────────────────────────────────────
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.5-flash"
-    GEMINI_EMBEDDING_MODEL: str = "text-embedding-004"
+    GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
 
     # ── Ingestion Connectors ────────────────────────────────────
     GITHUB_WEBHOOK_SECRET: str = ""

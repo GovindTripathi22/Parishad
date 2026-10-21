@@ -124,17 +124,18 @@ async def create_doc(body: CreateDocRequest, db: AsyncSession = Depends(get_db))
     )
     db.add(doc)
 
-    # Automatically extract facts and create DocRule entries
+    # Automatically extract facts and create DocRule entries (only for verified units)
     facts_res = extract_facts(body.content)
     if facts_res.has_signal:
         for f in facts_res.all_facts:
-            rule = DocRule(
-                doc_id=new_doc_id,
-                label=f.label or "Specification Limit",
-                value=f.value,
-                unit=f.unit,
-            )
-            db.add(rule)
+            if f.unit:
+                rule = DocRule(
+                    doc_id=new_doc_id,
+                    label=f.label or "Specification Limit",
+                    value=f.value,
+                    unit=f.unit,
+                )
+                db.add(rule)
 
     await db.commit()
 

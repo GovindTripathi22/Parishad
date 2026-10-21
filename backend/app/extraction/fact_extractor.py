@@ -39,11 +39,15 @@ from pydantic import BaseModel, Field
 # ── Data Models ─────────────────────────────────────────────────────────────
 
 class ExtractedFact(BaseModel):
-    """A single numeric fact extracted from text."""
+    """A single numeric fact extracted from text with span and provenance."""
     value: float = Field(..., description="Parsed numeric value.")
     unit: str = Field(..., description="Normalized canonical unit (e.g. 'V', 'Mbps').")
     display_unit: str = Field(..., description="Unit as it originally appeared in the text.")
     label: str = Field("", description="Auto-generated human-readable label for the fact.")
+    start_char: int = Field(-1, description="Start index in original source text.")
+    end_char: int = Field(-1, description="End index in original source text.")
+    source_text: str = Field("", description="Exact matching substring.")
+    confidence: float = Field(1.0, ge=0.0, le=1.0, description="Extraction confidence score.")
 
 
 class ExtractionResult(BaseModel):
@@ -55,7 +59,7 @@ class ExtractionResult(BaseModel):
     )
     proposed_fact: Optional[ExtractedFact] = Field(
         None,
-        description="The *last* (most likely target/proposed) fact extracted.",
+        description="The resolved candidate/target fact proposed for update.",
     )
     change_detected: bool = Field(
         False,
@@ -66,6 +70,14 @@ class ExtractionResult(BaseModel):
     )
     new_fact: Optional[ExtractedFact] = Field(
         None, description="The *new* value in a detected change pattern.",
+    )
+    is_ambiguous: bool = Field(
+        False,
+        description="True if multiple conflicting candidate parameters exist without clear target intent.",
+    )
+    ambiguity_reason: Optional[str] = Field(
+        None,
+        description="Diagnostic explanation when candidate proposal resolution is ambiguous.",
     )
 
 
@@ -87,8 +99,9 @@ _UNIT_NORM: dict[str, str] = {
     # Temperature
     "°c": "°C", "c": "°C", "celsius": "°C",
     "°f": "°F", "f": "°F", "fahrenheit": "°F",
-    # Percentage
+    # Percentage & Counts
     "%": "%", "percent": "%", "pct": "%",
+    "defects": "defects", "defect": "defects",
     # Storage
     "gb": "GB", "mb": "MB", "tb": "TB", "kb": "KB", "pb": "PB",
     # Currency
@@ -197,6 +210,10 @@ def extract_facts(text: str) -> ExtractionResult:
             unit=canonical,
             display_unit=display if display else ("$" if has_dollar else ""),
             label=_make_label(value, canonical),
+            start_char=m.start(),
+            end_char=m.end(),
+            source_text=m.group(0),
+            confidence=0.98 if canonical else 0.75,
         )
         all_facts.append(fact)
 
@@ -230,16 +247,65 @@ def extract_facts(text: str) -> ExtractionResult:
             unit=old_canon,
             display_unit=old_disp if old_disp else ("$" if old_has_dollar else ""),
             label=_make_label(old_val, old_canon),
+            start_char=change_match.start(),
+            end_char=change_match.start() + len(old_raw) + (len(old_unit_raw) if old_unit_raw else 0),
+            source_text=old_raw,
+            confidence=0.99,
         )
         new_fact = ExtractedFact(
             value=new_val,
             unit=new_canon,
             display_unit=new_disp if new_disp else ("$" if new_has_dollar else ""),
             label=_make_label(new_val, new_canon),
+            start_char=change_match.end() - len(new_raw) - (len(new_unit_raw) if new_unit_raw else 0),
+            end_char=change_match.end(),
+            source_text=new_raw,
+            confidence=0.99,
         )
         change_detected = True
 
-    proposed = all_facts[-1] if all_facts else None
+    # ── Intelligent Proposal Resolution (Not blindly last number) ────────
+    proposed: ExtractedFact | None = None
+    is_ambiguous = False
+    ambiguity_reason = None
+
+    if change_detected and new_fact:
+        proposed = new_fact
+    elif all_facts:
+        # Check for explicit proposal action keywords (e.g., 'to 54V', 'set to 42.5V', 'update to 60V')
+        proposal_kw_re = re.compile(
+            r"(?:to|set|update|change|raise|lower|increase|decrease|bump|target|limit|threshold)\s+([a-zA-Z\s]{0,15})?\$?(\d+(?:\.\d+)?)",
+            re.IGNORECASE,
+        )
+        kw_matches = list(proposal_kw_re.finditer(text))
+
+        candidate = None
+        if kw_matches:
+            # Match fact nearest to the last proposal keyword
+            last_kw = kw_matches[-1]
+            kw_pos = last_kw.start()
+            candidate_facts = [f for f in all_facts if f.start_char >= kw_pos]
+            if candidate_facts:
+                candidate = candidate_facts[0]
+
+        if candidate:
+            proposed = candidate
+        else:
+            # Filter facts: prefer facts that have explicit units over unitless facts
+            facts_with_units = [f for f in all_facts if f.unit]
+            if len(facts_with_units) == 1:
+                proposed = facts_with_units[0]
+            elif len(facts_with_units) > 1:
+                # Multiple facts with units: if units differ, check if one matches proposal pattern
+                distinct_units = set(f.unit for f in facts_with_units)
+                if len(distinct_units) > 1:
+                    proposed = facts_with_units[-1]
+                    is_ambiguous = True
+                    ambiguity_reason = f"Multiple distinct unit parameters detected ({', '.join(distinct_units)}). Selected {proposed.label} as primary candidate."
+                else:
+                    proposed = facts_with_units[-1]
+            else:
+                proposed = all_facts[-1]
 
     return ExtractionResult(
         has_signal=len(all_facts) > 0,
@@ -248,4 +314,6 @@ def extract_facts(text: str) -> ExtractionResult:
         change_detected=change_detected,
         old_fact=old_fact,
         new_fact=new_fact,
+        is_ambiguous=is_ambiguous,
+        ambiguity_reason=ambiguity_reason,
     )

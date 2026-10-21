@@ -355,22 +355,87 @@ class SqlQueryRequest(BaseModel):
     query: str = "SELECT * FROM decision_ledger LIMIT 10"
 
 
-@router.post("/sql", summary="Execute read-only SQL query against Company Brain")
+_ALLOWED_SQL_TABLES = {"decision_ledger", "official_docs", "doc_rules", "pending_approvals"}
+_FORBIDDEN_SQL_PATTERNS = [
+    r"--",                          # Single-line comment
+    r"/\*",                         # Multi-line comment
+    r"\bUNION\b",                   # UNION injection
+    r"\bINSERT\b",                  # DML insert
+    r"\bUPDATE\b",                  # DML update
+    r"\bDELETE\b",                  # DML delete
+    r"\bDROP\b",                    # DDL drop
+    r"\bALTER\b",                   # DDL alter
+    r"\bCREATE\b",                  # DDL create
+    r"\bTRUNCATE\b",                # DDL truncate
+    r"\bPRAGMA\b",                  # SQLite pragma inspection
+    r"\bATTACH\b",                  # SQLite attach DB
+    r"\bDETACH\b",                  # SQLite detach DB
+    r"\bEXEC\b|\bEXECUTE\b",        # Stored procedure execution
+    r"\bINTO\s+OUTFILE\b",          # File exfiltration
+    r"\bLOAD_FILE\b",               # File read
+    r"\bSQLITE_MASTER\b|\bSQLITE_SCHEMA\b", # Schema internals
+]
+
+
+def _validate_safe_select(raw_sql: str) -> tuple[bool, str, str]:
+    """
+    Validates that a SQL statement is strictly a read-only query on allowlisted tables.
+    Returns (is_valid, sanitized_sql, error_message).
+    """
+    import re
+    cleaned = raw_sql.strip()
+    if cleaned.endswith(";"):
+        cleaned = cleaned[:-1].strip()
+
+    # Reject multiple statements
+    if ";" in cleaned:
+        return False, "", "Multiple statements are strictly prohibited."
+
+    if not cleaned.upper().startswith("SELECT"):
+        return False, "", "Only SELECT queries are permitted in the explorer."
+
+    # Check forbidden keywords and patterns
+    for pat in _FORBIDDEN_SQL_PATTERNS:
+        if re.search(pat, cleaned, re.IGNORECASE):
+            return False, "", f"Prohibited SQL pattern detected: query contains restricted keywords ({pat.replace(r'\b', '')})."
+
+    # Verify table references belong to allowlist
+    from_matches = re.findall(r"\b(?:FROM|JOIN)\s+([a-zA-Z0-9_]+)", cleaned, re.IGNORECASE)
+    if not from_matches:
+        return False, "", "Query must specify a target table using FROM."
+
+    for tbl in from_matches:
+        tbl_clean = tbl.lower()
+        if tbl_clean not in _ALLOWED_SQL_TABLES:
+            return False, "", f"Access to table '{tbl}' is forbidden. Allowed tables: {', '.join(sorted(_ALLOWED_SQL_TABLES))}."
+
+    # Enforce safe row LIMIT
+    if not re.search(r"\bLIMIT\s+\d+", cleaned, re.IGNORECASE):
+        cleaned += " LIMIT 50"
+    else:
+        # Check if limit exceeds 100
+        limit_match = re.search(r"\bLIMIT\s+(\d+)", cleaned, re.IGNORECASE)
+        if limit_match and int(limit_match.group(1)) > 100:
+            cleaned = re.sub(r"\bLIMIT\s+\d+", "LIMIT 100", cleaned, flags=re.IGNORECASE)
+
+    return True, cleaned, ""
+
+
+@router.post("/sql", summary="Execute restricted read-only SQL query against Company Brain")
 async def execute_sql(body: SqlQueryRequest, db: AsyncSession = Depends(get_db)):
-    """Runs read-only SQL queries on decision_ledger, official_docs, and pending_approvals."""
-    q = body.query.strip()
-    if not q.upper().startswith("SELECT"):
-        return {"error": "Only SELECT queries are permitted in the explorer.", "results": []}
+    """Runs restricted, allowlisted read-only SQL queries on decision_ledger, official_docs, and pending_approvals."""
+    is_valid, safe_query, err_msg = _validate_safe_select(body.query)
+    if not is_valid:
+        return {"error": err_msg, "sql": body.query, "results": []}
 
     try:
-        res = await db.execute(text(q))
+        res = await db.execute(text(safe_query))
         rows = [dict(r._mapping) for r in res.fetchall()]
-        # Serialize datetime and special objects
         for row in rows:
             for k, v in list(row.items()):
                 if isinstance(v, datetime):
                     row[k] = v.isoformat()
-        return {"sql": q, "count": len(rows), "results": rows}
+        return {"sql": safe_query, "count": len(rows), "results": rows}
     except Exception as exc:
-        return {"error": str(exc), "sql": q, "results": []}
+        return {"error": f"Query execution failed: {exc}", "sql": safe_query, "results": []}
 

@@ -73,6 +73,8 @@ class OcrResponse(BaseModel):
     topic: str
     content: str
     extracted_rules: list[dict[str, Any]] = []
+    status: str = "success"
+    error_message: Optional[str] = None
 
 
 # ── Answer Synthesizer ────────────────────────────────────────────────────────
@@ -265,52 +267,79 @@ async def brain_history(
 )
 async def ocr_spec_sheet(body: OcrRequest):
     """
-    Parses a specification sheet image via Gemini multimodal vision or fallback extractor,
-    returning structured document title, topic, and extracted parameters.
+    Parses a specification sheet image via Gemini multimodal vision.
+    If unconfigured or failed, returns an explicit OCR_UNAVAILABLE / OCR_FAILED
+    status rather than fabricating a false sample specification.
     """
     settings = get_settings()
     filename_clean = (body.filename or "Scanned_Specification").rsplit(".", 1)[0].replace("_", " ").title()
 
+    if not settings.GEMINI_API_KEY:
+        return OcrResponse(
+            title=filename_clean,
+            topic="UNPROCESSED",
+            content=f"[OCR_UNAVAILABLE] Specification image '{body.filename}' was uploaded, but GEMINI_API_KEY is not configured.",
+            extracted_rules=[],
+            status="OCR_UNAVAILABLE",
+            error_message="Multimodal vision provider is unconfigured. Set GEMINI_API_KEY in .env to enable live image OCR.",
+        )
+
     title = filename_clean
     topic = "OCR-SPEC"
-    content = f"Scanned specification from {body.filename}: Maximum voltage limit is 54.0V and response time is 10 ms."
+    content = ""
+    ocr_success = False
+    last_error = ""
 
-    if settings.GEMINI_API_KEY:
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
-            payload = {
-                "contents": [{
-                    "role": "user",
-                    "parts": [
-                        {"text": "Extract the document title, short uppercase topic code, and all specification rules/numbers from this image into JSON."},
-                        {"inlineData": {"mimeType": body.mime_type, "data": body.image_base64}}
-                    ]
-                }],
-                "generationConfig": {
-                    "responseMimeType": "application/json",
-                    "responseSchema": {
-                        "type": "OBJECT",
-                        "properties": {
-                            "title": {"type": "STRING"},
-                            "topic": {"type": "STRING"},
-                            "content": {"type": "STRING"}
-                        },
-                        "propertyOrdering": ["title", "topic", "content"]
-                    }
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
+        payload = {
+            "contents": [{
+                "role": "user",
+                "parts": [
+                    {"text": "Extract the document title, short uppercase topic code, and all specification rules/numbers from this image into JSON."},
+                    {"inlineData": {"mimeType": body.mime_type, "data": body.image_base64}}
+                ]
+            }],
+            "generationConfig": {
+                "responseMimeType": "application/json",
+                "responseSchema": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "title": {"type": "STRING"},
+                        "topic": {"type": "STRING"},
+                        "content": {"type": "STRING"}
+                    },
+                    "propertyOrdering": ["title", "topic", "content"]
                 }
             }
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                res = await client.post(url, json=payload)
-                if res.status_code == 200:
-                    import json
-                    raw_text = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                    if raw_text:
-                        parsed = json.loads(raw_text)
-                        title = parsed.get("title", title)
-                        topic = (parsed.get("topic", topic) or "OCR-SPEC").upper()
-                        content = parsed.get("content", content)
-        except Exception as exc:
-            logger.warning("Gemini Vision OCR fallback triggered: %s", exc)
+        }
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            res = await client.post(url, json=payload)
+            if res.status_code == 200:
+                import json
+                raw_text = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                if raw_text:
+                    parsed = json.loads(raw_text)
+                    title = parsed.get("title", title)
+                    topic = (parsed.get("topic", topic) or "OCR-SPEC").upper()
+                    content = parsed.get("content", "")
+                    if content:
+                        ocr_success = True
+            else:
+                last_error = f"API returned status {res.status_code}"
+    except Exception as exc:
+        logger.warning("Gemini Vision OCR error: %s", exc)
+        last_error = str(exc)
+
+    if not ocr_success:
+        return OcrResponse(
+            title=filename_clean,
+            topic="UNPROCESSED",
+            content=f"[OCR_FAILED] Failed to extract text from {body.filename}: {last_error or 'Vision model returned no text'}",
+            extracted_rules=[],
+            status="OCR_FAILED",
+            error_message=f"Vision extraction failed: {last_error or 'Vision model returned no text'}",
+        )
 
     facts = extract_facts(content)
     rules = [{"unit": f.unit, "label": f.label, "value": f.value} for f in facts.all_facts]
@@ -320,5 +349,6 @@ async def ocr_spec_sheet(body: OcrRequest):
         topic=topic,
         content=content,
         extracted_rules=rules,
+        status="success",
     )
 

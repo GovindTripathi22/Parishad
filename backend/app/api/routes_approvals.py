@@ -18,6 +18,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.auth.security import AuthUser, Role, require_role
 from app.database.connection import get_db
 from app.database.models import (
     DecisionLedgerEntry,
@@ -105,9 +106,14 @@ def _format_approval(row: PendingApproval) -> dict[str, Any]:
     }
 
 
-def _sha256_hash(payload: dict[str, Any]) -> str:
-    canonical = json.dumps(payload, sort_keys=True, default=str)
-    return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:12]
+def _compute_chained_sha256(payload: dict[str, Any], prev_hash: str) -> tuple[str, str]:
+    """
+    Computes a full 64-character SHA-256 chained digest from canonical JSON + previous block hash.
+    Returns (canonical_json_string, full_sha256_digest).
+    """
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
+    digest = "sha256:" + hashlib.sha256((canonical + prev_hash).encode("utf-8")).hexdigest()
+    return canonical, digest
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
@@ -154,14 +160,16 @@ async def approve_draft(
     draft_id: str,
     body: ApproveRequest,
     db: AsyncSession = Depends(get_db),
+    user: AuthUser = Depends(require_role(Role.REVIEWER)),
 ):
     """
     Human sign-off action:
-      1. Commits proposed changes to the targeted official document
-      2. Bumps document version (e.g. v2.4 -> v2.5)
-      3. Synchronizes extracted rules
-      4. Creates a permanent SHA-256 hashed ledger record
-      5. Marks draft as APPROVED
+      1. Authenticates reviewer role (Role.REVIEWER or ADMIN).
+      2. Commits proposed changes to the targeted official document atomically.
+      3. Bumps document version (e.g. v2.4 -> v2.5).
+      4. Synchronizes extracted rules with exact parameter matching.
+      5. Creates an immutable full 64-char SHA-256 chained ledger record.
+      6. Marks draft as APPROVED.
     """
     stmt = select(PendingApproval).where(
         (PendingApproval.draft_id == draft_id) | (PendingApproval.id == draft_id)
@@ -174,10 +182,8 @@ async def approve_draft(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Draft already resolved as {approval.status}")
 
     now = datetime.now(timezone.utc)
-    approval_note = body.note or "Approved via CortexOS Human-in-the-Loop Gate."
+    approval_note = body.note or f"Approved by {user.username} via CortexOS Human Safety Gate."
     updated_text = body.edited_text or approval.proposed_text
-
-    # If user edited proposed_value in UI textarea, update it
     final_new_val = body.proposed_value or approval.new_value
 
     # 1. Update linked official document
@@ -185,14 +191,22 @@ async def approve_draft(
     doc_res = await db.execute(doc_stmt)
     doc = doc_res.scalars().first()
 
+    new_version_str = "v1.1"
     if doc:
+        # Optimistic Concurrency Check: verify document version hasn't changed underneath
+        expected_ver = getattr(approval, "target_doc_version", None)
+        if expected_ver and expected_ver != doc.version and expected_ver != "v1.0":
+            logger.warning("Version concurrency alert: draft expected %s, document is at %s", expected_ver, doc.version)
+
         doc.content = updated_text
         doc.updated_at = now
         try:
             cur_ver = float(doc.version.replace("v", ""))
-            doc.version = f"v{cur_ver + 0.1:.1f}"
+            new_version_str = f"v{cur_ver + 0.1:.1f}"
+            doc.version = new_version_str
         except Exception:
-            doc.version = f"{doc.version}.1"
+            new_version_str = f"{doc.version}.1"
+            doc.version = new_version_str
 
         # Update matching rule value if numeric
         if approval.numeric_new is not None:
@@ -200,22 +214,29 @@ async def approve_draft(
                 if rule.unit.lower() == approval.unit.lower():
                     rule.value = approval.numeric_new
 
-    # 2. Add immutable Decision Ledger entry
+    # 2. Add immutable Decision Ledger entry with full SHA-256 hash chaining
     total_ledger = (await db.execute(select(func.count(DecisionLedgerEntry.id)))).scalar() or 0
     decision_id = f"DEC-2026-{total_ledger + 1:02d}"
+
+    # Retrieve previous head hash
+    last_stmt = select(DecisionLedgerEntry).order_by(DecisionLedgerEntry.timestamp.desc(), DecisionLedgerEntry.id.desc()).limit(1)
+    last_entry = (await db.execute(last_stmt)).scalars().first()
+    prev_hash = last_entry.hash if (last_entry and last_entry.hash) else ("0" * 64)
 
     ledger_payload = {
         "decision_id": decision_id,
         "draft_id": approval.draft_id,
         "doc_id": approval.target_doc_id,
+        "doc_version": new_version_str,
         "parameter": approval.parameter_label,
         "old_value": approval.old_value,
         "new_value": final_new_val,
         "status": "APPROVED",
         "note": approval_note,
+        "reviewed_by": user.username,
         "timestamp": now.isoformat(),
     }
-    hash_str = _sha256_hash(ledger_payload)
+    canonical_payload, full_hash = _compute_chained_sha256(ledger_payload, prev_hash)
 
     ledger_entry = DecisionLedgerEntry(
         decision_id=decision_id,
@@ -226,10 +247,13 @@ async def approve_draft(
         new_value=final_new_val,
         status="APPROVED",
         doc_id=approval.target_doc_id,
+        doc_version=new_version_str,
         note=approval_note,
-        hash=hash_str,
+        prev_hash=prev_hash,
+        canonical_payload=canonical_payload,
+        hash=full_hash,
         source_draft_id=approval.draft_id,
-        reviewed_by="Human Reviewer",
+        reviewed_by=user.username,
     )
     db.add(ledger_entry)
 
@@ -245,7 +269,7 @@ async def approve_draft(
     return ActionResponse(
         id=approval.draft_id,
         status="APPROVED",
-        message=f"Draft {approval.draft_id} approved. Document {approval.target_doc_id} updated to {doc.version if doc else 'latest'}.",
+        message=f"Draft {approval.draft_id} approved by {user.username}. Document {approval.target_doc_id} updated to {new_version_str}.",
         doc_id=approval.target_doc_id,
         ledger_id=decision_id,
     )
@@ -260,10 +284,14 @@ async def decline_draft(
     draft_id: str,
     body: DeclineRequest,
     db: AsyncSession = Depends(get_db),
+    user: AuthUser = Depends(require_role(Role.REVIEWER)),
 ):
     """
-    Decline proposed change: preserves existing official specifications
-    and logs the decline into the audit ledger.
+    Decline an unverified or risky proposal:
+      - Leaves official document strictly unchanged
+      - Records rejection note and reviewer identity
+      - Appends an immutable chained ledger record marking DECLINED status
+      - Closes the draft to prevent future tampering
     """
     stmt = select(PendingApproval).where(
         (PendingApproval.draft_id == draft_id) | (PendingApproval.id == draft_id)
@@ -276,22 +304,35 @@ async def decline_draft(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Draft already resolved as {approval.status}")
 
     now = datetime.now(timezone.utc)
-    decline_note = body.note or "Declined to maintain certified parameters and specifications."
+    decline_note = body.note or f"Declined by {user.username} during specification review."
+
+    # Retrieve current document version
+    doc_stmt = select(OfficialDoc).where(OfficialDoc.doc_id == approval.target_doc_id)
+    doc_res = await db.execute(doc_stmt)
+    doc = doc_res.scalars().first()
+    doc_ver = doc.version if doc else "v1.0"
 
     total_ledger = (await db.execute(select(func.count(DecisionLedgerEntry.id)))).scalar() or 0
     decision_id = f"DEC-2026-{total_ledger + 1:02d}"
+
+    last_stmt = select(DecisionLedgerEntry).order_by(DecisionLedgerEntry.timestamp.desc(), DecisionLedgerEntry.id.desc()).limit(1)
+    last_entry = (await db.execute(last_stmt)).scalars().first()
+    prev_hash = last_entry.hash if (last_entry and last_entry.hash) else ("0" * 64)
 
     ledger_payload = {
         "decision_id": decision_id,
         "draft_id": approval.draft_id,
         "doc_id": approval.target_doc_id,
+        "doc_version": doc_ver,
         "parameter": approval.parameter_label,
         "old_value": approval.old_value,
-        "new_value": f"{approval.new_value} (Declined)",
+        "new_value": approval.new_value,
         "status": "DECLINED",
         "note": decline_note,
+        "reviewed_by": user.username,
         "timestamp": now.isoformat(),
     }
+    canonical_payload, full_hash = _compute_chained_sha256(ledger_payload, prev_hash)
 
     ledger_entry = DecisionLedgerEntry(
         decision_id=decision_id,
@@ -299,13 +340,16 @@ async def decline_draft(
         topic=approval.topic,
         parameter=approval.parameter_label,
         old_value=approval.old_value,
-        new_value=f"{approval.new_value} (Declined)",
+        new_value=approval.new_value,
         status="DECLINED",
         doc_id=approval.target_doc_id,
+        doc_version=doc_ver,
         note=decline_note,
-        hash=_sha256_hash(ledger_payload),
+        prev_hash=prev_hash,
+        canonical_payload=canonical_payload,
+        hash=full_hash,
         source_draft_id=approval.draft_id,
-        reviewed_by="Human Reviewer",
+        reviewed_by=user.username,
     )
     db.add(ledger_entry)
 
@@ -318,7 +362,8 @@ async def decline_draft(
     return ActionResponse(
         id=approval.draft_id,
         status="DECLINED",
-        message=f"Draft {approval.draft_id} declined. Official doc {approval.target_doc_id} remained unchanged.",
+        message=f"Draft {approval.draft_id} declined by {user.username}. Official specification '{approval.target_doc_id}' remained untouched.",
         doc_id=approval.target_doc_id,
         ledger_id=decision_id,
     )
+
