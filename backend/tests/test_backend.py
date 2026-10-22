@@ -29,6 +29,32 @@ async def test_serve_frontend_index():
         assert "alasql" in res.text
 
 @pytest.mark.asyncio
+async def test_serve_frontend_feature_pages():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        pages = [
+            ("/check", "Console // Check an Update"),
+            ("/approvals", "Safety Gate // Approvals"),
+            ("/brain", "Company Brain // Specs"),
+            ("/ledger", "Decision Ledger"),
+            ("/tests", "12 Checks // System Verification"),
+            ("/guide", "Field Manual // System Guide"),
+        ]
+        for route, expected_title in pages:
+            res = await ac.get(route)
+            assert res.status_code == 200, f"Route {route} failed with {res.status_code}"
+            assert expected_title in res.text, f"Title '{expected_title}' not found in {route}"
+            assert "parishad.css" in res.text
+            assert "parishad.js" in res.text
+
+        css_res = await ac.get("/static/parishad.css")
+        assert css_res.status_code == 200
+        assert "--bg-canvas" in css_res.text
+
+        js_res = await ac.get("/static/parishad.js")
+        assert js_res.status_code == 200
+        assert "window.appState" in js_res.text
+
+@pytest.mark.asyncio
 async def test_get_docs():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         res = await ac.get("/api/v1/docs")

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth bg-[#08090C] text-[#E2E8F0]">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('parishad_theme');
+        if (saved === 'light' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        } else {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <title>Field Manual // System Guide — Parishad</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS & Libraries -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.0/dist/alasql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Shared CSS & JS -->
+  <link rel="stylesheet" href="/static/parishad.css" />
+  <script src="/static/parishad.js" defer></script>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-600/30 selection:text-indigo-100">
+
+  <!-- ===================================================================
+       HEADER
+       =================================================================== -->
+  <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-xs group-hover:scale-105 transition">
+        P
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-bold tracking-tight text-white">Parishad</span>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="syncStatusText">Active (:8000)</span>
+        </span>
+      </div>
+    </a>
+
+    <!-- Navigation with 06 Guide ACTIVE -->
+    <nav class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/[0.06]">
+      <a href="/check" class="chapter-tab" id="tab-check">
+        <span class="font-mono text-[11px] opacity-50">01</span>
+        <span>Console</span>
+      </a>
+      <a href="/approvals" class="chapter-tab" id="tab-approvals">
+        <span class="font-mono text-[11px] opacity-50">02</span>
+        <span>Safety Gate</span>
+        <span id="tabPendingBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
+      </a>
+      <a href="/brain" class="chapter-tab" id="tab-brain">
+        <span class="font-mono text-[11px] opacity-50">03</span>
+        <span>Company Brain</span>
+      </a>
+      <a href="/ledger" class="chapter-tab" id="tab-ledger">
+        <span class="font-mono text-[11px] opacity-50">04</span>
+        <span>Ledger &amp; SQL</span>
+      </a>
+      <a href="/tests" class="chapter-tab" id="tab-tests">
+        <span class="font-mono text-[11px] opacity-50">05</span>
+        <span>12 Checks</span>
+      </a>
+      <a href="/guide" class="chapter-tab active" id="tab-guide">
+        <span class="font-mono text-[11px] opacity-50">06</span>
+        <span>Guide</span>
+      </a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2">
+      <a href="/brain" title="Search Company Brain (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
+        <span class="material-symbols-outlined text-[14px]">search</span>
+        <kbd class="font-mono text-[10px] text-slate-400">⌘K</kbd>
+      </a>
+      <button id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme" class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer">
+        <span id="themeIcon" class="material-symbols-outlined text-[16px]">light_mode</span>
+      </button>
+      <button id="soundToggleBtn" onclick="toggleAudioFeedback()" title="Toggle Audio" class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer">
+        <span id="soundIcon" class="material-symbols-outlined text-[16px]">volume_up</span>
+      </button>
+      <button onclick="toggleDemoTour()" title="Guided Walkthrough (Hotkey: D)" class="btn-main px-3 py-1.5 text-xs font-semibold cursor-pointer">
+        <span class="material-symbols-outlined text-[14px]">play_circle</span>
+        <span class="hidden md:inline">Guided Demo</span>
+        <kbd class="font-mono text-[9px] bg-black/30 text-indigo-200 px-1 py-0.5 rounded border border-indigo-400/30">D</kbd>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       MAIN CONTENT: FEATURE 06 FIELD MANUAL & GUIDE
+       =================================================================== -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+
+    <div class="section-label">
+      <span><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> CHAPTER 06 // FIELD MANUAL &amp; OPERATIONAL REFERENCE</span>
+      <span class="text-[11px] font-mono text-slate-400">PAGE: /guide</span>
+    </div>
+
+    <!-- Explainer Banner -->
+    <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-slate-300">menu_book</span>
+      <div>
+        <strong>System Operational Manual:</strong> This guide provides a plain-English explanation of how Parishad works, where deterministic Python logic ends and generative AI begins, what every button does, who has permission to use each action, and how keyboard shortcuts speed up technical review.
+      </div>
+    </div>
+
+    <!-- Section 1: The Core Mental Model -->
+    <section class="obsidian-card p-6 sm:p-8 space-y-4">
+      <h3 class="text-lg font-bold text-white font-display">1. The Core Mental Model: Deterministic vs. Advisory</h3>
+      <p class="text-xs text-slate-300 leading-relaxed font-sans">
+        Modern engineering organizations face a critical risk: as teams distribute across GitHub, Slack, and Jira, technical truth drifts. A pull request subtly changes battery sensor voltage from 54V to 60V, or a support policy shifts from 30 days to 14 days without stakeholder consensus.
+      </p>
+      <p class="text-xs text-slate-300 leading-relaxed font-sans">
+        Parishad solves this by acting as an autonomous company brain. Crucially, <strong>generative AI is NEVER given the authority to approve changes or rewrite documents on its own</strong>.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono pt-2">
+        <div class="p-4 rounded-xl bg-black/30 border border-white/10 space-y-2">
+          <div class="text-emerald-400 font-bold uppercase">Authoritative Deterministic Logic</div>
+          <ul class="text-slate-400 text-[11.5px] space-y-1 list-disc list-inside font-sans">
+            <li>Fact and unit extraction with character span boundaries</li>
+            <li>Parameter-aware rule matching against certified baselines</li>
+            <li>Exact mathematical delta % calculation (with zero-baseline protection)</li>
+            <li>Role-Based Access Control (RBAC) enforcement</li>
+            <li>Optimistic concurrency version locks</li>
+            <li>SHA-256 chained hashing for the Decision Ledger</li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl bg-black/30 border border-white/10 space-y-2">
+          <div class="text-indigo-400 font-bold uppercase">Advisory AI &amp; Specialist Model</div>
+          <ul class="text-slate-400 text-[11.5px] space-y-1 list-disc list-inside font-sans">
+            <li>Dynamic cascading impact identification across cross-domain specs</li>
+            <li>Decision history precedent analysis</li>
+            <li>Targeted parameter diff drafting</li>
+            <li>Parishad Review Specialist (fine-tuned Qwen3.5-4B LoRA) for consistent structured reporting with 100% finding ID preservation</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Comprehensive Button & Feature Directory -->
+    <section class="obsidian-card p-6 sm:p-8 space-y-5">
+      <h3 class="text-lg font-bold text-white font-display">2. Complete Button &amp; Action Reference Directory</h3>
+      <p class="text-xs text-slate-400 font-sans">Every single interactive control, its purpose, target page, and required permission.</p>
+
+      <div class="overflow-x-auto pt-2">
+        <table class="w-full text-left text-xs font-mono">
+          <thead class="text-slate-400 border-b border-white/10 text-[11px] uppercase tracking-wider">
+            <tr>
+              <th class="py-2.5 pr-4">Action / Button</th>
+              <th class="py-2.5 pr-4">Target Page</th>
+              <th class="py-2.5 pr-4">What It Does</th>
+              <th class="py-2.5 text-right">Required Role</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/[0.05] text-slate-300">
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Check Against Official Rules</td>
+              <td class="py-2.5 pr-4"><a href="/check" class="text-indigo-400 hover:underline">/check</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Runs the 4-stage pipeline: sanitizes PII, extracts numeric facts, matches certified rules, and generates structured report.</td>
+              <td class="py-2.5 text-right font-bold text-emerald-400">ENGINEER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Approve &amp; Save (⌘↵)</td>
+              <td class="py-2.5 pr-4"><a href="/approvals" class="text-amber-400 hover:underline">/approvals</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Mutates active official document, increments version (e.g. v2.4 &rarr; v2.5), updates parameter rules, and appends SHA-256 chained block to ledger.</td>
+              <td class="py-2.5 text-right font-bold text-amber-400">REVIEWER / ADMIN</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Decline Change</td>
+              <td class="py-2.5 pr-4"><a href="/approvals" class="text-amber-400 hover:underline">/approvals</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Rejects proposal, leaves certified baseline untouched, and records rejection note in the Decision Ledger.</td>
+              <td class="py-2.5 text-right font-bold text-amber-400">REVIEWER / ADMIN</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Ask Company Brain</td>
+              <td class="py-2.5 pr-4"><a href="/brain" class="text-emerald-400 hover:underline">/brain</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Executes hybrid search across all active official documents and returns grounded citations with similarity scores.</td>
+              <td class="py-2.5 text-right text-slate-400">VIEWER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Index New Specification</td>
+              <td class="py-2.5 pr-4"><a href="/brain" class="text-emerald-400 hover:underline">/brain</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Authors a new certified document, parses all numerical facts into rules, and registers the spec in the database.</td>
+              <td class="py-2.5 text-right font-bold text-rose-400">ADMIN</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Datasheet Vision OCR</td>
+              <td class="py-2.5 pr-4"><a href="/brain" class="text-emerald-400 hover:underline">/brain</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Uploads vendor PDF/image datasheet. Emits transparent OCR_UNAVAILABLE diagnostic when external key is unset.</td>
+              <td class="py-2.5 text-right text-slate-400">ENGINEER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Re-Verify Chain</td>
+              <td class="py-2.5 pr-4"><a href="/ledger" class="text-indigo-400 hover:underline">/ledger</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Crawls the SHA-256 chained hashes in the ledger from genesis (0*64) to head, asserting unbroken continuity.</td>
+              <td class="py-2.5 text-right text-slate-400">VIEWER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Export Audit Bundle</td>
+              <td class="py-2.5 pr-4"><a href="/ledger" class="text-indigo-400 hover:underline">/ledger</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Downloads full immutable JSON audit artifact containing complete decision history and active specifications.</td>
+              <td class="py-2.5 text-right text-slate-400">VIEWER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Run SQL Query</td>
+              <td class="py-2.5 pr-4"><a href="/ledger" class="text-indigo-400 hover:underline">/ledger</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Executes allowlisted, read-only SELECT queries on official_docs, pending_approvals, and decision_ledger.</td>
+              <td class="py-2.5 text-right font-bold text-rose-400">ADMIN</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Re-Run All Checks</td>
+              <td class="py-2.5 pr-4"><a href="/tests" class="text-purple-400 hover:underline">/tests</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Executes the 12 server-side automated integration checks and returns real-time execution telemetry.</td>
+              <td class="py-2.5 text-right text-slate-400">ENGINEER+</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 text-white font-bold">Download Codebase ZIP</td>
+              <td class="py-2.5 pr-4"><a href="/tests" class="text-purple-400 hover:underline">/tests</a></td>
+              <td class="py-2.5 pr-4 text-slate-400 font-sans">Bundles and exports the complete Python backend, frontend assets, and test suite directly in the browser.</td>
+              <td class="py-2.5 text-right text-slate-400">VIEWER+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 3: Keyboard Navigation & Shortcuts -->
+    <section class="obsidian-card p-6 sm:p-8 space-y-4">
+      <h3 class="text-lg font-bold text-white font-display">3. Keyboard Shortcuts Reference</h3>
+      <p class="text-xs text-slate-400 font-sans">Operate Parishad at terminal speed with single-key shortcuts.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono pt-2">
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">1</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open Console (/check)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">2</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open Safety Gate (/approvals)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">3</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open Company Brain (/brain)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">4</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open Ledger &amp; SQL (/ledger)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">5</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open 12 Checks (/tests)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">6</kbd>
+          <div class="text-slate-300 font-sans pt-1">Open Field Guide (/guide)</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">D</kbd>
+          <div class="text-slate-300 font-sans pt-1">Toggle Guided Walkthrough</div>
+        </div>
+        <div class="p-3 rounded-lg bg-black/30 border border-white/10 space-y-1">
+          <kbd class="px-2 py-1 rounded bg-white/10 text-white font-bold">⌘K</kbd>
+          <div class="text-slate-300 font-sans pt-1">Focus Brain Search Input</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="w-full border-t border-white/[0.08] py-8 px-4 sm:px-8 bg-[#060709] text-xs font-mono text-slate-400 mt-12">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-white font-sans text-sm">Parishad / CortexOS</span>
+        <span class="text-slate-600">|</span>
+        <span>Field Manual &amp; Operational Reference</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <a href="/" class="hover:text-white transition">Home</a>
+        <a href="/check" class="hover:text-white transition">Console</a>
+        <a href="/approvals" class="hover:text-white transition">Approvals</a>
+        <a href="/brain" class="hover:text-white transition">Brain</a>
+        <a href="/ledger" class="hover:text-white transition">Ledger</a>
+        <a href="/tests" class="hover:text-white transition">12 Checks</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -200,7 +200,11 @@ except Exception as exc:
 # ---------------------------------------------------------------------------
 
 if FRONTEND_DIR.is_dir():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+    static_dir = FRONTEND_DIR / "static"
+    if static_dir.is_dir():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    else:
+        app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
     @app.get("/", include_in_schema=False)
     async def serve_index() -> FileResponse:
@@ -209,7 +213,7 @@ if FRONTEND_DIR.is_dir():
             return FileResponse(str(index))
         return FileResponse(str(index))  # will 404 naturally
 
-    # Catch-all for SPA routing — serve index.html for any non-API, non-static path
+    # Multi-page & SPA routing — serve specific html page or index.html for non-API paths
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str) -> FileResponse:
         # Don't intercept API or docs routes
@@ -219,7 +223,11 @@ if FRONTEND_DIR.is_dir():
         file_path = FRONTEND_DIR / full_path
         if file_path.is_file():
             return FileResponse(str(file_path))
-        # Fall back to index.html for SPA routing
+        # If route has a matching .html file (e.g. /check -> frontend/check.html)
+        html_file = FRONTEND_DIR / f"{full_path}.html"
+        if html_file.is_file():
+            return FileResponse(str(html_file))
+        # Fall back to index.html
         index = FRONTEND_DIR / "index.html"
         if index.exists():
             return FileResponse(str(index))

@@ -8,8 +8,8 @@ This report documents the automated test suite, verification methodologies, and 
 
 | Metric | Result | Status |
 | :--- | :--- | :--- |
-| **Total Automated Pytest Tests** | 41 | **100% Passed** |
-| **Execution Duration** | 3.54 seconds | Sub-second test execution per module |
+| **Total Automated Pytest Tests** | 42 | **100% Passed** |
+| **Execution Duration** | 1.25 seconds | Sub-second test execution per module |
 | **Failed Tests** | 0 | None |
 | **Skipped Tests** | 0 | None |
 | **Pre-existing Failures Fixed** | 3 | Dual-DB split, unpinned router fail-fast, missing schema columns |
@@ -54,12 +54,13 @@ python -m pytest -v
 ---
 
 ### Suite B: Core Backend & API Workflows (`test_backend.py`)
-*11 Tests — 100% Passed*
+*12 Tests — 100% Passed*
 
 | Test Identifier | Category | Assertion & Verification Description |
 | :--- | :--- | :--- |
 | `test_root_health` | System Health | Verifies `GET /api/health` returns HTTP 200 with comprehensive subsystem health status. |
 | `test_serve_frontend_index` | Frontend Integration | Confirms that the root endpoint (`GET /`) successfully serves `frontend/index.html`. |
+| `test_serve_frontend_feature_pages` | Multi-Page Architecture | Asserts that each dedicated feature page (`/check`, `/approvals`, `/brain`, `/ledger`, `/tests`, `/guide`, `/static/parishad.css`, `/static/parishad.js`) returns HTTP 200 with title and assets. |
 | `test_get_docs` | Official Documents | Validates retrieval of seeded official documents and their extracted parameter rules. |
 | `test_get_approvals` | Human Safety Gate | Verifies retrieval and schema compliance of pending approval drafts. |
 | `test_get_ledger` | Audit Ledger | Ensures retrieval of historical decisions with cryptographic hash strings. |

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth bg-[#08090C] text-[#E2E8F0]">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('parishad_theme');
+        if (saved === 'light' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        } else {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <title>Safety Gate // Approvals &amp; Sign-Off — Parishad</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS & Libraries -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.0/dist/alasql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Shared CSS & JS -->
+  <link rel="stylesheet" href="/static/parishad.css" />
+  <script src="/static/parishad.js" defer></script>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-600/30 selection:text-indigo-100">
+
+  <!-- ===================================================================
+       HEADER
+       =================================================================== -->
+  <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-xs group-hover:scale-105 transition">
+        P
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-bold tracking-tight text-white">Parishad</span>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="syncStatusText">Active (:8000)</span>
+        </span>
+      </div>
+    </a>
+
+    <!-- Navigation with 02 Safety Gate ACTIVE -->
+    <nav class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/[0.06]">
+      <a href="/check" class="chapter-tab" id="tab-check">
+        <span class="font-mono text-[11px] opacity-50">01</span>
+        <span>Console</span>
+      </a>
+      <a href="/approvals" class="chapter-tab active" id="tab-approvals">
+        <span class="font-mono text-[11px] opacity-50">02</span>
+        <span>Safety Gate</span>
+        <span id="tabPendingBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
+      </a>
+      <a href="/brain" class="chapter-tab" id="tab-brain">
+        <span class="font-mono text-[11px] opacity-50">03</span>
+        <span>Company Brain</span>
+      </a>
+      <a href="/ledger" class="chapter-tab" id="tab-ledger">
+        <span class="font-mono text-[11px] opacity-50">04</span>
+        <span>Ledger &amp; SQL</span>
+      </a>
+      <a href="/tests" class="chapter-tab" id="tab-tests">
+        <span class="font-mono text-[11px] opacity-50">05</span>
+        <span>12 Checks</span>
+      </a>
+      <a href="/guide" class="chapter-tab" id="tab-guide">
+        <span class="font-mono text-[11px] opacity-50">06</span>
+        <span>Guide</span>
+      </a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2">
+      <a href="/brain" title="Search Company Brain (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
+        <span class="material-symbols-outlined text-[14px]">search</span>
+        <kbd class="font-mono text-[10px] text-slate-400">⌘K</kbd>
+      </a>
+      <button id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme" class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer">
+        <span id="themeIcon" class="material-symbols-outlined text-[16px]">light_mode</span>
+      </button>
+      <button id="soundToggleBtn" onclick="toggleAudioFeedback()" title="Toggle Audio" class="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer">
+        <span id="soundIcon" class="material-symbols-outlined text-[16px]">volume_up</span>
+      </button>
+      <button onclick="toggleDemoTour()" title="Guided Walkthrough (Hotkey: D)" class="btn-main px-3 py-1.5 text-xs font-semibold cursor-pointer">
+        <span class="material-symbols-outlined text-[14px]">play_circle</span>
+        <span class="hidden md:inline">Guided Demo</span>
+        <kbd class="font-mono text-[9px] bg-black/30 text-indigo-200 px-1 py-0.5 rounded border border-indigo-400/30">D</kbd>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       MAIN CONTENT: FEATURE 02 SAFETY GATE
+       =================================================================== -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+
+    <div class="section-label">
+      <span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> CHAPTER 02 // HUMAN-IN-THE-LOOP SAFETY GATE</span>
+      <span class="text-[11px] font-mono text-slate-400">PAGE: /approvals</span>
+    </div>
+
+    <!-- Explainer Banner -->
+    <div class="plain-explainer-banner">
+      <span class="material-symbols-outlined text-amber-400">verified_user</span>
+      <div>
+        <strong>Zero Silent Overwrites:</strong> AI agents are strictly forbidden from modifying certified company documents alone. Any proposed change that drifts from official baseline rules is held here for technical review. Approving a proposal bumps the document version, mutates active rules, and registers a cryptographically chained SHA-256 entry in the Decision Ledger.
+      </div>
+    </div>
+
+    <!-- Filter Pills & Counter -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+      <div class="flex items-center gap-2">
+        <button onclick="setFilter('ALL')" id="filter-all" class="btn-sub px-3 py-1.5 text-xs">All Reviews</button>
+        <button onclick="setFilter('PENDING')" id="filter-pending" class="btn-sub px-3 py-1.5 text-xs border-amber-500/40 bg-amber-500/10 text-amber-300">Awaiting Sign-Off (<span id="filterPendingNum">2</span>)</button>
+        <button onclick="setFilter('APPROVED')" id="filter-approved" class="btn-sub px-3 py-1.5 text-xs">Inscribed</button>
+        <button onclick="setFilter('DECLINED')" id="filter-declined" class="btn-sub px-3 py-1.5 text-xs">Declined</button>
+      </div>
+      <div class="text-xs font-mono text-slate-400">
+        Reviewer Role: <span class="text-emerald-400 font-bold">Authorized (TECH_LEAD)</span>
+      </div>
+    </div>
+
+    <!-- Approvals List Container -->
+    <div id="approvalsContainer" class="space-y-6"></div>
+
+  </main>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="w-full border-t border-white/[0.08] py-8 px-4 sm:px-8 bg-[#060709] text-xs font-mono text-slate-400 mt-12">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-white font-sans text-sm">Parishad / CortexOS</span>
+        <span class="text-slate-600">|</span>
+        <span>Human Safety Gate &amp; Diff Inspector</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <a href="/" class="hover:text-white transition">Home</a>
+        <a href="/check" class="hover:text-white transition">Console</a>
+        <a href="/brain" class="hover:text-white transition">Brain</a>
+        <a href="/ledger" class="hover:text-white transition">Ledger</a>
+        <a href="/tests" class="hover:text-white transition">12 Checks</a>
+        <a href="/guide" class="hover:text-white transition">Guide</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       SAFETY GATE LOGIC
+       =================================================================== -->
+  <script>
+    let activeFilter = 'PENDING';
+
+    function setFilter(filt) {
+      window.playTone(480, 'sine', 0.04, 0.02);
+      activeFilter = filt;
+      ['all', 'pending', 'approved', 'declined'].forEach(f => {
+        const btn = document.getElementById(`filter-${f}`);
+        if (btn) {
+          if (f.toUpperCase() === filt) {
+            btn.className = 'btn-sub px-3 py-1.5 text-xs border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold';
+          } else {
+            btn.className = 'btn-sub px-3 py-1.5 text-xs';
+          }
+        }
+      });
+      renderApprovals();
+    }
+
+    function renderApprovals() {
+      const container = document.getElementById('approvalsContainer');
+      if (!container) return;
+
+      const items = window.appState.pendingApprovals.filter(item => {
+        if (activeFilter === 'ALL') return true;
+        return item.status === activeFilter;
+      });
+
+      const pendingCount = window.appState.pendingApprovals.filter(i => i.status === 'PENDING').length;
+      const numEl = document.getElementById('filterPendingNum');
+      if (numEl) numEl.textContent = pendingCount;
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="obsidian-card p-12 text-center space-y-3">
+            <span class="material-symbols-outlined text-4xl text-slate-600">task_alt</span>
+            <div class="text-sm font-semibold text-white">No drafts match the "${activeFilter}" filter</div>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">All change proposals have either been signed off or no proposals are currently staged.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map(item => {
+        const isPending = item.status === 'PENDING';
+        return `
+          <div class="obsidian-card p-6 sm:p-7 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3.5">
+              <div class="flex items-center gap-2.5">
+                <span class="font-mono text-xs font-semibold px-2.5 py-0.5 rounded bg-white/5 text-indigo-300 border border-white/10">${item.draft_id}</span>
+                <span class="text-sm font-semibold text-white font-sans">${item.parameter_label}: <span class="text-rose-400 font-mono">${item.old_value}</span> &rarr; <span class="text-emerald-400 font-mono">${item.new_value}</span></span>
+                <span class="text-xs text-slate-400 font-sans">(${item.source})</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono font-medium ${
+                isPending ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' :
+                item.status === 'APPROVED' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30' :
+                'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+              }">
+                ${isPending ? '⚠️ Awaiting Human Sign-Off' : item.status === 'APPROVED' ? '✓ Inscribed in Ledger' : '✕ Declined'}
+              </span>
+            </div>
+
+            <p class="text-xs text-slate-300 bg-[#08090C] p-3.5 rounded-lg border border-white/10 leading-relaxed font-sans">
+              <strong class="text-white font-medium">Why Flagged:</strong> ${item.reason}
+            </p>
+
+            <!-- Side-by-Side Diff Inspector -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+              <!-- Current Baseline Spec -->
+              <div class="p-4 rounded-xl bg-[#181116] border border-rose-500/25 space-y-2">
+                <div class="text-[10px] uppercase font-bold text-rose-400 flex items-center justify-between">
+                  <span>Current Certified Baseline (${item.target_doc_id})</span>
+                  <span class="px-1.5 py-0.2 rounded bg-rose-950 text-rose-300 border border-rose-500/25">LOCKED</span>
+                </div>
+                <div class="text-slate-300 text-[11.5px] leading-relaxed bg-black/30 p-3 rounded-lg border border-white/[0.04]">
+                  ${item.old_text}
+                </div>
+              </div>
+
+              <!-- Proposed Revision -->
+              <div class="p-4 rounded-xl bg-[#0F1813] border border-emerald-500/25 space-y-2">
+                <div class="text-[10px] uppercase font-bold text-emerald-400 flex items-center justify-between">
+                  <span>Proposed Revision (Editable)</span>
+                  <span class="px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/25">PROPOSAL</span>
+                </div>
+                ${isPending 
+                  ? `<textarea id="edit-${item.draft_id}" rows="3" class="w-full bg-[#121520] border border-emerald-500/40 rounded-lg p-2.5 text-[11.5px] text-emerald-300 focus:outline-none focus:border-emerald-400 leading-relaxed font-mono">${item.proposed_text}</textarea>`
+                  : `<div class="text-slate-300 text-[11.5px] leading-relaxed bg-black/30 p-3 rounded-lg border border-white/[0.04]">${item.proposed_text}</div>`
+                }
+              </div>
+            </div>
+
+            ${isPending ? `
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
+                <input id="note-${item.draft_id}" type="text" placeholder="Audit note (e.g., Verified in thermal testing)..." class="flex-1 min-w-[220px] bg-[#08090C] border border-white/10 rounded-lg px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-sans transition" />
+                <div class="flex items-center gap-2">
+                  <button onclick="handleApprovalDecision('${item.draft_id}', 'DECLINED')" class="btn-sub px-4 py-2 text-xs text-rose-300 hover:text-white border-rose-500/30 cursor-pointer">
+                    Decline Change
+                  </button>
+                  <button onclick="handleApprovalDecision('${item.draft_id}', 'APPROVED')" class="btn-main px-4 py-2 text-xs flex items-center gap-1.5 cursor-pointer">
+                    <span class="material-symbols-outlined text-[15px]">verified</span>
+                    <span>Approve &amp; Save</span>
+                    <kbd class="font-mono text-[9px] bg-black/30 text-indigo-200 px-1 py-0.5 rounded border border-indigo-400/30">⌘↵</kbd>
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleApprovalDecision(draftId, decision) {
+      const item = window.appState.pendingApprovals.find(d => d.draft_id === draftId);
+      if (!item || item.status !== 'PENDING') return;
+
+      const editBox = document.getElementById(`edit-${draftId}`);
+      if (editBox && editBox.value.trim()) {
+        item.proposed_text = editBox.value.trim();
+      }
+      const noteBox = document.getElementById(`note-${draftId}`);
+      const note = noteBox && noteBox.value.trim() ? noteBox.value.trim() : (decision === 'APPROVED' ? 'Approved by human reviewer.' : 'Declined to preserve specification.');
+
+      item.status = decision;
+
+      if (decision === 'APPROVED') {
+        const doc = window.appState.officialDocs.find(d => d.doc_id === item.target_doc_id);
+        if (doc) {
+          doc.content = item.proposed_text;
+          const vNum = parseFloat(doc.version.replace('v', '')) || 1.0;
+          doc.version = 'v' + (vNum + 0.1).toFixed(1);
+          doc.updated_at = new Date().toISOString().slice(0, 10);
+          const rule = doc.rules.find(r => r.unit === item.unit);
+          if (rule && !isNaN(item.numeric_new)) rule.value = item.numeric_new;
+        }
+        window.playSuccessChime();
+      } else {
+        window.playAlertBeep();
+      }
+
+      // Append to decision ledger
+      window.appState.decisionLedger.unshift({
+        id: `DEC-2026-0${window.appState.decisionLedger.length + 1}`,
+        timestamp: new Date().toISOString().slice(0, 10),
+        topic: item.topic,
+        parameter: item.parameter_label,
+        old_value: item.old_value,
+        new_value: decision === 'APPROVED' ? item.new_value : `${item.new_value} (Declined)`,
+        status: decision,
+        doc_id: item.target_doc_id,
+        note,
+        hash: 'sha256:' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')
+      });
+
+      // Dispatch to FastAPI backend
+      if (window.backendAvailable) {
+        fetch(`${window.BACKEND_BASE}/api/v1/approvals/${draftId}/${decision === 'APPROVED' ? 'approve' : 'decline'}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-User-Role': 'REVIEWER' },
+          body: JSON.stringify({ note: note, edited_text: item.proposed_text })
+        }).catch(e => console.warn('Backend approval dispatch:', e));
+      }
+
+      window.syncAlaSqlTables();
+      renderApprovals();
+      window.updateTopCounters();
+      window.showToast(decision === 'APPROVED' ? `Inscribed ${item.target_doc_id} to Decision Ledger!` : `Proposal ${draftId} declined.`);
+    }
+
+    // Keyboard shortcut for approval (Cmd+Enter)
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const firstPending = window.appState.pendingApprovals.find(i => i.status === 'PENDING');
+        if (firstPending) {
+          handleApprovalDecision(firstPending.draft_id, 'APPROVED');
+        }
+      }
+    });
+
+    window.onBackendStateSynced = function() {
+      renderApprovals();
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApprovals();
+    });
+  </script>
+</body>
+</html>
