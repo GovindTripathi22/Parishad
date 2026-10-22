@@ -439,3 +439,107 @@ async def execute_sql(body: SqlQueryRequest, db: AsyncSession = Depends(get_db))
     except Exception as exc:
         return {"error": f"Query execution failed: {exc}", "sql": safe_query, "results": []}
 
+
+# ── Gemini API Key Configuration & Verification ─────────────────────────────
+
+class GeminiConfigRequest(BaseModel):
+    gemini_api_key: str
+    gemini_model: str = "gemini-2.5-flash"
+    gemini_embedding_model: str = "gemini-embedding-001"
+
+
+@router.get("/gemini-status", summary="Check Gemini API status and configuration")
+async def get_gemini_status():
+    from app.config import get_settings
+    cfg = get_settings()
+    has_key = bool(cfg.GEMINI_API_KEY and cfg.GEMINI_API_KEY.strip())
+    masked_key = ""
+    if has_key:
+        k = cfg.GEMINI_API_KEY.strip()
+        masked_key = f"{k[:6]}...{k[-4:]}" if len(k) > 10 else "***"
+    return {
+        "configured": has_key,
+        "masked_key": masked_key,
+        "model": cfg.GEMINI_MODEL,
+        "embedding_model": cfg.GEMINI_EMBEDDING_MODEL,
+        "capabilities": {
+            "multimodal_vision_ocr": has_key,
+            "neural_embeddings": has_key,
+            "signal_classification": has_key,
+            "ai_synthesis": has_key,
+        }
+    }
+
+
+@router.post("/configure-gemini", summary="Validate, set, and persist Gemini API key")
+async def configure_gemini(body: GeminiConfigRequest):
+    import re
+    import httpx
+    from app.config import PROJECT_ROOT, get_settings
+
+    key = body.gemini_api_key.strip()
+    if not key:
+        return {"success": False, "error": "API key cannot be empty."}
+
+    # Verify key against Google Generative Language API
+    verify_url = f"https://generativelanguage.googleapis.com/v1beta/models/{body.gemini_model}:generateContent?key={key}"
+    payload = {
+        "contents": [{"parts": [{"text": "Hello"}]}],
+        "generationConfig": {"maxOutputTokens": 5}
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(verify_url, json=payload)
+            if resp.status_code != 200:
+                err_detail = "Authentication failed"
+                try:
+                    err_detail = resp.json().get("error", {}).get("message", resp.text)
+                except Exception:
+                    err_detail = resp.text
+                return {
+                    "success": False,
+                    "error": f"Invalid Gemini API Key ({resp.status_code}): {err_detail}",
+                    "configured": False
+                }
+    except Exception as exc:
+        return {
+            "success": False,
+            "error": f"Network error communicating with Google AI API: {exc}",
+            "configured": False
+        }
+
+    # Persist to .env file
+    env_file = PROJECT_ROOT / ".env"
+    existing_content = ""
+    if env_file.exists():
+        existing_content = env_file.read_text(encoding="utf-8")
+
+    if re.search(r"^GEMINI_API_KEY=.*$", existing_content, flags=re.MULTILINE):
+        new_content = re.sub(r"^GEMINI_API_KEY=.*$", f"GEMINI_API_KEY={key}", existing_content, flags=re.MULTILINE)
+    else:
+        new_content = existing_content + f"\nGEMINI_API_KEY={key}\n"
+
+    if body.gemini_model:
+        if re.search(r"^GEMINI_MODEL=.*$", new_content, flags=re.MULTILINE):
+            new_content = re.sub(r"^GEMINI_MODEL=.*$", f"GEMINI_MODEL={body.gemini_model}", new_content, flags=re.MULTILINE)
+        else:
+            new_content += f"\nGEMINI_MODEL={body.gemini_model}\n"
+
+    env_file.write_text(new_content, encoding="utf-8")
+
+    # Invalidate cached settings
+    get_settings.cache_clear()
+    cfg = get_settings()
+    cfg.GEMINI_API_KEY = key
+    cfg.GEMINI_MODEL = body.gemini_model
+    cfg.GEMINI_EMBEDDING_MODEL = body.gemini_embedding_model
+
+    return {
+        "success": True,
+        "message": "Gemini API key verified and persisted successfully.",
+        "configured": True,
+        "model": cfg.GEMINI_MODEL,
+        "masked_key": f"{key[:6]}...{key[-4:]}" if len(key) > 10 else "***"
+    }
+

@@ -604,10 +604,173 @@
     }
   };
 
+  // 12. Gemini AI Key Management & Verification
+  window.geminiConfig = {
+    configured: false,
+    model: 'gemini-2.5-flash',
+    masked_key: ''
+  };
+
+  window.checkGeminiStatus = async function () {
+    try {
+      const res = await fetch(`${window.BACKEND_BASE}/api/v1/system/gemini-status`);
+      if (res.ok) {
+        const data = await res.json();
+        window.geminiConfig = data;
+        updateGeminiHeaderPill(data);
+      }
+    } catch (e) {}
+  };
+
+  function updateGeminiHeaderPill(cfg) {
+    let pill = document.getElementById('geminiStatusPill');
+    if (!pill) {
+      // Find header right controls and insert before search
+      const headerControls = document.querySelector('header div.flex.items-center.gap-2');
+      if (headerControls) {
+        pill = document.createElement('button');
+        pill.id = 'geminiStatusPill';
+        pill.onclick = window.openGeminiModal;
+        pill.className = 'hidden md:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-lg border transition cursor-pointer';
+        headerControls.insertBefore(pill, headerControls.firstChild);
+      }
+    }
+    if (pill) {
+      if (cfg.configured) {
+        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 font-medium cursor-pointer hover:bg-emerald-950/60 transition';
+        pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Gemini Active (${cfg.model.replace('gemini-', '')})</span>`;
+        pill.title = `Gemini AI is active (${cfg.masked_key}). Click to modify or test.`;
+      } else {
+        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-medium cursor-pointer hover:bg-indigo-500/20 transition';
+        pill.innerHTML = `<span class="material-symbols-outlined text-[13px] text-indigo-400">key</span><span>Configure Gemini</span>`;
+        pill.title = 'Click to activate Gemini Vision OCR, neural embeddings, and AI reasoning';
+      }
+    }
+  }
+
+  window.openGeminiModal = function () {
+    window.playTone(480, 'sine', 0.05, 0.02);
+    let modal = document.getElementById('geminiConfigModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'geminiConfigModal';
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+
+    const isConf = window.geminiConfig.configured;
+    modal.innerHTML = `
+      <div class="w-full max-w-md p-6 rounded-2xl bg-[#0E1017] border border-white/10 shadow-2xl space-y-4 font-sans text-xs">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full ${isConf ? 'bg-emerald-400 animate-pulse' : 'bg-indigo-400'}"></span>
+            <span class="font-bold text-white text-sm font-display">Configure Google Gemini AI</span>
+          </div>
+          <button onclick="closeGeminiModal()" class="text-slate-400 hover:text-white cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <p class="text-slate-400 leading-relaxed text-[11.5px]">
+          Adding your Gemini API key unlocks <strong>Multimodal Datasheet Vision OCR</strong>, <strong>Dense Neural Embeddings (gemini-embedding-001)</strong>, and <strong>Signal Filtering</strong>.
+        </p>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">Google Gemini API Key</label>
+            <input type="password" id="inputGeminiKey" placeholder="${isConf ? 'Current: ' + window.geminiConfig.masked_key : 'AIzaSy...'}" class="w-full bg-[#08090C] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono" />
+          </div>
+
+          <div>
+            <label class="block font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">Target Model</label>
+            <select id="selectGeminiModel" class="w-full bg-[#08090C] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+              <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Recommended: Ultra-fast & Multimodal)</option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+              <option value="gemini-1.5-pro">gemini-1.5-pro (High Reasoning)</option>
+            </select>
+          </div>
+
+          <div id="geminiModalFeedback" class="hidden p-3 rounded-lg text-[11px] font-mono leading-relaxed"></div>
+        </div>
+
+        <div class="pt-2 border-t border-white/[0.08] flex items-center justify-between">
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 hover:underline text-[11px] font-mono flex items-center gap-1">
+            <span>Get free key</span>
+            <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+          </a>
+
+          <div class="flex items-center gap-2">
+            <button onclick="closeGeminiModal()" class="btn-sub px-3 py-1.5 text-xs">Cancel</button>
+            <button id="btnSaveGeminiKey" onclick="saveGeminiApiKey()" class="btn-main px-4 py-1.5 text-xs flex items-center gap-1.5">
+              <span>Save &amp; Activate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  window.closeGeminiModal = function () {
+    const modal = document.getElementById('geminiConfigModal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  window.saveGeminiApiKey = async function () {
+    const key = document.getElementById('inputGeminiKey').value.trim();
+    const model = document.getElementById('selectGeminiModel').value;
+    const fb = document.getElementById('geminiModalFeedback');
+    const btn = document.getElementById('btnSaveGeminiKey');
+
+    if (!key && !window.geminiConfig.configured) {
+      fb.className = 'p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 block';
+      fb.textContent = 'Please enter an API key starting with AIzaSy...';
+      window.playAlertBeep();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Verifying...</span>';
+    fb.className = 'p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 block animate-pulse';
+    fb.textContent = 'Verifying key against Google AI Studio API...';
+
+    try {
+      const resp = await fetch(`${window.BACKEND_BASE}/api/v1/system/configure-gemini`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gemini_api_key: key, gemini_model: model })
+      });
+      const data = await resp.json();
+
+      if (data.success) {
+        fb.className = 'p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 block font-bold';
+        fb.textContent = '✓ API Key Validated! Persisted to .env. All Gemini features are now active.';
+        window.playSuccessChime();
+        await window.checkGeminiStatus();
+        window.showToast('Google Gemini AI is now active!');
+        setTimeout(() => {
+          closeGeminiModal();
+        }, 1500);
+      } else {
+        fb.className = 'p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 block';
+        fb.textContent = data.error || 'Validation failed. Check your key.';
+        window.playAlertBeep();
+      }
+    } catch (err) {
+      fb.className = 'p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 block';
+      fb.textContent = `Connection error: ${err.message}`;
+      window.playAlertBeep();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Save &amp; Activate</span>';
+    }
+  };
+
   // Run initial connectivity check upon DOM readiness
   window.addEventListener('DOMContentLoaded', () => {
     window.updateThemeIcon();
     window.syncAlaSqlTables();
     window.checkBackendConnectivity();
+    window.checkGeminiStatus();
   });
 })();

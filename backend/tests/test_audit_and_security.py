@@ -230,3 +230,23 @@ async def test_approval_action_creates_chained_sha256_ledger_entry():
             if r_row:
                 r_row.value = 54.0
             await s.commit()
+
+
+@pytest.mark.asyncio
+async def test_gemini_status_and_validation():
+    """Verifies that the Gemini status endpoint reports current configuration and rejects invalid keys."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        res = await ac.get("/api/v1/system/gemini-status")
+        assert res.status_code == 200
+        data = res.json()
+        assert "configured" in data
+        assert "capabilities" in data
+
+        # Test rejected with invalid key
+        bad_res = await ac.post("/api/v1/system/configure-gemini", json={
+            "gemini_api_key": "invalid_fake_key_123"
+        })
+        assert bad_res.status_code == 200
+        bad_data = bad_res.json()
+        assert bad_data["success"] is False
+        assert "Invalid Gemini API Key" in bad_data["error"] or "API key" in bad_data["error"]
