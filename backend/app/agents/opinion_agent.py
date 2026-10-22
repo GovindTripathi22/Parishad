@@ -192,13 +192,13 @@ async def analyze_opinion(
                 f"Special Case: Official baseline for {rule_label} is 0 {rule_unit}. "
                 f"Proposed value introduces a non-zero threshold of {proposed_formatted}, requiring human review."
             )
+            reasoning = f"{base_reason} {ai_reason}" if ai_reason else base_reason
         else:
             base_reason = (
                 f"Update changes {rule_label} from official {official_formatted} to {proposed_formatted} "
                 f"({delta_pct}% shift). This exceeds certified tolerances in {matched_doc.get('doc_id')}."
             )
-
-        reasoning = ai_reason or base_reason
+            reasoning = ai_reason or base_reason
 
         return OpinionResult(
             has_conflict=True,
