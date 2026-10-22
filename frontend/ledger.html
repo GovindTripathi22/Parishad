@@ -19,6 +19,8 @@
   </script>
 
   <title>Decision Ledger &amp; SQL — Parishad</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg" />
+  <link rel="alternate icon" href="/static/logo.svg" />
 
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,11 +44,11 @@
        =================================================================== -->
   <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
     <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-xs group-hover:scale-105 transition">
-        P
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-indigo-950/40 p-1 border border-indigo-500/30 shadow-lg shadow-indigo-950/50 flex items-center justify-center group-hover:border-indigo-400 group-hover:scale-105 transition-all duration-200">
+        <img src="/static/logo.svg" alt="Parishad Logo" class="w-full h-full object-contain filter drop-shadow" />
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sm font-bold tracking-tight text-white">Parishad</span>
+        <span class="text-sm font-bold tracking-tight text-white group-hover:text-indigo-200 transition-colors">Parishad</span>
         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span id="syncStatusText">Active (:8000)</span>

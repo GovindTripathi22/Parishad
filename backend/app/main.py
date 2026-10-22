@@ -206,6 +206,13 @@ if FRONTEND_DIR.is_dir():
     else:
         app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon() -> FileResponse:
+        logo = FRONTEND_DIR / "static" / "logo.svg"
+        if logo.is_file():
+            return FileResponse(str(logo), media_type="image/svg+xml")
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
     @app.get("/", include_in_schema=False)
     async def serve_index() -> FileResponse:
         index = FRONTEND_DIR / "index.html"

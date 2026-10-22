@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="p-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12131C" />
+      <stop offset="100%" stop-color="#08090E" />
+    </linearGradient>
+
+    <!-- Council Primary (Indigo to Royal Violet) -->
+    <linearGradient id="p-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8" />
+      <stop offset="60%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4338CA" />
+    </linearGradient>
+
+    <!-- Neural Mesh (Cyan to Sky) -->
+    <linearGradient id="p-cyan" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <!-- Ledger Gold Nexus (Amber to Orange) -->
+    <linearGradient id="p-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <!-- Subtle Glow Filter -->
+    <filter id="p-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <radialGradient id="p-pulse" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Base Rounded Shield with Cybernetic Stroke -->
+  <rect x="6" y="6" width="108" height="108" rx="28" fill="url(#p-bg)" stroke="#3730A3" stroke-width="1.8" />
+  
+  <!-- Ambient Radial Light -->
+  <circle cx="60" cy="56" r="44" fill="url(#p-pulse)" />
+
+  <!-- Outer Isometric Council Hexagon (Subtle dashed telemetry) -->
+  <polygon points="60,18 96,39 96,81 60,102 24,81 24,39" stroke="#4F46E5" stroke-width="1.2" stroke-dasharray="3 3.5" opacity="0.35" fill="none" />
+
+  <!-- Tripartite Council Nodes (3 outer vertices) -->
+  <circle cx="60" cy="18" r="2.5" fill="#38BDF8" opacity="0.8" />
+  <circle cx="96" cy="60" r="2.5" fill="#F59E0B" opacity="0.8" />
+  <circle cx="24" cy="60" r="2.5" fill="#818CF8" opacity="0.8" />
+
+  <!-- Geometric Modern 'P' Sigil (Parishad / CortexOS) -->
+  <!-- 1. Vertical Immutable Ledger Pillar -->
+  <rect x="36" y="30" width="13" height="60" rx="6.5" fill="url(#p-primary)" filter="url(#p-glow)" />
+
+  <!-- 2. Upper Dynamic Synthesis Loop -->
+  <path d="M 46 30 
+           H 68 
+           C 82 30 89 40 89 51 
+           C 89 62 82 72 68 72 
+           H 46 
+           Z" 
+        fill="none" 
+        stroke="url(#p-primary)" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- 3. Inner Brain / Cortex Synapse Flow (Cyan Arc) -->
+  <path d="M 44 43 
+           H 66 
+           C 74 43 78 47 78 51 
+           C 78 55 74 59 66 59 
+           H 44" 
+        fill="none" 
+        stroke="url(#p-cyan)" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        opacity="0.9" />
+
+  <!-- 4. Ground Truth Nexus Core (Golden SHA-256 Decision Node) -->
+  <circle cx="60" cy="51" r="5" fill="url(#p-gold)" filter="url(#p-glow)" />
+  <circle cx="60" cy="51" r="2" fill="#FFFFFF" />
+  <circle cx="60" cy="51" r="8.5" stroke="#F59E0B" stroke-width="1" stroke-dasharray="2 2" opacity="0.7" />
+</svg>
