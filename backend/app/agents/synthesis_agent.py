@@ -49,10 +49,14 @@ async def _generate_ai_summary(
         f"Proposed Change: {proposed_update}\n"
         f"Technical Findings: {human_summary}\n"
     )
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
+            resp = await client.post(
+                url,
+                json={"contents": [{"parts": [{"text": prompt}]}]},
+                headers={"x-goog-api-key": settings.GEMINI_API_KEY},
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")

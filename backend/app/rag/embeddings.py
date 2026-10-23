@@ -29,14 +29,14 @@ DEFAULT_DIMENSION = 768
 
 async def _gemini_embed(text: str, model: str, api_key: str) -> list[float] | None:
     """Fetch text embedding from Google Gemini API."""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
     payload = {
         "model": f"models/{model}",
         "content": {"parts": [{"text": text[:2048]}]},
     }
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(url, json=payload)
+            resp = await client.post(url, json=payload, headers={"x-goog-api-key": api_key})
             if resp.status_code == 200:
                 data = resp.json()
                 embedding = data.get("embedding", {}).get("values")

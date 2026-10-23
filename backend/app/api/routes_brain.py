@@ -113,10 +113,14 @@ async def _synthesize_answer(
             f"Question: {query}\n\n"
             f"Provide a concise, direct, and factual answer in 2-3 sentences. Cite the document ID."
         )
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
+                resp = await client.post(
+                    url,
+                    json={"contents": [{"parts": [{"text": prompt}]}]},
+                    headers={"x-goog-api-key": settings.GEMINI_API_KEY},
+                )
                 if resp.status_code == 200:
                     data = resp.json()
                     text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
@@ -282,7 +286,7 @@ async def _process_ocr(image_base64: str, mime_type: str, filename: str) -> OcrR
     last_error = ""
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
         payload = {
             "contents": [{
                 "role": "user",
@@ -305,7 +309,11 @@ async def _process_ocr(image_base64: str, mime_type: str, filename: str) -> OcrR
             }
         }
         async with httpx.AsyncClient(timeout=20.0) as client:
-            res = await client.post(url, json=payload)
+            res = await client.post(
+                url,
+                json=payload,
+                headers={"x-goog-api-key": settings.GEMINI_API_KEY},
+            )
             if res.status_code == 200:
                 raw_text = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
                 if raw_text:

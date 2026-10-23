@@ -216,7 +216,7 @@ async def _gemini_classify(text: str) -> SignalResult | None:
 
     url = (
         f"https://generativelanguage.googleapis.com/v1beta/"
-        f"models/{model}:generateContent?key={api_key}"
+        f"models/{model}:generateContent"
     )
 
     payload = {
@@ -234,7 +234,7 @@ async def _gemini_classify(text: str) -> SignalResult | None:
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(url, json=payload)
+            resp = await client.post(url, json=payload, headers={"x-goog-api-key": api_key})
             resp.raise_for_status()
 
         body = resp.json()

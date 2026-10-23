@@ -482,7 +482,7 @@ async def configure_gemini(body: GeminiConfigRequest):
         return {"success": False, "error": "API key cannot be empty."}
 
     # Verify key against Google Generative Language API
-    verify_url = f"https://generativelanguage.googleapis.com/v1beta/models/{body.gemini_model}:generateContent?key={key}"
+    verify_url = f"https://generativelanguage.googleapis.com/v1beta/models/{body.gemini_model}:generateContent"
     payload = {
         "contents": [{"parts": [{"text": "Hello"}]}],
         "generationConfig": {"maxOutputTokens": 5}
@@ -490,7 +490,7 @@ async def configure_gemini(body: GeminiConfigRequest):
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(verify_url, json=payload)
+            resp = await client.post(verify_url, json=payload, headers={"x-goog-api-key": key})
             if resp.status_code != 200:
                 err_detail = "Authentication failed"
                 try:
