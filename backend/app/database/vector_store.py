@@ -1,5 +1,5 @@
 """
-CortexOS Vector Store — In-memory vector storage with persistence via SQLite.
+Parishad Vector Store — In-memory vector storage with persistence via SQLite.
 
 Provides cosine-similarity search over document chunk embeddings.
 Used as a component of the hybrid search pipeline.
@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models import VectorChunk
 
-logger = logging.getLogger("cortexos.vector_store")
+logger = logging.getLogger("parishad.vector_store")
 
 
 def cosine_similarity(a: list[float], b: list[float]) -> float:

@@ -1,5 +1,5 @@
 """
-CortexOS Council of Agents — Multi-Agent Consensus Orchestrator.
+Parishad Council of Agents — Multi-Agent Consensus Orchestrator.
 
 Orchestrates the 3-stage consensus pipeline:
   Stage 1: First Opinion Agent (conflict & drift detection)

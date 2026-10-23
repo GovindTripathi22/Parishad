@@ -1,5 +1,5 @@
 """
-CortexOS Ingestion — Slack Connector.
+Parishad Ingestion — Slack Connector.
 
 Handles Slack request signature verification, Events API parsing
 (messages, app_mention, url_verification), and Slack Web API polling.

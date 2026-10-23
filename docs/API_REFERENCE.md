@@ -1,4 +1,4 @@
-# Parishad / CortexOS — API Reference Manual
+# Parishad — API Reference Manual
 
 Complete specification for all REST API endpoints provided by the Parishad backend.
 

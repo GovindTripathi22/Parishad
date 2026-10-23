@@ -1,5 +1,5 @@
 """
-CortexOS — Embedding Generation Module.
+Parishad — Embedding Generation Module.
 
 Generates normalized dense vector embeddings for documents and queries.
 When `GEMINI_API_KEY` is configured, uses Google Gemini API (`gemini-embedding-001`).

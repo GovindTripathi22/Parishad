@@ -1,5 +1,5 @@
 """
-CortexOS — System Tests & Health (View 4)
+Parishad — System Tests & Health (View 4)
 Automated verification tests, health checks, and dashboard metrics.
 """
 from __future__ import annotations

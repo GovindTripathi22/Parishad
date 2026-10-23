@@ -1,5 +1,5 @@
 """
-CortexOS — Prompt Injection & Jailbreak Guard.
+Parishad — Prompt Injection & Jailbreak Guard.
 
 Scores arbitrary user/external input against a library of known attack
 patterns and heuristics before the text reaches the LLM or is stored in the

@@ -1,5 +1,5 @@
 """
-Parishad (CortexOS) — 1-Click Zero-Friction Demo Launcher
+Parishad (Parishad) — 1-Click Zero-Friction Demo Launcher
 Run: python launch_demo.py
 """
 import sys
@@ -25,7 +25,7 @@ def check_health(url: str = "http://127.0.0.1:8000/api/health") -> bool:
 
 def main():
     print("=" * 65)
-    print("  PARISHAD (CORTEXOS) — AUTONOMOUS COMPANY BRAIN & LEDGER")
+    print("  PARISHAD (PARISHAD) — AUTONOMOUS COMPANY BRAIN & LEDGER")
     print("  Live System Demonstration Launcher")
     print("=" * 65)
 
@@ -60,8 +60,8 @@ def main():
     print("  - Tab 4: Press '4' or click '04 Ledger & SQL' -> Run live SQL queries")
     print("  - Tab 5: Press '5' or click '05 12 Checks' -> Re-run automated tests")
     print("  - Theme: Click Sun/Moon icon in header to switch Dark / Light mode")
-    print("  - Script: Read d:\\cortexos\\DEMO_SCRIPT_AND_CHEATSHEET.md")
-    print("  - PDF:    Open d:\\cortexos\\PARISHAD_system demonstration_DEMO_DOSSIER.pdf")
+    print("  - Script: Read d:\\parishad\\DEMO_SCRIPT_AND_CHEATSHEET.md")
+    print("  - PDF:    Open d:\\parishad\\PARISHAD_system demonstration_DEMO_DOSSIER.pdf")
     print("=" * 65)
     print("Press Ctrl+C to close this launcher console.")
 

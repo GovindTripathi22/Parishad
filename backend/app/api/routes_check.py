@@ -1,5 +1,5 @@
 """
-CortexOS — Check an Update (View 1)
+Parishad — Check an Update (View 1)
 End-to-End Pipeline: Privacy Guard → Fact Extraction → Entity Resolution →
 Hybrid Search → Council of Agents Consensus → Human-in-the-Loop Approval Staging.
 """
@@ -168,7 +168,7 @@ async def check_update(body: CheckRequest, db: AsyncSession = Depends(get_db)):
             verdict="blocked",
             title="Prompt Injection Attack Blocked",
             subtitle="Adversarial input detected and neutralized",
-            message="The submitted content contains prompt injection or unsafe patterns attempting to override rules or exfiltrate restricted data. The input has been blocked by CortexOS Security Guard.",
+            message="The submitted content contains prompt injection or unsafe patterns attempting to override rules or exfiltrate restricted data. The input has been blocked by Parishad Security Guard.",
             threats=threats_list,
             privacy_clean=False,
             clean_text=raw_text,

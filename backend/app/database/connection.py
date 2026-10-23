@@ -1,5 +1,5 @@
 """
-CortexOS Database Connection — Async SQLAlchemy session management & startup seeding.
+Parishad Database Connection — Async SQLAlchemy session management & startup seeding.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from app.database.models import (
     DecisionLedgerEntry, VectorChunk,
 )
 
-logger = logging.getLogger("cortexos.db")
+logger = logging.getLogger("parishad.db")
 
 _settings = get_settings()
 

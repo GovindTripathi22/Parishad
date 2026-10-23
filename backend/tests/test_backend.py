@@ -16,7 +16,7 @@ async def test_root_health():
         assert res.status_code == 200
         data = res.json()
         assert data["status"] == "healthy"
-        assert data["service"] == "CortexOS"
+        assert data["service"] == "Parishad"
 
 @pytest.mark.asyncio
 async def test_serve_frontend_index():

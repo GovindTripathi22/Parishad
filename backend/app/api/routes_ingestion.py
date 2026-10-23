@@ -1,5 +1,5 @@
 """
-CortexOS — Ingestion Webhooks & Events
+Parishad — Ingestion Webhooks & Events
 Receive webhook payloads from GitHub, Slack, Jira, and Google Drive.
 Parse, persist as IngestionEvents, and run signal-vs-noise filtering.
 """
@@ -254,7 +254,7 @@ async def process_event(event_id: str, db: AsyncSession = Depends(get_db)):
     """
     Applies the LLM Signal-vs-Noise filter. If classified as a durable decision,
     standard operating procedure, or architectural change, automatically triggers
-    the CortexOS check pipeline.
+    the Parishad check pipeline.
     """
     stmt = select(IngestionEvent).where(IngestionEvent.id == event_id)
     event = (await db.execute(stmt)).scalars().first()

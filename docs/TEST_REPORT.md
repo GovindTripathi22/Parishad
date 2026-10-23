@@ -1,6 +1,6 @@
-# Parishad / CortexOS — Automated Test & Verification Report
+# Parishad — Automated Test & Verification Report
 
-This report documents the automated test suite, verification methodologies, and test results for Parishad (CortexOS).
+This report documents the automated test suite, verification methodologies, and test results for Parishad (Parishad).
 
 ---
 
@@ -20,7 +20,7 @@ This report documents the automated test suite, verification methodologies, and 
 ## 2. Test Execution Command & Environment
 
 ```bash
-cd d:\cortexos
+cd d:\parishad
 python -m pytest -v
 ```
 

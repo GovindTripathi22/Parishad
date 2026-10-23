@@ -1,5 +1,5 @@
 """
-CortexOS — Official Documents Management (View 3)
+Parishad — Official Documents Management (View 3)
 CRUD endpoints for official company specifications and policies.
 On document creation, automatically extracts numeric constraints into rules.
 """

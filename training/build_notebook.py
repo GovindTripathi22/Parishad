@@ -723,7 +723,7 @@ notebook_data = {
     "nbformat_minor": 5
 }
 
-out_path = Path("D:/cortexos/training/parishad_review_training.ipynb")
+out_path = Path("D:/parishad/training/parishad_review_training.ipynb")
 with open(out_path, "w", encoding="utf-8") as f:
     json.dump(notebook_data, f, indent=2)
 

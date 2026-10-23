@@ -1,5 +1,5 @@
 """
-CortexOS Council of Agents — Stage 2: Cross-Review Agent.
+Parishad Council of Agents — Stage 2: Cross-Review Agent.
 
 Takes the Stage 1 opinion and cross-references across the broader Company Brain:
 1. Cascading impacts: checks if modifying this parameter impacts other official documents

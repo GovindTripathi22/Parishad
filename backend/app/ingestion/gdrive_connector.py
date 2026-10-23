@@ -1,5 +1,5 @@
 """
-CortexOS Ingestion — Google Drive Connector.
+Parishad Ingestion — Google Drive Connector.
 
 Handles Google Drive push notifications (change events), document
 content export via the Drive API, and OAuth2 service-account token

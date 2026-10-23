@@ -1,5 +1,5 @@
 """
-CortexOS Ingestion — GitHub Connector.
+Parishad Ingestion — GitHub Connector.
 
 Handles GitHub webhook signature verification, event parsing for pull
 requests, pushes, issues, and issue comments, plus REST API polling.

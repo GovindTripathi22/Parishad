@@ -22,7 +22,7 @@ This guide details how to deploy, configure, and operate the fine-tuned **Parish
 
 1. **Local Model Directory:**
    Save trained adapter files in:
-   `D:\cortexos\training\saved_model\`
+   `D:\parishad\training\saved_model\`
    The directory should contain:
    - `adapter_config.json`
    - `adapter_model.safetensors`

@@ -1,4 +1,4 @@
-# Parishad / CortexOS — System Architecture & Technical Specifications
+# Parishad — System Architecture & Technical Specifications
 **Document Version:** 4.3.0  
 **Target Environment:** Local Python 3.12 / FastAPI / SQLite (or PostgreSQL) / Google Colab SFT  
 **Architecture Classification:** Autonomous Company Brain & Tamper-Evident Decision Governance System
@@ -7,7 +7,7 @@
 
 ## 1. System Overview
 
-Parishad (CortexOS) is an enterprise governance and autonomous decision platform designed to maintain a single immutable source of truth for technical, hardware, and operational specifications.
+Parishad (Parishad) is an enterprise governance and autonomous decision platform designed to maintain a single immutable source of truth for technical, hardware, and operational specifications.
 
 In modern distributed engineering environments, specification drift is one of the highest causes of production incidents:
 - Electrical teams change battery cut-off voltages without notifying firmware or thermal engineers.

@@ -1,5 +1,5 @@
 """
-CortexOS Configuration — Pydantic Settings for all services.
+Parishad Configuration — Pydantic Settings for all services.
 """
 from __future__ import annotations
 
@@ -10,14 +10,14 @@ from pydantic_settings import BaseSettings
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-CANONICAL_DB_FILE = (PROJECT_ROOT / "cortexos.db").as_posix()
+CANONICAL_DB_FILE = (PROJECT_ROOT / "parishad.db").as_posix()
 
 
 class Settings(BaseSettings):
     """Central configuration loaded from environment / .env file."""
 
     # ── App ─────────────────────────────────────────────────────
-    APP_NAME: str = "CortexOS"
+    APP_NAME: str = "Parishad"
     APP_VERSION: str = "3.0.0"
     DEBUG: bool = True
     HOST: str = "0.0.0.0"
@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     GDRIVE_CREDENTIALS_JSON: str = ""
 
     # ── Security ────────────────────────────────────────────────
-    SECRET_KEY: str = "cortexos-dev-secret-change-in-production"
-    ADMIN_API_KEY: str = "cortexos-admin-key"
+    SECRET_KEY: str = "parishad-dev-secret-change-in-production"
+    ADMIN_API_KEY: str = "parishad-admin-key"
 
     # ── Vector Store ────────────────────────────────────────────
     VECTOR_DIMENSION: int = 768

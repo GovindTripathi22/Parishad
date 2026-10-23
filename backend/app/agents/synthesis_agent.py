@@ -1,5 +1,5 @@
 """
-CortexOS Council of Agents — Stage 3: Synthesis Agent.
+Parishad Council of Agents — Stage 3: Synthesis Agent.
 
 Synthesizes the First Opinion and Cross-Review into a definitive recommendation:
 1. Final verdict (CONFLICT_DETECTED | ALIGNED | NEEDS_DISCUSSION)
@@ -43,7 +43,7 @@ async def _generate_ai_summary(
         return None
 
     prompt = (
-        "You are the Lead Synthesizer for CortexOS Council of Agents. "
+        "You are the Lead Synthesizer for Parishad Council of Agents. "
         "Summarize this change for an engineering executive in 2 crisp sentences:\n\n"
         f"Original Context: {original_text}\n"
         f"Proposed Change: {proposed_update}\n"
@@ -129,7 +129,7 @@ async def synthesize_recommendation(
 
         base_summary = (
             f"Update proposes changing {param_label} from certified {official_val} to {proposed_val} "
-            f"({delta_pct}% difference) against '{doc_title}'. CortexOS flagged this change and prepared "
+            f"({delta_pct}% difference) against '{doc_title}'. Parishad flagged this change and prepared "
             f"an approval draft for human sign-off."
         )
         ai_summary = await _generate_ai_summary(base_summary, doc_content, proposed_doc_text)

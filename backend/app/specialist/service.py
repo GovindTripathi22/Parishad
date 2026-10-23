@@ -231,7 +231,7 @@ class ReviewSummaryService:
                 severity="critical",
                 title="Security Alert Flagged by Guard",
                 description=f"Automated security guard detected adversarial patterns: {sec_desc}",
-                evidence=[FindingEvidence(source="CortexOS Security Guard", location="Input Inspection")],
+                evidence=[FindingEvidence(source="Parishad Security Guard", location="Input Inspection")],
                 impact="Potential prompt injection or safety rule override attempt.",
                 recommended_fix="Block update and conduct security review of submission origin.",
                 confidence="high",

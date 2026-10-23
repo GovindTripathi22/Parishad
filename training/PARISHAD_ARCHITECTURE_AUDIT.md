@@ -1,6 +1,6 @@
 # Parishad Architecture Audit
 
-**Repository:** `https://github.com/GovindTripathi22/Parishad` (Local root: `D:\cortexos`)  
+**Repository:** `https://github.com/GovindTripathi22/Parishad` (Local root: `D:\parishad`)  
 **Audit Date:** October 2026  
 **Auditor:** Parishad Review Specialist Engineering Team  
 
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Parishad (internally codebase-named CortexOS) is an autonomous "Company Brain" and human-in-the-loop decision ledger. Its primary purpose is verifying proposed technical and business changes (from Pull Requests, Slack messages, Jira tickets, and Google Docs) against certified company specifications, official rules, system dependencies, and historical decisions.
+Parishad (internally codebase-named Parishad) is an autonomous "Company Brain" and human-in-the-loop decision ledger. Its primary purpose is verifying proposed technical and business changes (from Pull Requests, Slack messages, Jira tickets, and Google Docs) against certified company specifications, official rules, system dependencies, and historical decisions.
 
 This document details the architectural audit conducted prior to training and integrating the **Parishad Review Specialist** language model.
 

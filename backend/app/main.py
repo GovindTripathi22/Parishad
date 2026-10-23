@@ -1,5 +1,5 @@
 """
-CortexOS — Company Brain & Decision Ledger
+Parishad — Autonomous Company Brain & Decision Ledger
 FastAPI application entry point.
 """
 
@@ -28,7 +28,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
 )
-logger = logging.getLogger("cortexos")
+logger = logging.getLogger("parishad")
 
 # ---------------------------------------------------------------------------
 # Lifespan — DB init on startup
@@ -38,7 +38,7 @@ logger = logging.getLogger("cortexos")
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Initialise the database on startup."""
-    logger.info("CortexOS starting up …")
+    logger.info("Parishad starting up …")
     try:
         from app.database.connection import init_db
 
@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     except Exception as exc:
         logger.error("Database initialisation failed: %s", exc)
     yield
-    logger.info("CortexOS shutting down …")
+    logger.info("Parishad shutting down …")
 
 
 # ---------------------------------------------------------------------------
@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="CortexOS — Company Brain & Decision Ledger",
+    title="Parishad — Autonomous Company Brain & Decision Ledger",
     version="3.0.0",
     description=(
         "Unified platform for checking company updates against official documents, "
@@ -106,8 +106,8 @@ async def root_health():
     is_healthy = db_status == "connected"
     return {
         "status": "healthy" if is_healthy else "degraded",
-        "service": "CortexOS",
-        "service_name": "CortexOS — Parishad Autonomous Company Brain",
+        "service": "Parishad",
+        "service_name": "Parishad — Autonomous Company Brain & Decision Ledger",
         "version": "4.3.0",
         "components": {
             "backend": "ready",
@@ -245,7 +245,7 @@ else:
     @app.get("/", include_in_schema=False)
     async def root() -> dict[str, str]:
         return {
-            "service": "CortexOS — Company Brain & Decision Ledger",
+            "service": "Parishad — Autonomous Company Brain & Decision Ledger",
             "version": "3.0.0",
             "docs": "/docs",
         }

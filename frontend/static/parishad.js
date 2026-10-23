@@ -1,5 +1,5 @@
 /**
- * Parishad / CortexOS — Shared Core Client Library
+ * Parishad — Shared Core Client Library
  * Handles Web Audio, State Sync (FastAPI & AlaSQL), Theme Switching,
  * Toast Notifications, Keyboard Shortcuts, and Guided Demo Navigation.
  */
@@ -457,13 +457,13 @@
         return;
       }
       const zip = new JSZip();
-      zip.file('README.md', '# Parishad / CortexOS\nAutonomous Company Brain & Decision Ledger.\n\nRun:\npython run.py\n');
+      zip.file('README.md', '# Parishad\nAutonomous Company Brain & Decision Ledger.\n\nRun:\npython run.py\n');
       zip.file('backend/requirements.txt', 'fastapi==0.115.6\nuvicorn[standard]==0.34.0\npydantic==2.10.4\nsqlalchemy==2.0.36\naiosqlite==0.20.0\nhttpx==0.28.1\n');
       
       const blob = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'Parishad-CortexOS-Production.zip';
+      a.download = 'Parishad-Parishad-Production.zip';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

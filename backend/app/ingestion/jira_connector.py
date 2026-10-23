@@ -1,5 +1,5 @@
 """
-CortexOS Ingestion — Jira & Linear Connectors.
+Parishad Ingestion — Jira & Linear Connectors.
 
 Handles Jira Cloud/Server webhook payloads, REST API v3 polling via
 Basic auth, and provides a ``LinearConnector`` subclass for Linear

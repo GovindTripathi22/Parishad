@@ -1,6 +1,6 @@
-# Parishad / CortexOS — Local Setup & Deployment Guide
+# Parishad — Local Setup & Deployment Guide
 
-This guide provides instructions for setting up, configuring, running, testing, and fine-tuning Parishad (CortexOS) locally and in cloud environments.
+This guide provides instructions for setting up, configuring, running, testing, and fine-tuning Parishad (Parishad) locally and in cloud environments.
 
 ---
 
@@ -50,14 +50,14 @@ pip install torch transformers peft accelerate bitsandbytes
 
 ## 3. Environment Variables (`.env`)
 
-Create a `.env` file in the project root directory (`d:/cortexos/.env` or root):
+Create a `.env` file in the project root directory (`d:/parishad/.env` or root):
 
 ```dotenv
 # ==============================================================================
 # DATABASE CONFIGURATION
 # ==============================================================================
-# The backend automatically resolves CANONICAL_DB_FILE to project root cortexos.db
-DATABASE_URL=sqlite+aiosqlite:///./cortexos.db
+# The backend automatically resolves CANONICAL_DB_FILE to project root parishad.db
+DATABASE_URL=sqlite+aiosqlite:///./parishad.db
 
 # ==============================================================================
 # EXTERNAL AI / EMBEDDINGS (ADVISORY ONLY)
@@ -79,8 +79,8 @@ PARISHAD_SPECIALIST_TIMEOUT_SECONDS=15.0
 # ==============================================================================
 # SECURITY & ACCESS CONTROL (RBAC)
 # ==============================================================================
-SECRET_KEY=cortexos-dev-secret-change-in-production-env
-ADMIN_API_KEY=cortexos-admin-key-2026
+SECRET_KEY=parishad-dev-secret-change-in-production-env
+ADMIN_API_KEY=parishad-admin-key-2026
 
 # ==============================================================================
 # INGESTION WEBHOOKS & CONNECTORS (OPTIONAL)
@@ -179,7 +179,7 @@ Enforces strict 10-point programmatic validation:
 ### Step 4: Deploy the Trained Adapter Locally
 Download the trained adapter folder from Google Drive into the Parishad directory:
 ```
-cortexos/
+parishad/
 └── models/
     └── parishad_review_specialist/
         ├── adapter_config.json

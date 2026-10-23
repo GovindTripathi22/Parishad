@@ -1,4 +1,4 @@
-# Parishad (CortexOS) — Executive Demonstration Script & Cheatsheet
+# Parishad (Parishad) — Executive Demonstration Script & Cheatsheet
 
 > **Autonomous Company Brain & Cryptographic Decision Ledger**  
 > *Engineered for high-velocity engineering teams in automotive firmware, radar sensors, cloud infrastructure, and enterprise operations.*
@@ -11,7 +11,7 @@
 >
 > *An engineer might change a battery voltage threshold in a pull request from 54 volts to 60 volts to handle cold-crank spikes. It passes unit tests and code review, but silently violates an automotive electrical safety specification certified six months earlier. In production, this causes hardware burnouts, regulatory non-compliance, and catastrophic incidents.*
 >
-> *I built **Parishad (CortexOS)** to solve this specification drift problem.*
+> *I built **Parishad (Parishad)** to solve this specification drift problem.*
 >
 > *Parishad is an AI-native consensus council and immutable decision ledger. It sits between incoming proposals and production systems. When a proposed change arrives, a 4-stage pipeline extracts numeric constraints, queries a hybrid semantic knowledge vault, evaluates safety against certified rules, and runs a 3-stage multi-agent consensus council.*
 >

@@ -1,5 +1,5 @@
 """
-CortexOS — Human-in-the-Loop Approvals (View 2)
+Parishad — Human-in-the-Loop Approvals (View 2)
 List, inspect, approve, and decline pending drafts.
 Approving a draft atomically updates the official document, bumps its version,
 updates extracted rules, and records an immutable SHA-256 ledger entry.
@@ -182,7 +182,7 @@ async def approve_draft(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Draft already resolved as {approval.status}")
 
     now = datetime.now(timezone.utc)
-    approval_note = body.note or f"Approved by {user.username} via CortexOS Human Safety Gate."
+    approval_note = body.note or f"Approved by {user.username} via Parishad Human Safety Gate."
     updated_text = body.edited_text or approval.proposed_text
     final_new_val = body.proposed_value or approval.new_value
 

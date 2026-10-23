@@ -52,7 +52,7 @@
   <circle cx="96" cy="60" r="2.5" fill="#F59E0B" opacity="0.8" />
   <circle cx="24" cy="60" r="2.5" fill="#818CF8" opacity="0.8" />
 
-  <!-- Geometric Modern 'P' Sigil (Parishad / CortexOS) -->
+  <!-- Geometric Modern 'P' Sigil (Parishad) -->
   <!-- 1. Vertical Immutable Ledger Pillar -->
   <rect x="36" y="30" width="13" height="60" rx="6.5" fill="url(#p-primary)" filter="url(#p-glow)" />
 
@@ -69,7 +69,7 @@
         stroke-linecap="round" 
         stroke-linejoin="round" />
 
-  <!-- 3. Inner Brain / Cortex Synapse Flow (Cyan Arc) -->
+  <!-- 3. Inner Brain / Neural Synapse Flow (Cyan Arc) -->
   <path d="M 44 43 
            H 66 
            C 74 43 78 47 78 51 

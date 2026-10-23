@@ -1,5 +1,5 @@
 """
-CortexOS — Entity Resolution & Deduplication.
+Parishad — Entity Resolution & Deduplication.
 
 Extracts structured entity mentions from free-form text, normalises them,
 deduplicates, and links document references to known Official Docs in the

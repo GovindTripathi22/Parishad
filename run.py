@@ -1,5 +1,5 @@
 """
-CortexOS — Company Brain & Decision Ledger
+Parishad — Autonomous Company Brain & Decision Ledger
 Startup script to launch the FastAPI server and serve the UI.
 """
 import sys
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         except Exception:
             pass
     print("=" * 65)
-    print("  [*] CortexOS -- Autonomous Company Brain & Decision Ledger")
+    print("  [*] Parishad -- Autonomous Company Brain & Decision Ledger")
     print("  [>] Web UI & API running at: http://localhost:8000")
     print("  [>] Swagger Interactive API docs: http://localhost:8000/docs")
     print("=" * 65)

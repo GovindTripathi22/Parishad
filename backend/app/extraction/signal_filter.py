@@ -1,5 +1,5 @@
 """
-CortexOS — Signal-vs-Noise Filter.
+Parishad — Signal-vs-Noise Filter.
 
 Classifies incoming text into actionable signal categories or rejects it as
 noise.  When a ``GEMINI_API_KEY`` is configured the module calls the Gemini

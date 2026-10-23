@@ -1,5 +1,5 @@
 """
-CortexOS / Parishad — Authentication & Role-Based Access Control (RBAC).
+Parishad — Authentication & Role-Based Access Control (RBAC).
 
 Defines roles, token/key verification, and permission enforcement for API routes:
 - VIEWER: Read-only access to docs, ledger, and system health.
@@ -18,7 +18,7 @@ from pydantic import BaseModel
 
 from app.config import get_settings
 
-logger = logging.getLogger("cortexos.auth")
+logger = logging.getLogger("parishad.auth")
 
 
 class Role(str, enum.Enum):
@@ -61,8 +61,8 @@ def get_current_user(
     if not provided_key and authorization and authorization.startswith("Bearer "):
         provided_key = authorization.split("Bearer ", 1)[1].strip()
 
-    admin_key = getattr(settings, "ADMIN_API_KEY", "cortexos-admin-key")
-    secret_key = getattr(settings, "SECRET_KEY", "cortexos-dev-secret-change-in-production")
+    admin_key = getattr(settings, "ADMIN_API_KEY", "parishad-admin-key")
+    secret_key = getattr(settings, "SECRET_KEY", "parishad-dev-secret-change-in-production")
 
     if provided_key:
         if provided_key == admin_key:
@@ -75,7 +75,7 @@ def get_current_user(
             return AuthUser(user_id="usr_viewer", username="guest_viewer", role=Role.VIEWER)
 
     # 2. Development Role Header Override (Strictly allowed ONLY if default dev secret is active)
-    if secret_key == "cortexos-dev-secret-change-in-production":
+    if secret_key == "parishad-dev-secret-change-in-production":
         if x_user_role:
             role_norm = x_user_role.lower().strip()
             for r in Role:

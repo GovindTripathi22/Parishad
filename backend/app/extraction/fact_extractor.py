@@ -1,5 +1,5 @@
 """
-CortexOS — Universal Fact & Numeric Value Extractor.
+Parishad — Universal Fact & Numeric Value Extractor.
 
 Parses arbitrary domain text and extracts every numeric value along with its
 unit, producing structured ``ExtractedFact`` objects.  Also detects *change

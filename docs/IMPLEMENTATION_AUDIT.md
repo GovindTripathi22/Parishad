@@ -1,14 +1,14 @@
-# Parishad / CortexOS — Implementation & Architecture Audit
+# Parishad — Implementation & Architecture Audit
 **Document Version:** 4.3.0  
 **Audit Date:** 2026-10-22  
 **Auditor:** Senior Engineering Architecture Team  
-**Scope:** Complete repository audit of `d:\cortexos` (FastAPI backend, Council of Agents, Ingestion Connectors, Cryptographic Ledger, Company Brain RAG, Parishad Review Specialist, and Interactive Frontend).
+**Scope:** Complete repository audit of `d:\parishad` (FastAPI backend, Council of Agents, Ingestion Connectors, Cryptographic Ledger, Company Brain RAG, Parishad Review Specialist, and Interactive Frontend).
 
 ---
 
 ## 1. Executive Summary
 
-Parishad (CortexOS) is an autonomous Company Brain and Decision Ledger engineered to prevent specification drift in high-consequence engineering, hardware, and operational environments (such as 48V Battery Management Systems, 77GHz Automotive Radar, and Customer SLA/Refund Policies).
+Parishad (Parishad) is an autonomous Company Brain and Decision Ledger engineered to prevent specification drift in high-consequence engineering, hardware, and operational environments (such as 48V Battery Management Systems, 77GHz Automotive Radar, and Customer SLA/Refund Policies).
 
 The system intercepts incoming change proposals across communication and code channels (GitHub, Slack, Jira, Drive, manual console), subjects them to deterministic parameter extraction and rule conflict detection, validates cascading impacts through a 3-stage Council of Agents, routes conflicting proposals to a human-in-the-loop safety gate, atomically updates official specifications upon approval, and records an immutable cryptographic audit trail.
 

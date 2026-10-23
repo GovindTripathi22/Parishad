@@ -1,5 +1,5 @@
 """
-CortexOS — Hybrid Search Module.
+Parishad — Hybrid Search Module.
 
 Combines BM25 lexical search, TF-IDF n-gram scoring, and vector semantic similarity
 into a unified ranking algorithm with domain and unit-preference boosts.

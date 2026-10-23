@@ -1,5 +1,5 @@
 """
-CortexOS — Company Brain & Ask AI (View 3)
+Parishad — Company Brain & Ask AI (View 3)
 Source-grounded querying against official documents and decision history.
 Uses hybrid search to retrieve context and Gemini to synthesize plain-English answers.
 """
@@ -103,7 +103,7 @@ async def _synthesize_answer(
     # If Gemini is configured, call generative endpoint
     if settings.GEMINI_API_KEY:
         prompt = (
-            f"You are the CortexOS Company Brain Assistant. Answer the question using ONLY the provided official context.\n"
+            f"You are the Parishad Company Brain Assistant. Answer the question using ONLY the provided official context.\n"
             f"Official Document: {doc_title} ({doc_id})\n"
             f"Specification Content: {doc_content}\n"
             f"Certified Rules: {rules_text}\n"

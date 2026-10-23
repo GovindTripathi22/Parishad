@@ -1,5 +1,5 @@
 """
-CortexOS Database Models — SQLAlchemy ORM for all persistent entities.
+Parishad Database Models — SQLAlchemy ORM for all persistent entities.
 
 Tables:
   - official_docs:      Source-of-truth company documents & specifications

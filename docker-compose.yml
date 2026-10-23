@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  cortexos-api:
+  parishad-api:
     build: ./backend
     ports:
       - "8000:8000"
@@ -8,6 +8,6 @@ services:
       - ./backend:/app
       - ./frontend:/frontend
     environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./cortexos.db
+      - DATABASE_URL=sqlite+aiosqlite:///./parishad.db
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     restart: unless-stopped

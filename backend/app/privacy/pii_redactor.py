@@ -1,5 +1,5 @@
 """
-CortexOS — PII Detection & Redaction Module.
+Parishad — PII Detection & Redaction Module.
 
 Detects and redacts personally identifiable information (PII) and sensitive
 secrets from arbitrary text before it enters the Company Brain pipeline.

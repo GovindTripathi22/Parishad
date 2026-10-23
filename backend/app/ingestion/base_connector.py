@@ -1,5 +1,5 @@
 """
-CortexOS Ingestion — Base Connector ABC.
+Parishad Ingestion — Base Connector ABC.
 
 Provides the abstract contract that every source connector (GitHub, Slack,
 Jira, Google Drive, …) must implement, plus a shared `save_event` helper

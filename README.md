@@ -1,4 +1,4 @@
-# CortexOS — Autonomous "Company Brain" & Decision Ledger
+# Parishad — Autonomous "Company Brain" & Decision Ledger
 
 > Inspired by **YC 2026 RFS (The Company Brain)** & **Multi-Agent Consensus Architectures**
 
@@ -15,7 +15,7 @@
 
 ---
 
-## 🚀 How CortexOS Works
+## 🚀 How Parishad Works
 
 ```
  Incoming Updates (PRs, Slack, Jira, Drive)
@@ -59,7 +59,7 @@
 ## 📦 Project Structure
 
 ```
-d:\cortexos
+d:\parishad
 │
 ├── run.py                          # 1-click server runner (uvicorn on port 8000)
 ├── docker-compose.yml              # Multi-container orchestration
@@ -122,12 +122,12 @@ d:\cortexos
 
 ### 1. Install Dependencies
 ```powershell
-pip install -r d:\cortexos\backend\requirements.txt
+pip install -r d:\parishad\backend\requirements.txt
 ```
 
-### 2. Start CortexOS
+### 2. Start Parishad
 ```powershell
-python d:\cortexos\run.py
+python d:\parishad\run.py
 ```
 
 Open your browser to:

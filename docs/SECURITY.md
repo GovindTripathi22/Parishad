@@ -1,4 +1,4 @@
-# Parishad / CortexOS — Enterprise Security & Threat Model
+# Parishad — Enterprise Security & Threat Model
 
 This document outlines the threat modeling, defense-in-depth architecture, privacy controls, access governance, and cryptographic guarantees implemented across Parishad.
 
@@ -20,7 +20,7 @@ Parishad ingests updates from multiple semi-trusted and untrusted sources (GitHu
 
 ## 2. Prompt Injection Defense
 
-All inbound content submitted to `/api/v1/check` passes through the `InjectionGuard` module ([`backend/app/privacy/injection_guard.py`](file:///d:/cortexos/backend/app/privacy/injection_guard.py)) prior to fact extraction, vector search, or LLM agent invocation.
+All inbound content submitted to `/api/v1/check` passes through the `InjectionGuard` module ([`backend/app/privacy/injection_guard.py`](file:///d:/parishad/backend/app/privacy/injection_guard.py)) prior to fact extraction, vector search, or LLM agent invocation.
 
 ### Defense Mechanisms:
 - **Heuristic Pattern Scoring:** Scans for over 15 known jailbreak, role-override, and instruction-ignoring patterns (e.g., `ignore previous instructions`, `system prompt override`, `act as system administrator`, `bypass safety`).
@@ -34,7 +34,7 @@ All inbound content submitted to `/api/v1/check` passes through the `InjectionGu
 
 ## 3. PII Detection & Sensitive Data Redaction
 
-The `PIIRedactor` module ([`backend/app/privacy/pii_redactor.py`](file:///d:/cortexos/backend/app/privacy/pii_redactor.py)) sanitizes text when `enforce_privacy=True`.
+The `PIIRedactor` module ([`backend/app/privacy/pii_redactor.py`](file:///d:/parishad/backend/app/privacy/pii_redactor.py)) sanitizes text when `enforce_privacy=True`.
 
 ### Redacted Entities:
 - **Email Addresses:** Matched via RFC-5322 regex → replaced with `[EMAIL_REDACTED]`.
@@ -50,7 +50,7 @@ The `PIIRedactor` module ([`backend/app/privacy/pii_redactor.py`](file:///d:/cor
 
 ## 4. Role-Based Access Control (RBAC)
 
-Parishad implements server-side role validation in [`backend/app/auth/security.py`](file:///d:/cortexos/backend/app/auth/security.py) using FastAPI dependency injection.
+Parishad implements server-side role validation in [`backend/app/auth/security.py`](file:///d:/parishad/backend/app/auth/security.py) using FastAPI dependency injection.
 
 ### Role Hierarchy:
 | Role | Privileges | Target Operations |
@@ -69,7 +69,7 @@ Parishad implements server-side role validation in [`backend/app/auth/security.p
 
 ## 5. SQL Explorer Security & Allowlisting
 
-The System Utility module provides an in-app SQL Explorer for auditing database state. To prevent SQL injection and unauthorized data modification, [`backend/app/api/routes_system.py`](file:///d:/cortexos/backend/app/api/routes_system.py) enforces strict programmatic validation:
+The System Utility module provides an in-app SQL Explorer for auditing database state. To prevent SQL injection and unauthorized data modification, [`backend/app/api/routes_system.py`](file:///d:/parishad/backend/app/api/routes_system.py) enforces strict programmatic validation:
 
 1. **Strict SELECT-Only Enforcement:** Queries must begin with `SELECT` (case-insensitive).
 2. **Prohibited Keywords & Syntax:**

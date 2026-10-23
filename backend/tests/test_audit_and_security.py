@@ -1,5 +1,5 @@
 """
-Audit, Security, and Cryptographic Ledger Integrity Test Suite for Parishad / CortexOS.
+Audit, Security, and Cryptographic Ledger Integrity Test Suite for Parishad.
 
 Verifies:
 1. Server-side Role-Based Access Control (RBAC).

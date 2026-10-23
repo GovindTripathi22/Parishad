@@ -1,5 +1,5 @@
 """
-CortexOS — Immutable Decision Ledger (View 3)
+Parishad — Immutable Decision Ledger (View 3)
 Auditable, tamper-evident record of all approved and declined policy/spec updates
 with SHA-256 cryptographic hashes.
 """
@@ -230,7 +230,7 @@ async def export_ledger(db: AsyncSession = Depends(get_db)):
 
     return JSONResponse(
         content=bundle,
-        headers={"Content-Disposition": "attachment; filename=cortexos_audit_ledger.json"},
+        headers={"Content-Disposition": "attachment; filename=parishad_audit_ledger.json"},
     )
 
 

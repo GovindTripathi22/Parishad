@@ -2,7 +2,7 @@
 
 Welcome to the **Parishad Review Specialist** engineering directory.
 
-The Parishad Review Specialist is a domain-adapted language model trained specifically to understand the architecture, terminology, and review workflow of Parishad (CortexOS). It takes unstructured proposed updates (from Pull Requests, Slack, Jira, or Google Docs) along with retrieved company specifications and pipeline findings, and generates complete, evidence-grounded, schema-compliant review reports in strict JSON.
+The Parishad Review Specialist is a domain-adapted language model trained specifically to understand the architecture, terminology, and review workflow of Parishad (Parishad). It takes unstructured proposed updates (from Pull Requests, Slack, Jira, or Google Docs) along with retrieved company specifications and pipeline findings, and generates complete, evidence-grounded, schema-compliant review reports in strict JSON.
 
 ---
 
@@ -69,10 +69,10 @@ If a Colab session disconnects:
 
 ### 1. Model Storage Location
 Keep trained model weights outside Git. Place the exported adapter and tokenizer in:
-`D:\cortexos\training\saved_model\`
+`D:\parishad\training\saved_model\`
 
 ### 2. Enable in `.env`
-In `D:\cortexos\.env`, add or update:
+In `D:\parishad\.env`, add or update:
 ```env
 PARISHAD_LOCAL_SUMMARY_ENABLED=true
 PARISHAD_LOCAL_MODEL_PATH="training/saved_model"
@@ -82,7 +82,7 @@ PARISHAD_LOCAL_TIMEOUT_SECONDS=15.0
 
 ### 3. Start Parishad
 ```powershell
-python d:\cortexos\run.py
+python d:\parishad\run.py
 ```
 When enabled, Parishad's `ReviewSummaryService` will automatically invoke the local fine-tuned model for all check requests (`/api/v1/check`).
 

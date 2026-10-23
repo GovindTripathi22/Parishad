@@ -1,1 +1,1 @@
-# CortexOS — Autonomous Company Brain & Decision Ledger
+# Parishad — Autonomous Company Brain & Decision Ledger

@@ -1,5 +1,5 @@
 """
-CortexOS Council of Agents — Stage 1: First Opinion Agent.
+Parishad Council of Agents — Stage 1: First Opinion Agent.
 
 Performs the initial domain analysis of an incoming update against the top-matched
 official document and extracted facts, identifying whether a conflict exists, its
@@ -43,7 +43,7 @@ async def _call_gemini_opinion(
         return None
 
     prompt = (
-        f"You are an expert technical auditor in the CortexOS Council of Agents.\n"
+        f"You are an expert technical auditor in the Parishad Council of Agents.\n"
         f"Official Document: {doc_title}\n"
         f"Document Content: {doc_content}\n"
         f"Official Parameter Value: {official_val}\n"
