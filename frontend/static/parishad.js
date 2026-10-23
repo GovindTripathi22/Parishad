@@ -294,7 +294,8 @@
   };
 
   // 7. FastAPI Backend Synchronization
-  const BACKEND_BASE = (window.location.protocol.startsWith('http')) ? '' : 'http://localhost:8000';
+  const currentPort = window.location.port || (window.location.protocol === 'https:' ? '443' : '3000');
+  const BACKEND_BASE = (window.location.protocol.startsWith('http')) ? '' : `http://localhost:${currentPort}`;
   window.BACKEND_BASE = BACKEND_BASE;
   window.backendAvailable = false;
 
@@ -303,8 +304,11 @@
       const res = await fetch(`${BACKEND_BASE}/api/health`, { method: 'GET', signal: AbortSignal.timeout(1500) });
       if (res.ok) {
         window.backendAvailable = true;
+        const portStr = window.location.port ? `:${window.location.port}` : (window.location.protocol.startsWith('http') ? '' : ':3000');
         const statusText = document.getElementById('syncStatusText');
-        if (statusText) statusText.textContent = 'FastAPI (:8000) Active';
+        if (statusText) statusText.textContent = `Active (${portStr || ':3000'})`;
+        const readyPort = document.getElementById('systemReadyPort');
+        if (readyPort) readyPort.textContent = `Ready (${portStr || ':3000'})`;
         await syncStateFromBackend();
       }
     } catch (e) {
@@ -805,6 +809,11 @@
 
   // Run initial connectivity check upon DOM readiness
   window.addEventListener('DOMContentLoaded', () => {
+    const portStr = window.location.port ? `:${window.location.port}` : (window.location.protocol.startsWith('http') ? '' : ':3000');
+    const statusText = document.getElementById('syncStatusText');
+    if (statusText) statusText.textContent = `Active (${portStr || ':3000'})`;
+    const readyPort = document.getElementById('systemReadyPort');
+    if (readyPort) readyPort.textContent = `Ready (${portStr || ':3000'})`;
     window.updateThemeIcon();
     window.syncAlaSqlTables();
     window.checkBackendConnectivity();

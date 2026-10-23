@@ -1,11 +1,11 @@
 {
   "name": "parishad",
   "version": "4.2.0",
-  "description": "Parishad (Parishad) — Autonomous Company Brain & Decision Ledger",
+  "description": "Parishad — Autonomous Company Brain & Decision Ledger",
   "scripts": {
-    "dev": "python run.py",
-    "dve": "python run.py",
-    "start": "python run.py",
+    "dev": "python run.py 3000",
+    "dve": "python run.py 3000",
+    "start": "python run.py 3000",
     "test": "pytest -v",
     "lint": "python -m py_compile run.py"
   },
