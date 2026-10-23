@@ -44,53 +44,53 @@
        GLOBAL 64PX STICKY HEADER
        =================================================================== -->
   <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
-    <!-- Brand -->
-    <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-indigo-950/40 p-1 border border-indigo-500/30 shadow-lg shadow-indigo-950/50 flex items-center justify-center group-hover:border-indigo-400 group-hover:scale-105 transition-all duration-200">
-        <img src="/static/logo.svg" alt="Parishad Logo" class="w-full h-full object-contain filter drop-shadow" />
-      </div>
-      <div class="flex items-center gap-2">
+    <!-- Brand & Server Status -->
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-indigo-950/40 p-1 border border-indigo-500/30 shadow-lg shadow-indigo-950/50 flex items-center justify-center group-hover:border-indigo-400 group-hover:scale-105 transition-all duration-200">
+          <img src="/static/logo.svg" alt="Parishad Logo" class="w-full h-full object-contain filter drop-shadow" />
+        </div>
         <span class="text-sm font-bold tracking-tight text-white group-hover:text-indigo-200 transition-colors">Parishad</span>
-        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="syncStatusText">Active (:8000)</span>
-        </span>
-      </div>
-    </a>
+      </a>
+      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5 cursor-default select-none" title="FastAPI Backend Status: Port 8000">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="syncStatusText">Active (:8000)</span>
+      </span>
+    </div>
 
-    <!-- Center Multi-Page Navigation -->
+    <!-- Clean, Aesthetic Navigation for Non-Technical & Technical Users -->
     <nav class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/[0.06]">
       <a href="/check" class="chapter-tab" id="tab-check">
-        <span class="font-mono text-[11px] opacity-50">01</span>
-        <span>Console</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">fact_check</span>
+        <span>Review Changes</span>
       </a>
       <a href="/approvals" class="chapter-tab" id="tab-approvals">
-        <span class="font-mono text-[11px] opacity-50">02</span>
-        <span>Safety Gate</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">verified_user</span>
+        <span>Approvals</span>
         <span id="tabPendingBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
       </a>
       <a href="/brain" class="chapter-tab" id="tab-brain">
-        <span class="font-mono text-[11px] opacity-50">03</span>
-        <span>Company Brain</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">psychology</span>
+        <span>Knowledge Base</span>
       </a>
       <a href="/ledger" class="chapter-tab" id="tab-ledger">
-        <span class="font-mono text-[11px] opacity-50">04</span>
-        <span>Ledger &amp; SQL</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">history_edu</span>
+        <span>Decision History</span>
       </a>
       <a href="/tests" class="chapter-tab" id="tab-tests">
-        <span class="font-mono text-[11px] opacity-50">05</span>
-        <span>12 Checks</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">task_alt</span>
+        <span>System Health</span>
       </a>
       <a href="/guide" class="chapter-tab" id="tab-guide">
-        <span class="font-mono text-[11px] opacity-50">06</span>
-        <span>Guide</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">menu_book</span>
+        <span>Help Guide</span>
       </a>
     </nav>
 
     <!-- Right Controls -->
-    <div class="flex items-center gap-2">
+    <div id="headerRightControls" class="flex items-center gap-2">
       <!-- Search Shortcut -->
-      <a href="/brain" title="Search Company Brain (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
+      <a href="/brain" title="Search Knowledge Base (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
         <span class="material-symbols-outlined text-[14px]">search</span>
         <kbd class="font-mono text-[10px] text-slate-400">⌘K</kbd>
       </a>
@@ -361,12 +361,12 @@
         <span>Deterministic Rule Engine &amp; Cryptographic Ledger</span>
       </div>
       <div class="flex items-center gap-4 text-slate-400">
-        <a href="/check" class="hover:text-white transition">Console</a>
+        <a href="/check" class="hover:text-white transition">Review Changes</a>
         <a href="/approvals" class="hover:text-white transition">Approvals</a>
-        <a href="/brain" class="hover:text-white transition">Brain</a>
-        <a href="/ledger" class="hover:text-white transition">Ledger</a>
-        <a href="/tests" class="hover:text-white transition">12 Checks</a>
-        <a href="/guide" class="hover:text-white transition">Guide</a>
+        <a href="/brain" class="hover:text-white transition">Knowledge Base</a>
+        <a href="/ledger" class="hover:text-white transition">Decision History</a>
+        <a href="/tests" class="hover:text-white transition">System Health</a>
+        <a href="/guide" class="hover:text-white transition">Help Guide</a>
         <a href="/docs" target="_blank" class="hover:text-white transition">API Docs</a>
       </div>
     </div>

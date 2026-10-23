@@ -17,7 +17,7 @@
     }
   } catch (e) {}
 
-  // 2. Audio Synthesizer
+  // 2. Luxury Studio Audio Synthesizer
   let audioCtx = null;
   let audioEnabled = true;
 
@@ -32,39 +32,68 @@
     audioEnabled = !audioEnabled;
     const icon = document.getElementById('soundIcon');
     if (icon) icon.textContent = audioEnabled ? 'volume_up' : 'volume_off';
-    showToast(audioEnabled ? 'Sound feedback enabled' : 'Sound muted');
-    if (audioEnabled) playTone(587.33, 'sine', 0.08, 0.03);
+    showToast(audioEnabled ? 'Luxury sound feedback enabled' : 'Sound muted');
+    if (audioEnabled) window.playTone(660, 'sine', 0.12, 0.025);
   };
 
-  window.playTone = function (freq, type = 'sine', duration = 0.08, gainVal = 0.03) {
+  // Smooth warm tone with soft 15ms linear attack, biquad lowpass filtering, and smooth exponential decay
+  window.playTone = function (freq, type = 'sine', duration = 0.12, gainVal = 0.025) {
     if (!audioEnabled) return;
     try {
       const ctx = getAudioContext();
       if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1400, now);
+      filter.Q.setValueAtTime(0.7, now);
+
       osc.type = type;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(gainVal, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-      osc.connect(gain);
+      osc.frequency.setValueAtTime(freq, now);
+
+      // 15ms soft attack ramp to eliminate digital click / pop
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(gainVal, now + 0.015);
+      // Smooth exponential decay
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(filter);
+      filter.connect(gain);
       gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + duration);
+
+      osc.start(now);
+      osc.stop(now + duration);
     } catch (e) {}
   };
 
+  // Warm Apple/Linear-inspired acoustic major 7th chime
   window.playSuccessChime = function () {
     if (!audioEnabled) return;
-    playTone(523.25, 'sine', 0.1, 0.03); // C5
-    setTimeout(() => playTone(659.25, 'sine', 0.1, 0.03), 70); // E5
-    setTimeout(() => playTone(783.99, 'sine', 0.15, 0.04), 140); // G5
+    try {
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') ctx.resume();
+      // Soft arpeggiated chord (F#5 -> A#5 -> C#6)
+      const notes = [
+        { f: 739.99, t: 0, d: 0.25, v: 0.022 },
+        { f: 932.33, t: 0.06, d: 0.30, v: 0.020 },
+        { f: 1108.73, t: 0.12, d: 0.38, v: 0.025 }
+      ];
+      notes.forEach(n => {
+        setTimeout(() => {
+          window.playTone(n.f, 'sine', n.d, n.v);
+        }, n.t * 1000);
+      });
+    } catch (e) {}
   };
 
+  // Gentle low warning tap (no harsh sawtooth buzzer)
   window.playAlertBeep = function () {
     if (!audioEnabled) return;
-    playTone(330, 'triangle', 0.12, 0.05); // E4
-    setTimeout(() => playTone(293.66, 'sawtooth', 0.15, 0.05), 90); // D4
+    window.playTone(392.00, 'triangle', 0.16, 0.035); // G4 soft warm thud
+    setTimeout(() => window.playTone(329.63, 'sine', 0.22, 0.030), 60); // E4 gentle low
   };
 
   // 3. Global Shared Application State
@@ -625,43 +654,51 @@
   function updateGeminiHeaderPill(cfg) {
     let pill = document.getElementById('geminiStatusPill');
     if (!pill) {
-      // Find header right controls and insert before search
-      const headerControls = document.querySelector('header div.flex.items-center.gap-2');
+      // Find header right controls by explicit ID or right container
+      const headerControls = document.getElementById('headerRightControls') || document.querySelector('header > div:last-child');
       if (headerControls) {
         pill = document.createElement('button');
         pill.id = 'geminiStatusPill';
-        pill.onclick = window.openGeminiModal;
-        pill.className = 'hidden md:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-lg border transition cursor-pointer';
+        pill.onclick = function (e) {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          window.openGeminiModal();
+        };
         headerControls.insertBefore(pill, headerControls.firstChild);
       }
     }
     if (pill) {
       if (cfg.configured) {
-        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 font-medium cursor-pointer hover:bg-emerald-950/60 transition';
-        pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Gemini Active (${cfg.model.replace('gemini-', '')})</span>`;
-        pill.title = `Gemini AI is active (${cfg.masked_key}). Click to modify or test.`;
+        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-sans px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 font-medium cursor-pointer hover:bg-emerald-950/60 transition';
+        pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Gemini AI Connected</span>`;
+        pill.title = 'Google Gemini AI is active (Vision OCR, neural embeddings, reasoning)';
       } else {
-        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-medium cursor-pointer hover:bg-indigo-500/20 transition';
-        pill.innerHTML = `<span class="material-symbols-outlined text-[13px] text-indigo-400">key</span><span>Configure Gemini</span>`;
+        pill.className = 'hidden md:flex items-center gap-1.5 text-[11px] font-sans px-2.5 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-medium cursor-pointer hover:bg-indigo-500/20 transition';
+        pill.innerHTML = `<span class="material-symbols-outlined text-[13px] text-indigo-400">key</span><span>Configure AI</span>`;
         pill.title = 'Click to activate Gemini Vision OCR, neural embeddings, and AI reasoning';
       }
     }
   }
 
   window.openGeminiModal = function () {
-    window.playTone(480, 'sine', 0.05, 0.02);
+    window.playTone(480, 'sine', 0.08, 0.02);
     let modal = document.getElementById('geminiConfigModal');
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'geminiConfigModal';
       modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
+      modal.onclick = function (e) {
+        if (e.target === modal) window.closeGeminiModal();
+      };
       document.body.appendChild(modal);
     }
     modal.classList.remove('hidden');
 
     const isConf = window.geminiConfig.configured;
     modal.innerHTML = `
-      <div class="w-full max-w-md p-6 rounded-2xl bg-[#0E1017] border border-white/10 shadow-2xl space-y-4 font-sans text-xs">
+      <div onclick="event.stopPropagation()" class="w-full max-w-md p-6 rounded-2xl bg-[#0E1017] border border-white/10 shadow-2xl space-y-4 font-sans text-xs">
         <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full ${isConf ? 'bg-emerald-400 animate-pulse' : 'bg-indigo-400'}"></span>
@@ -679,7 +716,7 @@
         <div class="space-y-3">
           <div>
             <label class="block font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">Google Gemini API Key</label>
-            <input type="password" id="inputGeminiKey" placeholder="${isConf ? 'Current: ' + window.geminiConfig.masked_key : 'AIzaSy...'}" class="w-full bg-[#08090C] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono" />
+            <input type="password" id="inputGeminiKey" placeholder="${isConf ? 'Active & Verified (Stored securely in .env)' : 'Paste API Key...'}" class="w-full bg-[#08090C] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono" />
           </div>
 
           <div>

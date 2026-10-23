@@ -5,12 +5,14 @@ Uses hybrid search to retrieve context and Gemini to synthesize plain-English an
 """
 from __future__ import annotations
 
+import base64
+import json
 import logging
 from datetime import datetime, timezone
 from typing import Any, Optional
 
 import httpx
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -259,33 +261,22 @@ async def brain_history(
     ]
 
 
-@router.post(
-    "/ocr",
-    response_model=OcrResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Extract specification rules from image using multimodal AI vision",
-)
-async def ocr_spec_sheet(body: OcrRequest):
-    """
-    Parses a specification sheet image via Gemini multimodal vision.
-    If unconfigured or failed, returns an explicit OCR_UNAVAILABLE / OCR_FAILED
-    status rather than fabricating a false sample specification.
-    """
+async def _process_ocr(image_base64: str, mime_type: str, filename: str) -> OcrResponse:
     settings = get_settings()
-    filename_clean = (body.filename or "Scanned_Specification").rsplit(".", 1)[0].replace("_", " ").title()
+    filename_clean = (filename or "Scanned_Specification").rsplit(".", 1)[0].replace("_", " ").title()
 
     if not settings.GEMINI_API_KEY:
         return OcrResponse(
             title=filename_clean,
             topic="UNPROCESSED",
-            content=f"[OCR_UNAVAILABLE] Specification image '{body.filename}' was uploaded, but GEMINI_API_KEY is not configured.",
+            content=f"[OCR_UNAVAILABLE] Specification image '{filename}' was uploaded, but GEMINI_API_KEY is not configured.",
             extracted_rules=[],
             status="OCR_UNAVAILABLE",
             error_message="Multimodal vision provider is unconfigured. Set GEMINI_API_KEY in .env to enable live image OCR.",
         )
 
     title = filename_clean
-    topic = "OCR-SPEC"
+    topic = "HARDWARE-SPEC"
     content = ""
     ocr_success = False
     last_error = ""
@@ -296,8 +287,8 @@ async def ocr_spec_sheet(body: OcrRequest):
             "contents": [{
                 "role": "user",
                 "parts": [
-                    {"text": "Extract the document title, short uppercase topic code, and all specification rules/numbers from this image into JSON."},
-                    {"inlineData": {"mimeType": body.mime_type, "data": body.image_base64}}
+                    {"text": "You are a hardware engineering specification extractor. Extract the official title, a short uppercase topic (e.g. BMS-48V, RADAR-77GHZ, THERMAL, CLOUD, HARDWARE), and a concise summary paragraph containing all technical specifications, numeric limits, tolerances, and operating values from this document or image."},
+                    {"inlineData": {"mimeType": mime_type, "data": image_base64}}
                 ]
             }],
             "generationConfig": {
@@ -313,20 +304,19 @@ async def ocr_spec_sheet(body: OcrRequest):
                 }
             }
         }
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=20.0) as client:
             res = await client.post(url, json=payload)
             if res.status_code == 200:
-                import json
                 raw_text = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
                 if raw_text:
                     parsed = json.loads(raw_text)
                     title = parsed.get("title", title)
-                    topic = (parsed.get("topic", topic) or "OCR-SPEC").upper()
+                    topic = (parsed.get("topic", topic) or "HARDWARE-SPEC").upper()
                     content = parsed.get("content", "")
                     if content:
                         ocr_success = True
             else:
-                last_error = f"API returned status {res.status_code}"
+                last_error = f"Gemini API returned status {res.status_code}"
     except Exception as exc:
         logger.warning("Gemini Vision OCR error: %s", exc)
         last_error = str(exc)
@@ -335,7 +325,7 @@ async def ocr_spec_sheet(body: OcrRequest):
         return OcrResponse(
             title=filename_clean,
             topic="UNPROCESSED",
-            content=f"[OCR_FAILED] Failed to extract text from {body.filename}: {last_error or 'Vision model returned no text'}",
+            content=f"[OCR_FAILED] Failed to extract text from {filename}: {last_error or 'Vision model returned no text'}",
             extracted_rules=[],
             status="OCR_FAILED",
             error_message=f"Vision extraction failed: {last_error or 'Vision model returned no text'}",
@@ -350,5 +340,44 @@ async def ocr_spec_sheet(body: OcrRequest):
         content=content,
         extracted_rules=rules,
         status="success",
+    )
+
+
+@router.post(
+    "/ocr",
+    response_model=OcrResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Extract specification rules from image using multimodal AI vision (JSON base64)",
+)
+async def ocr_spec_sheet(body: OcrRequest):
+    """
+    Parses a specification sheet image via Gemini multimodal vision.
+    If unconfigured or failed, returns an explicit OCR_UNAVAILABLE / OCR_FAILED
+    status rather than fabricating a false sample specification.
+    """
+    return await _process_ocr(
+        image_base64=body.image_base64,
+        mime_type=body.mime_type or "image/png",
+        filename=body.filename or "Scanned_Specification.png",
+    )
+
+
+@router.post(
+    "/ocr/upload",
+    response_model=OcrResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Extract specification rules from uploaded file using multimodal AI vision",
+)
+async def ocr_upload_file(file: UploadFile = File(...)):
+    """
+    Direct file upload endpoint for specification documents & images.
+    """
+    contents = await file.read()
+    b64_data = base64.b64encode(contents).decode("utf-8")
+    content_type = file.content_type or "image/png"
+    return await _process_ocr(
+        image_base64=b64_data,
+        mime_type=content_type,
+        filename=file.filename or "Scanned_Specification.png",
     )
 

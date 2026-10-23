@@ -43,51 +43,52 @@
        HEADER
        =================================================================== -->
   <header class="w-full h-16 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.08] bg-[#08090C]/90 backdrop-blur-xl sticky top-0 z-50">
-    <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-indigo-950/40 p-1 border border-indigo-500/30 shadow-lg shadow-indigo-950/50 flex items-center justify-center group-hover:border-indigo-400 group-hover:scale-105 transition-all duration-200">
-        <img src="/static/logo.svg" alt="Parishad Logo" class="w-full h-full object-contain filter drop-shadow" />
-      </div>
-      <div class="flex items-center gap-2">
+    <!-- Brand & Server Status -->
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-indigo-950/40 p-1 border border-indigo-500/30 shadow-lg shadow-indigo-950/50 flex items-center justify-center group-hover:border-indigo-400 group-hover:scale-105 transition-all duration-200">
+          <img src="/static/logo.svg" alt="Parishad Logo" class="w-full h-full object-contain filter drop-shadow" />
+        </div>
         <span class="text-sm font-bold tracking-tight text-white group-hover:text-indigo-200 transition-colors">Parishad</span>
-        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="syncStatusText">Active (:8000)</span>
-        </span>
-      </div>
-    </a>
+      </a>
+      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1.5 cursor-default select-none" title="FastAPI Backend Status: Port 8000">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="syncStatusText">Active (:8000)</span>
+      </span>
+    </div>
 
-    <!-- Navigation with 03 Company Brain ACTIVE -->
+    <!-- Clean, Aesthetic Navigation for Non-Technical & Technical Users -->
     <nav class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/[0.06]">
       <a href="/check" class="chapter-tab" id="tab-check">
-        <span class="font-mono text-[11px] opacity-50">01</span>
-        <span>Console</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">fact_check</span>
+        <span>Review Changes</span>
       </a>
       <a href="/approvals" class="chapter-tab" id="tab-approvals">
-        <span class="font-mono text-[11px] opacity-50">02</span>
-        <span>Safety Gate</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">verified_user</span>
+        <span>Approvals</span>
         <span id="tabPendingBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold ml-0.5">2</span>
       </a>
       <a href="/brain" class="chapter-tab active" id="tab-brain">
-        <span class="font-mono text-[11px] opacity-50">03</span>
-        <span>Company Brain</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">psychology</span>
+        <span>Knowledge Base</span>
       </a>
       <a href="/ledger" class="chapter-tab" id="tab-ledger">
-        <span class="font-mono text-[11px] opacity-50">04</span>
-        <span>Ledger &amp; SQL</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">history_edu</span>
+        <span>Decision History</span>
       </a>
       <a href="/tests" class="chapter-tab" id="tab-tests">
-        <span class="font-mono text-[11px] opacity-50">05</span>
-        <span>12 Checks</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">task_alt</span>
+        <span>System Health</span>
       </a>
       <a href="/guide" class="chapter-tab" id="tab-guide">
-        <span class="font-mono text-[11px] opacity-50">06</span>
-        <span>Guide</span>
+        <span class="material-symbols-outlined text-[15px] opacity-70">menu_book</span>
+        <span>Help Guide</span>
       </a>
     </nav>
 
     <!-- Header Actions -->
-    <div class="flex items-center gap-2">
-      <a href="/brain" title="Search Company Brain (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
+    <div id="headerRightControls" class="flex items-center gap-2">
+      <a href="/brain" title="Search Knowledge Base (Cmd+K)" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg hover:text-white transition">
         <span class="material-symbols-outlined text-[14px]">search</span>
         <kbd class="font-mono text-[10px] text-slate-400">⌘K</kbd>
       </a>
@@ -111,7 +112,7 @@
   <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-10">
 
     <div class="section-label">
-      <span><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> CHAPTER 03 // COMPANY BRAIN &amp; KNOWLEDGE BASE</span>
+      <span><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PARISHAD // KNOWLEDGE BASE &amp; VISION OCR</span>
       <span class="text-[11px] font-mono text-slate-400">PAGE: /brain</span>
     </div>
 
@@ -189,24 +190,52 @@
           <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-indigo-500/40 transition cursor-pointer bg-black/20 space-y-2">
             <span class="material-symbols-outlined text-3xl text-indigo-400">upload_file</span>
             <div class="text-xs font-semibold text-white">Click or drag &amp; drop datasheet</div>
-            <div class="text-[10px] text-slate-500 font-mono">Supports PDF, PNG, JPG (Max 15MB)</div>
-            <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(event)" accept=".pdf,image/*" />
+            <div class="text-[10px] text-slate-500 font-mono">Supports PDF, PNG, JPG, TXT, JSON (Max 15MB)</div>
+            <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(event)" accept=".pdf,image/*,.txt,.json,.md" />
           </div>
 
           <!-- Diagnostic Banner -->
-          <div id="ocrDiagnosticBanner" class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 font-mono hidden">
+          <div id="ocrDiagnosticBanner" class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 font-mono hidden space-y-2">
             <div class="font-bold flex items-center gap-1.5 mb-0.5">
               <span class="material-symbols-outlined text-[14px]">info</span>
               <span>Truthful Service Diagnostic</span>
             </div>
             <div id="ocrDiagnosticDetail">
-              GEMINI_API_KEY is currently unconfigured. Deterministic regex extraction is used for text inputs. Set your API key in .env to enable neural multimodal OCR.
+              GEMINI_API_KEY is currently unconfigured. Deterministic regex extraction is used for text inputs. Set your API key in .env or configure via the key dialog to enable neural multimodal OCR.
+            </div>
+            <div class="pt-1">
+              <button onclick="window.openGeminiModal()" class="btn-main px-3 py-1 text-[11px] font-sans">Configure Gemini API Key</button>
+            </div>
+          </div>
+
+          <!-- OCR Extracted Result Card (Shows when file is parsed) -->
+          <div id="ocrResultCard" class="hidden p-4 rounded-xl bg-[#0E151E] border border-emerald-500/30 space-y-3 font-sans">
+            <div class="flex items-center justify-between border-b border-emerald-500/20 pb-2">
+              <span class="font-mono text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                <span>Extracted Specification</span>
+              </span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold" id="ocrTopicBadge">SPEC</span>
+            </div>
+            <div class="text-xs font-bold text-white font-sans" id="ocrResultTitle">Specification Title</div>
+            <p class="text-[11px] text-slate-300 font-mono bg-black/40 p-2.5 rounded border border-white/5 leading-relaxed max-h-32 overflow-y-auto" id="ocrResultContent">Content...</p>
+            <div class="space-y-1">
+              <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Identified Rules</span>
+              <div class="flex flex-wrap gap-1.5" id="ocrResultRules"></div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+              <button onclick="editInModalFromOcr()" class="btn-sub px-3 py-1.5 text-xs">Edit First</button>
+              <button onclick="commitOcrDocToBrain()" class="btn-main px-4 py-1.5 text-xs flex items-center gap-1 font-semibold">
+                <span class="material-symbols-outlined text-[14px]">library_add</span>
+                <span>Index into Knowledge Base</span>
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="text-[11px] font-mono text-slate-500 border-t border-white/[0.08] pt-3">
-          Honest Reporting: Zero fabricated measurements.
+        <div class="text-[11px] font-mono text-slate-500 border-t border-white/[0.08] pt-3 flex items-center justify-between">
+          <span>Honest Reporting: Zero fabricated measurements.</span>
+          <span class="text-indigo-400 hover:underline cursor-pointer" onclick="toggleAddDocModal()">Manual Entry &rarr;</span>
         </div>
       </div>
     </div>
@@ -274,11 +303,12 @@
       </div>
       <div class="flex items-center gap-4 text-slate-400">
         <a href="/" class="hover:text-white transition">Home</a>
-        <a href="/check" class="hover:text-white transition">Console</a>
+        <a href="/check" class="hover:text-white transition">Review Changes</a>
         <a href="/approvals" class="hover:text-white transition">Approvals</a>
-        <a href="/ledger" class="hover:text-white transition">Ledger</a>
-        <a href="/tests" class="hover:text-white transition">12 Checks</a>
-        <a href="/guide" class="hover:text-white transition">Guide</a>
+        <a href="/brain" class="hover:text-white transition">Knowledge Base</a>
+        <a href="/ledger" class="hover:text-white transition">Decision History</a>
+        <a href="/tests" class="hover:text-white transition">System Health</a>
+        <a href="/guide" class="hover:text-white transition">Help Guide</a>
       </div>
     </div>
   </footer>
@@ -421,43 +451,164 @@
       window.showToast(`Indexed "${title}" into Company Brain.`);
     }
 
+    let lastOcrResult = null;
+
     async function handleFileUpload(event) {
-      const file = event.target.files[0];
+      const file = (event.target.files && event.target.files[0]) || (event.dataTransfer && event.dataTransfer.files[0]);
       if (!file) return;
 
       const beam = document.getElementById('scannerLaserBeam');
       beam.classList.remove('hidden');
-      window.showToast(`Scanning "${file.name}"...`);
+      const diagBanner = document.getElementById('ocrDiagnosticBanner');
+      const resultCard = document.getElementById('ocrResultCard');
+      diagBanner.classList.add('hidden');
+      resultCard.classList.add('hidden');
 
-      if (window.backendAvailable) {
-        try {
-          const formData = new FormData();
-          formData.append('file', file);
-          const resp = await fetch(`${window.BACKEND_BASE}/api/v1/brain/ocr`, {
-            method: 'POST',
-            body: formData
+      window.showToast(`Scanning "${file.name}" with Multimodal Vision...`);
+      window.playTone(520, 'sine', 0.12, 0.03);
+
+      try {
+        // Direct local parser for plain text, json, or markdown spec files
+        if (file.type.includes('text') || file.name.endsWith('.txt') || file.name.endsWith('.md') || file.name.endsWith('.json')) {
+          const text = await file.text();
+          const extracted = window.extractUniversalFacts(text);
+          const rules = extracted.allNumbers.map(n => ({ unit: n.unit, label: n.label, value: n.value }));
+          const filenameClean = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, ' ');
+          renderOcrSuccess({
+            title: filenameClean,
+            topic: 'SPEC-DOC',
+            content: text.slice(0, 600),
+            extracted_rules: rules,
+            status: 'success'
           });
-          const diagBanner = document.getElementById('ocrDiagnosticBanner');
-          if (resp.status === 503) {
-            const data = await resp.json();
-            diagBanner.classList.remove('hidden');
-            document.getElementById('ocrDiagnosticDetail').textContent = data.detail || 'Multimodal OCR requires a valid GEMINI_API_KEY. Deterministic extraction is used for text inputs.';
-            window.showToast('OCR Unconfigured: Transparent error reported.');
-          } else if (resp.ok) {
-            diagBanner.classList.add('hidden');
-            window.showToast('Document parsed successfully.');
-          }
-        } catch (e) {
-          console.warn('OCR dispatch error:', e);
+          beam.classList.add('hidden');
+          return;
         }
-      } else {
-        const diagBanner = document.getElementById('ocrDiagnosticBanner');
+
+        // Send to backend multipart OCR upload endpoint
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const resp = await fetch(`${window.BACKEND_BASE}/api/v1/brain/ocr/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.status === 'success') {
+            renderOcrSuccess(data);
+          } else if (data.status === 'OCR_UNAVAILABLE') {
+            diagBanner.classList.remove('hidden');
+            document.getElementById('ocrDiagnosticDetail').textContent = data.error_message || 'Gemini Multimodal API is unconfigured. Set GEMINI_API_KEY in .env or configure via the key dialog.';
+            window.playAlertBeep();
+            window.showToast('OCR unconfigured: Add your Gemini API key to activate.');
+          } else {
+            diagBanner.classList.remove('hidden');
+            document.getElementById('ocrDiagnosticDetail').textContent = data.error_message || 'Vision model could not extract text from document.';
+            window.playAlertBeep();
+          }
+        } else {
+          diagBanner.classList.remove('hidden');
+          document.getElementById('ocrDiagnosticDetail').textContent = `Server responded with HTTP ${resp.status}. Please check backend logs.`;
+          window.playAlertBeep();
+        }
+      } catch (err) {
+        console.error('OCR Upload Error:', err);
         diagBanner.classList.remove('hidden');
+        document.getElementById('ocrDiagnosticDetail').textContent = 'Network error during upload: ' + err.message;
+        window.playAlertBeep();
+      } finally {
+        beam.classList.add('hidden');
+      }
+    }
+
+    function renderOcrSuccess(data) {
+      lastOcrResult = data;
+      const resultCard = document.getElementById('ocrResultCard');
+      resultCard.classList.remove('hidden');
+
+      document.getElementById('ocrTopicBadge').textContent = data.topic || 'SPEC';
+      document.getElementById('ocrResultTitle').textContent = data.title || 'Extracted Specification';
+      document.getElementById('ocrResultContent').textContent = data.content || '';
+
+      const rulesContainer = document.getElementById('ocrResultRules');
+      const rules = data.extracted_rules || [];
+      if (rules.length === 0) {
+        rulesContainer.innerHTML = '<span class="text-[10px] text-slate-500 font-mono italic">No numeric rules detected in scanned text.</span>';
+      } else {
+        rulesContainer.innerHTML = rules.map(r => `
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-bold">
+            ${r.label}: ${r.value} ${String(r.unit).toUpperCase()}
+          </span>
+        `).join('');
       }
 
-      setTimeout(() => {
-        beam.classList.add('hidden');
-      }, 1500);
+      window.playSuccessChime();
+      window.showToast(`Extracted rules for "${data.title}"!`);
+    }
+
+    function editInModalFromOcr() {
+      if (!lastOcrResult) return;
+      document.getElementById('newDocTitle').value = lastOcrResult.title || '';
+      document.getElementById('newDocTopic').value = lastOcrResult.topic || '';
+      document.getElementById('newDocContent').value = lastOcrResult.content || '';
+
+      const el = document.getElementById('addDocContainer');
+      el.classList.remove('hidden');
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function commitOcrDocToBrain() {
+      if (!lastOcrResult) return;
+      const title = lastOcrResult.title || 'Scanned Specification';
+      const topic = (lastOcrResult.topic || 'HARDWARE-SPEC').toUpperCase();
+      const content = lastOcrResult.content || '';
+      const rules = lastOcrResult.extracted_rules || [];
+      const newId = `DOC-SCAN-${100 + window.appState.officialDocs.length + 1}`;
+
+      window.appState.officialDocs.unshift({
+        doc_id: newId,
+        topic,
+        title,
+        version: 'v1.0',
+        updated_at: new Date().toISOString().slice(0, 10),
+        content,
+        rules
+      });
+
+      if (window.backendAvailable) {
+        fetch(`${window.BACKEND_BASE}/api/v1/docs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-User-Role': 'ADMIN' },
+          body: JSON.stringify({ title, topic, content })
+        }).catch(e => console.warn('Backend doc sync:', e));
+      }
+
+      window.syncAlaSqlTables();
+      renderCompanyBrainLists();
+      window.updateTopCounters();
+      window.playSuccessChime();
+      window.showToast(`Indexed "${title}" into Knowledge Base.`);
+      document.getElementById('ocrResultCard').classList.add('hidden');
+    }
+
+    // Setup drag and drop on dropZone
+    function initDropZone() {
+      const dz = document.getElementById('dropZone');
+      if (!dz) return;
+      dz.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dz.classList.add('border-indigo-500', 'bg-indigo-500/10');
+      });
+      dz.addEventListener('dragleave', () => {
+        dz.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+      });
+      dz.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dz.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+        handleFileUpload(e);
+      });
     }
 
     window.onBackendStateSynced = function() {
@@ -466,6 +617,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       renderCompanyBrainLists();
+      initDropZone();
     });
   </script>
 </body>
